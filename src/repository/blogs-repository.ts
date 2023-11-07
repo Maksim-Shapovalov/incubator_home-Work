@@ -2,7 +2,6 @@ import {BlogsOutputModel, BlogsType} from "../types/blogs-type";
 import {dataBlog} from "../DB/data-base";
 import {ObjectId, WithId} from "mongodb";
 import {BlogsPaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
-
 export const blogsRepository = {
     async getAllBlogs(filter: BlogsPaginationQueryType): Promise<PaginationType<BlogsOutputModel>> {
         const filterQuery = {name: {$regex: filter.searchNameTerm, $options: 'i'}}
