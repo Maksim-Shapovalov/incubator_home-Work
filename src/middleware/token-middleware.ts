@@ -12,14 +12,17 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         return
     }
-    // const findTokenInBlackList = await dataBlackListForToken.findOne({refreshToken: refreshToken})
-    // if (findTokenInBlackList){
-    //     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-    //     return
-    // }
+    const findTokenInBlackList = await dataBlackListForToken.findOne({refreshToken: refreshToken})
+    if (findTokenInBlackList){
+        res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        return
+    }
 
     const payload = await jwtService.parseJWTRefreshToken(refreshToken);
-    // await dataBlackListForToken.insertOne(refreshToken)
+    const bannedToken = {
+        token: refreshToken
+    }
+    await dataBlackListForToken.insertOne(bannedToken)
     if (payload){
         const userId = new ObjectId(payload.userId) ;
         const user = await userRepository.getUserById(userId)
