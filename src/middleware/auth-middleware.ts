@@ -7,6 +7,7 @@ import {body} from "express-validator";
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const registr = req.headers.authorization
     if (!registr){
+        console.log(registr, 'regist')
         res.send(HTTP_STATUS.UNAUTHORIZED_401)
         return
     }
@@ -24,7 +25,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             return next()
         }
     }
-
+    console.log(req, 'request')
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
 }
 

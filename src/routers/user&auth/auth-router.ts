@@ -75,7 +75,11 @@ authRouter.post("/registration-email-resending",
 authRouter.get("/me",
     authMiddleware ,
     async (req: Request ,res:Response)=> {
-    const user = await serviceUser.checkCredentials(req.body.loginOrEmail, req.body.password)
+    // const user = await serviceUser.checkCredentials(req.body.loginOrEmail, req.body.password)
+        const user = req.body.user
+        console.log(user, 'token')
+        // const userId = await jwtService.parseJWTAccessToken(token)
+
     if (!user){
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         return

@@ -23,13 +23,42 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
     const bannedToken = {
         token: refreshToken
     }
-    console.log(bannedToken)
     await dataBlackListForToken.insertOne(bannedToken)
     if (payload){
         const userId = new ObjectId(payload.userId) ;
         const user = await userRepository.getUserById(userId)
 
         if(!user){
+            res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+            return
+        }
+
+        req.body.user = user
+
+        next()
+        return;
+    }else{
+        return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+    }
+}
+
+export const ValidationAccessToken = async (req: Request, res: Response , next: NextFunction) => {
+    const accessToken = req.body.accessToken
+    console.log(accessToken,'access')
+
+    if (!accessToken){
+        res.status(HTTP_STATUS.UNAUTHORIZED_401).send('no access token')
+        return
+    }
+
+    const payload = await jwtService.parseJWTAccessToken(accessToken);
+    console.log(payload)
+    if (payload){
+        const userId = new ObjectId(payload.userId) ;
+        const user = await userRepository.getUserById(userId)
+
+        if(!user){
+            console.log("no user")
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
             return
         }

@@ -27,9 +27,17 @@ export const jwtService = {
           return null
         }
     },
-    async deletedTokens(token:string){
-      await deletedTokenRepoRepository.deletedTokens(token)
+    async parseJWTAccessToken(accessToken: string){
+        console.log('parse')
+        try {
+            const payload = jwt.verify(accessToken, setting.JWT_SECRET)
+            console.log('paylod in parse')
+            return payload as PayloadType
+        }catch (e){
+            return null
+        }
     },
+
     async getUserIdByToken(token: string) {
         try {
             const result: any = jwt.verify(token, setting.JWT_SECRET)
