@@ -12,7 +12,7 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         return
     }
-    const findTokenInBlackList = await dataBlackListForToken.findOne({refreshToken: refreshToken})
+    const findTokenInBlackList = await dataBlackListForToken.findOne({token: refreshToken})
     if (findTokenInBlackList){
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         return
