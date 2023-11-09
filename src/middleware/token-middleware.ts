@@ -7,14 +7,15 @@ import {dataBlackListForToken} from "../DB/data-base";
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
+    console.log(refreshToken,'refresh')
 
     if (!refreshToken){
-        res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        res.status(HTTP_STATUS.UNAUTHORIZED_401).send('no refresh token')
         return
     }
     const findTokenInBlackList = await dataBlackListForToken.findOne({token: refreshToken})
     if (findTokenInBlackList){
-        res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+        res.status(HTTP_STATUS.UNAUTHORIZED_401).send('registration')
         return
     }
 
@@ -22,6 +23,7 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
     const bannedToken = {
         token: refreshToken
     }
+    console.log(bannedToken)
     await dataBlackListForToken.insertOne(bannedToken)
     if (payload){
         const userId = new ObjectId(payload.userId) ;
