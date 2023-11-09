@@ -14,7 +14,7 @@ export const jwtService = {
         const accessToken:string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '10sec'})
         const refreshToken:string = jwt.sign({userId: user.id},
-            setting.JWT_REFRESH_SECRET, {expiresIn: '30sec'})
+            setting.JWT_REFRESH_SECRET, {expiresIn: '20sec'})
         return [accessToken, refreshToken]
 
     },
