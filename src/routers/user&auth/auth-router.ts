@@ -7,7 +7,8 @@ import {authMiddleware, CheckingAuthorizationValidationCode} from "../../middlew
 import {authService} from "../../domain/auth-service";
 import {AuthValidation, AuthValidationEmail} from "../../middleware/input-middleware/validation/auth-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
-import {UserToCodeOutputModel} from "../../types/user-type";
+import {ValidationRefreshToken} from "../../middleware/token-middleware";
+
 
 export const authRouter = Router()
 
@@ -19,7 +20,22 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
         return
     }
     const token = await jwtService.createdJWT(userMapper(user))
-   return res.status(HTTP_STATUS.OK_200).send({accessToken:token})
+    res.cookie('refreshToken', token[1], {httpOnly: true,secure: true})
+   return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
+})
+authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
+    const user = req.body.user;
+
+    const token = await jwtService.createdJWT(userMapper(user))
+
+    res.cookie('refreshToken', token[1], {httpOnly: true,secure: true})
+
+    return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
+})
+//создать новый рефреш access токен как в login и пейлоуд будет такимже как в рефреш токене
+authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+
 })
 
 authRouter.post("/registration-confirmation",

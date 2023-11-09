@@ -7,8 +7,10 @@ import {authRouter} from "./routers/user&auth/auth-router";
 import {blogsRouter} from "./routers/blogs&posts&comments/blogs-router";
 import {postsRouter} from "./routers/blogs&posts&comments/posts-router";
 import {commentsRouter} from "./routers/blogs&posts&comments/comments-router";
+import cookieParser from "cookie-parser";
+import dotenv from 'dotenv';
 
-
+dotenv.config()
 export const app = express()
 export const port = process.env.PORT || 3000
 
@@ -25,6 +27,8 @@ export const HTTP_STATUS = {
 }
 
 app.use(express.json());
+app.use(cookieParser())
+
 app.use("/videos", VideoRouter)
 app.use("/testing/all-data", AllDataClear)
 app.use("/blogs", blogsRouter)
@@ -32,7 +36,6 @@ app.use("/posts", postsRouter)
 app.use("/users", userRouter)
 app.use("/auth", authRouter)
 app.use("/comments", commentsRouter)
-
 
 
 const startApp = async () => {

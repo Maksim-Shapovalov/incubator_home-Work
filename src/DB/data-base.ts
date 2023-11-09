@@ -4,6 +4,7 @@ import {PostsType} from "../types/posts-type";
 import {BlogsType} from "../types/blogs-type";
 import {UserDbType} from "../types/user-type";
 import {CommentsTypeDb} from "../types/comment-type";
+import {BlackListForTokenType} from "../types/blackListForToken-type";
 config()
 
 
@@ -18,6 +19,7 @@ export const dataBlog = db.collection<BlogsType>("blogs")
 export const dataPost = db.collection<PostsType>("posts")
 export const dataUser = db.collection<UserDbType>("user")
 export const dataComments = db.collection<CommentsTypeDb>("comments")
+export const dataBlackListForToken = db.collection<BlackListForTokenType>("blackList")
 
 export const runDB = async () => {
     try{
