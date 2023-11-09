@@ -24,6 +24,7 @@ export type UserToPostsDBModel = {
 
 
 export type UserToCodeOutputModel = {
+    id:string
     login: string
     email: string
     createdAt: string
@@ -32,6 +33,7 @@ export type UserToCodeOutputModel = {
 
 
 export type UserDbType = {
+    // id:string
     login: string
     email: string
     passwordHash: any
