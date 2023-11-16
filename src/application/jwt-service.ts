@@ -3,8 +3,8 @@ import {UserToPostsOutputModel} from "../types/user-type";
 import {setting} from "../setting";
 import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
-import {userRepository} from "../repository/user-repository";
 import {refreshTokenRepo} from "../repository/refreshToken-repo";
+import {DevicesUserDB} from "../types/device-of-user";
 
 type PayloadType = {
     userId: string
@@ -12,11 +12,11 @@ type PayloadType = {
 
 export const jwtService = {
     async createdJWT(user: UserToPostsOutputModel, userAgent:any = null) {
-        const createRefreshTokenMeta = {
-            issuedAt: new Date().toISOString(),
+        const createRefreshTokenMeta: DevicesUserDB = {
+            lastActivateDate: new Date().toISOString(),
             deviceId: uuidv4(),
-            IP: userAgent.IP || '123',
-            deviceName: userAgent.deviceName || 'internet',
+            ip: userAgent.IP || '123',
+            title: userAgent.deviceName || 'internet',
             userId: user.id
         }
         await refreshTokenRepo.AddRefreshTokenInData(createRefreshTokenMeta)
