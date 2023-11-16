@@ -14,12 +14,16 @@ export const authRouter = Router()
 
 
 authRouter.post("/login", async (req: Request ,res:Response)=>{
+    const userAgent = {
+        IP: req.socket.remoteAddress || req.headers['x-forwarded-for'],
+        deviceName: req.headers["user-agent"]
+    }
     const user = await serviceUser.checkCredentials(req.body.loginOrEmail, req.body.password)
     if (!user){
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         return
     }
-    const token = await jwtService.createdJWT(userMapper(user))
+    const token = await jwtService.createdJWT(userMapper(user), userAgent)
     res.cookie('refreshToken', token[1], {httpOnly: true,secure: true})
    return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
 })
@@ -75,10 +79,7 @@ authRouter.post("/registration-email-resending",
 authRouter.get("/me",
     authMiddleware ,
     async (req: Request ,res:Response)=> {
-    // const user = await serviceUser.checkCredentials(req.body.loginOrEmail, req.body.password)
-        const user = req.body.user
-        console.log(user, 'token')
-        // const userId = await jwtService.parseJWTAccessToken(token)
+    const user = req.body.user
 
     if (!user){
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)

@@ -2,18 +2,27 @@ import jwt from 'jsonwebtoken'
 import {UserToPostsOutputModel} from "../types/user-type";
 import {setting} from "../setting";
 import {ObjectId} from "mongodb";
-import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
+import {v4 as uuidv4} from "uuid";
+import {userRepository} from "../repository/user-repository";
+import {refreshTokenRepo} from "../repository/refreshToken-repo";
 
 type PayloadType = {
     userId: string
 }
 
 export const jwtService = {
-    async createdJWT(user: UserToPostsOutputModel) {
-        console.log( setting.JWT_REFRESH_SECRET, ' setting.JWT_REFRESH_SECRET')
+    async createdJWT(user: UserToPostsOutputModel, userAgent:any = null) {
+        const createRefreshTokenMeta = {
+            issuedAt: new Date().toISOString(),
+            deviceId: uuidv4(),
+            IP: userAgent.IP || '123',
+            deviceName: userAgent.deviceName || 'internet',
+            userId: user.id
+        }
+        await refreshTokenRepo.AddRefreshTokenInData(createRefreshTokenMeta)
         const accessToken:string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '10sec'})
-        const refreshToken:string = jwt.sign({userId: user.id},
+        const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
             setting.JWT_REFRESH_SECRET, {expiresIn: '20sec'})
         return [accessToken, refreshToken]
 

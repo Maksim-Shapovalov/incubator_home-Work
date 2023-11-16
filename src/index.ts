@@ -9,6 +9,7 @@ import {postsRouter} from "./routers/blogs&posts&comments/posts-router";
 import {commentsRouter} from "./routers/blogs&posts&comments/comments-router";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
+import {securityDevices} from "./routers/security-deviced/security-devices";
 
 dotenv.config()
 export const app = express()
@@ -36,6 +37,7 @@ app.use("/posts", postsRouter)
 app.use("/users", userRouter)
 app.use("/auth", authRouter)
 app.use("/comments", commentsRouter)
+app.use("/security/devices", securityDevices)
 
 
 const startApp = async () => {
