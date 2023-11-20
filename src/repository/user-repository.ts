@@ -78,9 +78,9 @@ export const userRepository = {
         console.log('result',user)
         return user
     },
-    async getNewUser(newUser: UserDbType): Promise<UserToPostsOutputModel>{
+    async getNewUser(newUser: UserDbType): Promise<UserToCodeOutputModel>{
         const result = await dataUser.insertOne({...newUser})
-        return userToPostMapper({...newUser, _id: result.insertedId})
+        return UserToCodeMapper({...newUser, _id: result.insertedId})
     },
     async deleteUserById(userId:string): Promise<boolean>{
         const findUser = await dataUser.deleteOne({_id:new ObjectId(userId)})

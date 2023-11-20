@@ -11,7 +11,7 @@ import {v4 as uuidv4} from "uuid";
 import add from 'date-fns/add'
 
 export const serviceUser = {
-    async getNewUser(login: string, password: string, email: string): Promise<UserToPostsOutputModel> {
+    async getNewUser(login: string, password: string, email: string): Promise<UserToCodeOutputModel> {
 
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(password, passwordSalt)
