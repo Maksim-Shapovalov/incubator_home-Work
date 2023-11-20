@@ -9,15 +9,15 @@ export const securityDeviceService={
         if (!devices){
             return null
         }
-        return deviceMapper(devices)
+        return devices
     }
 }
 
-const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => {
-    return {
-        ip: device.ip,
-        title: device.title,
-        deviceId: device.deviceId,
-        lastActivateDate: device.lastActivateDate
-    }
-}
+// const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => {
+//     return {
+//         ip: device.ip,
+//         title: device.title,
+//         deviceId: device.deviceId,
+//         lastActivateDate: device.lastActivateDate
+//     }
+// }
