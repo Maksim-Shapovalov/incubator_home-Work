@@ -10,8 +10,17 @@ export const securityDeviceService={
             return null
         }
         return devices
+    },
+    async deletingAllDevicesExceptId(user: any,deviceId: string){
+        const deletedDevice = await securityDevicesRepo.deletingAllDevicesExceptId(user,deviceId)
+        return deletedDevice
+    },
+    async deletingAllDevices(user: any){
+        const deletedDevice = await securityDevicesRepo.deletingAllDevices(user)
+        return deletedDevice
     }
 }
+
 
 // const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => {
 //     return {
