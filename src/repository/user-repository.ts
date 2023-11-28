@@ -12,7 +12,7 @@ import {blogMapper} from "./blogs-repository";
 import add from "date-fns/add";
 
 export const userRepository = {
-    async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToCodeOutputModel> | null>{
+    async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToPostsOutputModel> | null>{
         const filterQuery = {$or: [
             {login: {$regex:filter.searchLoginTerm, $options: 'i'}},
                 {email: {$regex: filter.searchEmailTerm, $options: 'i'}}
@@ -29,7 +29,7 @@ export const userRepository = {
             .skip(pageBlog)
             .limit(pageSizeInQuery)
             .toArray()
-        const items = result.map((u) => UserToCodeMapper(u))
+        const items = result.map((u) => userToPostMapper(u))
         return {
             pagesCount: pageCountUsers,
             page: filter.pageNumber,
@@ -78,9 +78,9 @@ export const userRepository = {
         console.log('result',user)
         return user
     },
-    async getNewUser(newUser: UserDbType): Promise<UserToCodeOutputModel>{
+    async getNewUser(newUser: UserDbType): Promise<UserToPostsOutputModel>{
         const result = await dataUser.insertOne({...newUser})
-        return UserToCodeMapper({...newUser, _id: result.insertedId})
+        return userToPostMapper({...newUser, _id: result.insertedId})
     },
     async deleteUserById(userId:string): Promise<boolean>{
         const findUser = await dataUser.deleteOne({_id:new ObjectId(userId)})

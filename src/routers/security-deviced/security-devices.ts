@@ -10,12 +10,10 @@ securityDevices.get("/",ValidationRefreshToken,
     async (req:Request, res:Response) =>{
 
     const user = req.body.user
-        console.log('user-----', user)
     const devices: OutpatModeldevicesUser|null = await securityDeviceService.getAllDevices(user._id)
         if (!devices){
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         }
-        console.log('device ---',devices)
         res.status(HTTP_STATUS.OK_200).send(devices)
 })
 securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, res:Response) => {
