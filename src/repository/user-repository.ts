@@ -12,7 +12,7 @@ import {blogMapper} from "./blogs-repository";
 import add from "date-fns/add";
 
 export const userRepository = {
-    async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToPostsOutputModel> | null>{
+    async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToCodeOutputModel> | null>{
         const filterQuery = {$or: [
             {login: {$regex:filter.searchLoginTerm, $options: 'i'}},
                 {email: {$regex: filter.searchEmailTerm, $options: 'i'}}
@@ -29,7 +29,7 @@ export const userRepository = {
             .skip(pageBlog)
             .limit(pageSizeInQuery)
             .toArray()
-        const items = result.map((u) => userToPostMapper(u))
+        const items = result.map((u) => UserToCodeMapper(u))
         return {
             pagesCount: pageCountUsers,
             page: filter.pageNumber,
