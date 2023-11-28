@@ -1,11 +1,11 @@
 import {securityDevicesRepo} from "../repository/security-devices-repo";
 import {DevicesUserDB, OutpatModeldevicesUser} from "../types/device-of-user";
-import {WithId} from "mongodb";
-import {de} from "date-fns/locale";
+import {ObjectId, WithId} from "mongodb";
+
 
 export const securityDeviceService={
     async getAllDevices(userId:string): Promise<OutpatModeldevicesUser | null>{
-        const devices = await securityDevicesRepo.getAllDevices(userId)
+        const devices = await securityDevicesRepo.getAllDevices(new ObjectId(userId).toString())
         if (!devices){
             return null
         }
@@ -21,6 +21,17 @@ export const securityDeviceService={
     }
 }
 
+
+// export const deviceMapper =(device: WithId<PostsType>) => {
+//
+//     return {
+//         title: device.title,
+//         shortDescription: device.shortDescription,
+//         content: device.content,
+//         blogId: device.blogId,
+//         blogName: device.blogName,
+//         createdAt: device.createdAt
+//     }
 
 // const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => {
 //     return {
