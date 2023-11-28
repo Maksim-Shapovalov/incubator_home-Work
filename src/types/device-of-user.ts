@@ -1,4 +1,5 @@
 export type DevicesUserDB = {
+    id:string
     ip: string
     title: string
     lastActivateDate: string

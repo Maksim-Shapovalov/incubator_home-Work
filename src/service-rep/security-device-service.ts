@@ -33,11 +33,3 @@ export const securityDeviceService={
 //         createdAt: device.createdAt
 //     }
 
-// const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => {
-//     return {
-//         ip: device.ip,
-//         title: device.title,
-//         deviceId: device.deviceId,
-//         lastActivateDate: device.lastActivateDate
-//     }
-// }
