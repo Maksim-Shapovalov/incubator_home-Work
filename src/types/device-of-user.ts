@@ -9,6 +9,6 @@ export type DevicesUserDB = {
 export type OutpatModeldevicesUser = {
     ip: string
     title: string
-    lastActivateDate: string
+    lastActiveDate: string
     deviceId: string
 }
