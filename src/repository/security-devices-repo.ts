@@ -16,8 +16,8 @@ export const securityDevicesRepo = {
         const deleted = await dataID.deleteOne({userId: user.id ,deviceId: deviceId})
         return deleted.deletedCount === 1
     },
-    async deletingAllDevices(user:any){
-        const deleted = await dataID.deleteMany({userId: user.id})
+    async deletingAllDevices(user:any,device:any){
+        const deleted = await dataID.deleteMany({userId: user.id, deviceId: {$ne: device}})
         return deleted.deletedCount === 1
     }
 }

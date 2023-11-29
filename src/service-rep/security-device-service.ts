@@ -15,8 +15,8 @@ export const securityDeviceService={
         const deletedDevice = await securityDevicesRepo.deletingAllDevicesExceptId(user,deviceId)
         return deletedDevice
     },
-    async deletingAllDevices(user: any){
-        const deletedDevice = await securityDevicesRepo.deletingAllDevices(user)
+    async deletingAllDevices(user: any,device:any){
+        const deletedDevice = await securityDevicesRepo.deletingAllDevices(user,device)
         return deletedDevice
     }
 }

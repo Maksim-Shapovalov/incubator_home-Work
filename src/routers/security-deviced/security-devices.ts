@@ -39,6 +39,7 @@ securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, 
 
 securityDevices.delete("/",ValidationRefreshToken,async (req:Request, res:Response) => {
     const user = req.body.user
-    const deletedDevice = await securityDeviceService.deletingAllDevices(user)
+    const device = req.body.deviceId
+    const deletedDevice = await securityDeviceService.deletingAllDevices(user,device)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
