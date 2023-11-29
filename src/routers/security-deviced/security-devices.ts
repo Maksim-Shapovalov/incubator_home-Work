@@ -19,6 +19,9 @@ securityDevices.get("/",ValidationRefreshToken,
         res.status(HTTP_STATUS.OK_200).send(devices)
 })
 securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, res:Response) => {
+    if (!req.params.idDevice){
+        res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+    }
     const user = req.body.user
     const findDevice = await securityDevicesRepo.getDevice(req.params.idDevice)
     if (findDevice?.userId !== user._id){
