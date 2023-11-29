@@ -28,11 +28,9 @@ export const jwtService = {
 
     },
     async createdJWT(user: UserToPostsOutputModel, userAgent:any = null) {
-        const createRefreshTokenMeta: DevicesUserDB = {
+        const createRefreshTokenMeta = {
             lastActiveDate: new Date().toISOString(),
             deviceId: uuidv4(),
-            ip: userAgent.IP || '123',
-            title: userAgent.deviceName || 'internet',
             userId: user.id
         }
 
