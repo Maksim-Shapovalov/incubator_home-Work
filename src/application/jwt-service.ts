@@ -13,7 +13,7 @@ type PayloadType = {
 export const jwtService = {
     async createdJWT(user: UserToPostsOutputModel, userAgent:any = null) {
         const createRefreshTokenMeta: DevicesUserDB = {
-            lastActivateDate: new Date().toISOString(),
+            lastActiveDate: new Date().toISOString(),
             deviceId: uuidv4(),
             ip: userAgent.IP || '123',
             title: userAgent.deviceName || 'internet',

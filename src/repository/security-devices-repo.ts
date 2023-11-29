@@ -13,7 +13,7 @@ export const securityDevicesRepo = {
         return deviceMapper(device)
     },
     async deletingAllDevicesExceptId(user:any ,deviceId:string){
-        const deleted = await dataID.deleteMany({userId: user.id ,deviceId: {$ne:deviceId}})
+        const deleted = await dataID.deleteOne({userId: user.id ,deviceId: deviceId})
         return deleted.deletedCount === 1
     },
     async deletingAllDevices(user:any){
@@ -26,6 +26,6 @@ const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => 
         ip: device.ip,
         title: device.title,
         deviceId: device.deviceId,
-        lastActivateDate: device.lastActivateDate
+        lastActiveDate: device.lastActiveDate
     }
 }

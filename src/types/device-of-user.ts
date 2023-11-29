@@ -1,8 +1,8 @@
 export type DevicesUserDB = {
-    id:string
+    // id:string
     ip: string
     title: string
-    lastActivateDate: string
+    lastActiveDate: string
     deviceId: string
     userId: string
 }

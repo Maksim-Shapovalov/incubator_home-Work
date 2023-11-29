@@ -22,9 +22,19 @@ securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, 
     const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user,req.params.idDevice)
     if (!deletedDevice){
         res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-        return
+            return
     }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+
+
+
+    // const user = req.body.user
+    // const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user,req.params.idDevice)
+    // if (!deletedDevice){
+    //     res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+    //     return
+    // }
+    // res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 
 securityDevices.delete("/",ValidationRefreshToken,async (req:Request, res:Response) => {
