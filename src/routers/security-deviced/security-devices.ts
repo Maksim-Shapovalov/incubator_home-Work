@@ -10,12 +10,12 @@ securityDevices.get("/",ValidationRefreshToken,
     async (req:Request, res:Response) =>{
 
     const user = req.body.user
-    const devices: OutpatModeldevicesUser|null = await securityDeviceService.getAllDevices(user._id)
+    const devices: OutpatModeldevicesUser[] | null = await securityDeviceService.getAllDevices(user._id)
         if (!devices){
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         }
         console.log("devices---",devices)
-        res.status(HTTP_STATUS.OK_200).send([devices])
+        res.status(HTTP_STATUS.OK_200).send(devices)
 })
 securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, res:Response) => {
     const user = req.body.user
@@ -26,15 +26,6 @@ securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, 
     }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 
-
-
-    // const user = req.body.user
-    // const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user,req.params.idDevice)
-    // if (!deletedDevice){
-    //     res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-    //     return
-    // }
-    // res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 
 securityDevices.delete("/",ValidationRefreshToken,async (req:Request, res:Response) => {

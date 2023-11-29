@@ -4,7 +4,7 @@ import {ObjectId, WithId} from "mongodb";
 
 
 export const securityDeviceService={
-    async getAllDevices(userId:string): Promise<OutpatModeldevicesUser | null>{
+    async getAllDevices(userId:string): Promise<OutpatModeldevicesUser[] | null>{
         const devices = await securityDevicesRepo.getAllDevices(new ObjectId(userId).toString())
         if (!devices){
             return null

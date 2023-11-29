@@ -1,16 +1,17 @@
 import {dataID} from "../DB/data-base";
 import {DevicesUserDB, OutpatModeldevicesUser} from "../types/device-of-user";
 import {WithId} from "mongodb";
+import {de} from "date-fns/locale";
 
 
 export const securityDevicesRepo = {
 
-    async getAllDevices(userId:string): Promise<OutpatModeldevicesUser | null>{
-        const device = await dataID.findOne({userId:  userId})
-        if (!device){
+    async getAllDevices(userId:string): Promise<OutpatModeldevicesUser[] | null>{
+        const devices = await dataID.find({userId:  userId}).toArray()
+        if (!devices){
             return null
         }
-        return deviceMapper(device)
+        return devices.map(deviceMapper)
     },
     async deletingAllDevicesExceptId(user:any ,deviceId:string){
         const deleted = await dataID.deleteOne({userId: user.id ,deviceId: deviceId})
