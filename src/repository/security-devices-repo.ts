@@ -6,6 +6,14 @@ import {de} from "date-fns/locale";
 
 export const securityDevicesRepo = {
 
+    async getDevice(sessionId:string){
+        const device = await dataID.findOne({deviceId: sessionId})
+        if (!device){
+            return null
+        }
+        return device
+    },
+
     async getAllDevices(userId:string): Promise<OutpatModeldevicesUser[] | null>{
         const devices = await dataID.find({userId:  userId}).toArray()
         if (!devices){

@@ -3,6 +3,7 @@ import {ValidationRefreshToken} from "../../middleware/token-middleware";
 import {OutpatModeldevicesUser} from "../../types/device-of-user";
 import {HTTP_STATUS} from "../../index";
 import {securityDeviceService} from "../../service-rep/security-device-service";
+import {securityDevicesRepo} from "../../repository/security-devices-repo";
 
 export const securityDevices = Router();
 
@@ -19,6 +20,10 @@ securityDevices.get("/",ValidationRefreshToken,
 })
 securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, res:Response) => {
     const user = req.body.user
+    const findDevice = await securityDevicesRepo.getDevice(req.params.idDevice)
+    if (findDevice?.userId !== user._id){
+        return res.sendStatus(HTTP_STATUS.Forbidden_403)
+    }
     const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user,req.params.idDevice)
     if (!deletedDevice){
         res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
