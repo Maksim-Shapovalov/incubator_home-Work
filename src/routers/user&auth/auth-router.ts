@@ -8,6 +8,7 @@ import {authService} from "../../domain/auth-service";
 import {AuthValidation, AuthValidationEmail} from "../../middleware/input-middleware/validation/auth-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {ValidationRefreshToken} from "../../middleware/token-middleware";
+import {securityDevicesRepo} from "../../repository/security-devices-repo";
 
 
 export const authRouter = Router()
@@ -23,7 +24,8 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         return
     }
-    const token = await jwtService.createdJWT(userMapper(user), userAgent)
+    const token = await jwtService.createdJWTAndInsertDevice(userMapper(user), userAgent)
+
     res.cookie('refreshToken', token[1], {httpOnly: true,secure: true})
    return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
 })

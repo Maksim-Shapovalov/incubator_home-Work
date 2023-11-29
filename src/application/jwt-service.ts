@@ -11,7 +11,7 @@ type PayloadType = {
 }
 
 export const jwtService = {
-    async createdJWT(user: UserToPostsOutputModel, userAgent:any = null) {
+    async createdJWTAndInsertDevice(user: UserToPostsOutputModel, userAgent:any = null) {
         const createRefreshTokenMeta: DevicesUserDB = {
             lastActiveDate: new Date().toISOString(),
             deviceId: uuidv4(),
@@ -20,6 +20,22 @@ export const jwtService = {
             userId: user.id
         }
         await refreshTokenRepo.AddRefreshTokenInData(createRefreshTokenMeta)
+        const accessToken:string = jwt.sign({userId: user.id},
+            setting.JWT_SECRET, {expiresIn: '10sec'})
+        const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
+            setting.JWT_REFRESH_SECRET, {expiresIn: '20sec'})
+        return [accessToken, refreshToken]
+
+    },
+    async createdJWT(user: UserToPostsOutputModel, userAgent:any = null) {
+        const createRefreshTokenMeta: DevicesUserDB = {
+            lastActiveDate: new Date().toISOString(),
+            deviceId: uuidv4(),
+            ip: userAgent.IP || '123',
+            title: userAgent.deviceName || 'internet',
+            userId: user.id
+        }
+
         const accessToken:string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '10sec'})
         const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
