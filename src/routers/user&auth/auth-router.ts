@@ -38,8 +38,8 @@ authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,r
     const user = req.body.user;
 
     const token = await jwtService.createdJWT(userMapper(user))
-    const newDateDevice = await securityDeviceService.updateDevice(deviceId)
-    if (!newDateDevice) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+    // const newDateDevice = await securityDeviceService.updateDevice(deviceId)
+    // if (!newDateDevice) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
     await deletedTokenRepoRepository.deletedTokens(refreshToken)
 
