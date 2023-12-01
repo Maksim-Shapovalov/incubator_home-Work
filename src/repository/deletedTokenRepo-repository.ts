@@ -9,6 +9,6 @@ export const deletedTokenRepoRepository = {
         if (!refreshToken){
             return null
         }
-        return refreshToken
+        return refreshToken.token
     }
 }
