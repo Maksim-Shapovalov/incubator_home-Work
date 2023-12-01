@@ -1,8 +1,6 @@
 import {emailManager} from "../manager/email-manager";
 import {userRepository} from "../repository/user-repository";
 import {v4 as uuidv4} from "uuid";
-import add from "date-fns/add";
-import now = jest.now;
 
 export const authService = {
     async doOperation(user: any){

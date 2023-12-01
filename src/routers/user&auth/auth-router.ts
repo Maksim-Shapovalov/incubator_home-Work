@@ -9,6 +9,7 @@ import {AuthValidation, AuthValidationEmail} from "../../middleware/input-middle
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {ValidationRefreshToken} from "../../middleware/token-middleware";
 import {securityDevicesRepo} from "../../repository/security-devices-repo";
+import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
 
 
 export const authRouter = Router()
@@ -30,18 +31,22 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
    return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
 })
 authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
+    const refreshToken = req.cookies.refreshToken
+    const findRefreshToken = await deletedTokenRepoRepository.findRefreshTokenInDB(refreshToken)
+    if (findRefreshToken) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     const user = req.body.user;
 
 
     const token = await jwtService.createdJWT(userMapper(user))
 
+    await deletedTokenRepoRepository.deletedTokens(refreshToken)
 
     res.cookie('refreshToken', token[1], {httpOnly: true,secure: true})
 
     return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
 })
-//создать новый рефреш access токен как в login и пейлоуд будет такимже как в рефреш токене
 authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
+    await deletedTokenRepoRepository.deletedTokens(req.cookies.refreshToken)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 
 })
@@ -50,6 +55,7 @@ authRouter.post("/registration-confirmation",
     CheckingAuthorizationValidationCode(),
     ErrorMiddleware,
     async (req: Request ,res:Response) => {
+
     const result = await authService.confirmatorUser(req.body.code)
         if (!result){
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)

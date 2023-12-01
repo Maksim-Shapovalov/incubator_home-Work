@@ -15,7 +15,7 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
 
 
     const payload = await jwtService.parseJWTRefreshToken(refreshToken);
-    console.log('payload jwt ------',payload)
+
 
     if (payload){
         const userId = new ObjectId(payload.userId) ;
