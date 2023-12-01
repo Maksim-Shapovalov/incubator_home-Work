@@ -20,13 +20,14 @@ securityDevices.get("/",ValidationRefreshToken,
 securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, res:Response) => {
 
     const user = req.body.user
-    const findDevice = await securityDevicesRepo.getDevice(req.params.idDevice)
+    const findDevice = await securityDevicesRepo.getDevice(req.params.idDevice,user._id)
+    if (findDevice!.userId !== user._id){
+        return res.sendStatus(HTTP_STATUS.Forbidden_403)
+    }
     if (!findDevice){
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
     }
-    if (findDevice?.userId !== user._id){
-        return res.sendStatus(HTTP_STATUS.Forbidden_403)
-    }
+
     const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user,req.params.idDevice)
     if (!deletedDevice){
         res.sendStatus(HTTP_STATUS.NOT_FOUND_404)

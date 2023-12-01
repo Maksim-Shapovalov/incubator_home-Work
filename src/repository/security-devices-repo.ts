@@ -7,9 +7,9 @@ import {refreshTokenRepo} from "./refreshToken-repo";
 export const securityDevicesRepo = {
 
 
-    async getDevice(sessionId:string){
+    async getDevice(sessionId:string, id:string){
         const device = await dataID.findOne({deviceId: sessionId})
-        if (!device){
+        if (!device || device.userId !== id){
             return null
         }
         return device
