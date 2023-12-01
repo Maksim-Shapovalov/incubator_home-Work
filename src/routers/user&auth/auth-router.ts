@@ -32,8 +32,10 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
 })
 authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
     const refreshToken = req.cookies.refreshToken
-    const findRefreshToken = await deletedTokenRepoRepository.findRefreshTokenInDB(refreshToken)
-    if (findRefreshToken) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+
+    console.log('refreshToken-----',refreshToken)
+
+
     const user = req.body.user;
 
 

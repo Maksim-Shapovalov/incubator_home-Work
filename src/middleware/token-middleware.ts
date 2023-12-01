@@ -4,11 +4,17 @@ import {jwtService} from "../application/jwt-service";
 import {userRepository} from "../repository/user-repository";
 import {ObjectId} from "mongodb";
 import {dataBlackListForToken} from "../DB/data-base";
+import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
-
+    const findRefreshToken = await deletedTokenRepoRepository.findRefreshTokenInDB(refreshToken)
+    console.log('findRefreshToken------',findRefreshToken)
     if (!refreshToken){
+        res.status(HTTP_STATUS.UNAUTHORIZED_401).send('no refresh token')
+        return
+    }
+    if (findRefreshToken){
         res.status(HTTP_STATUS.UNAUTHORIZED_401).send('no refresh token')
         return
     }
