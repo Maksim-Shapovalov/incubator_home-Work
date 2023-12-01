@@ -14,6 +14,11 @@ export const securityDevicesRepo = {
         }
         return device
     },
+    async updateDevice(deviceId: string){
+        const device = await dataID.findOneAndUpdate({deviceId: deviceId},
+            {$set: {lastActiveDate: new Date().toISOString()}})
+        return device
+    },
 
     async getAllDevices(userId:string): Promise<OutpatModeldevicesUser[] | null>{
         const devices = await dataID.find({userId:  userId}).toArray()

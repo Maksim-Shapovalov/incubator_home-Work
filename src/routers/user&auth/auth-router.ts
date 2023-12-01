@@ -10,6 +10,7 @@ import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {ValidationRefreshToken} from "../../middleware/token-middleware";
 import {securityDevicesRepo} from "../../repository/security-devices-repo";
 import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
+import {securityDeviceService} from "../../service-rep/security-device-service";
 
 
 export const authRouter = Router()
@@ -31,8 +32,10 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
    return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
 })
 authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
+    const deviceId = req.body.deviceId
     const refreshToken = req.cookies.refreshToken
-
+    const newDateDevice = await securityDeviceService.updateDevice(deviceId)
+    if (!newDateDevice) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
     console.log('refreshToken-----',refreshToken)
 
 
