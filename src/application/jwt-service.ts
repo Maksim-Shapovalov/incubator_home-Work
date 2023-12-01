@@ -27,10 +27,10 @@ export const jwtService = {
         return [accessToken, refreshToken]
 
     },
-    async createdJWT(user: UserToPostsOutputModel, deviceId:string) {
+    async createdJWT(user: UserToPostsOutputModel) {
         const createRefreshTokenMeta = {
             lastActiveDate: new Date().toISOString(),
-            deviceId: deviceId || uuidv4(),
+            deviceId: uuidv4(),
             userId: user.id
         }
 
