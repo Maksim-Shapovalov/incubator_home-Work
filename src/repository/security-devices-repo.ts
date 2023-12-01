@@ -9,7 +9,7 @@ export const securityDevicesRepo = {
 
     async getDevice(sessionId:string, id:string){
         const device = await dataID.findOne({deviceId: sessionId})
-        if (!device || device.userId !== id){
+        if (!device){
             return null
         }
         return device
