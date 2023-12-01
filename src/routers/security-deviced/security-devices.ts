@@ -35,7 +35,7 @@ securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, 
         return res.sendStatus(HTTP_STATUS.Forbidden_403)
     }
 
-    const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user,req.params.idDevice)
+    const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user._id,req.params.idDevice)
     console.log(deletedDevice)
     if (!deletedDevice){
 

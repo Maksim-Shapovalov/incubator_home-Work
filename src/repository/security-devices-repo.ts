@@ -31,8 +31,8 @@ export const securityDevicesRepo = {
         }
         return devices.map(deviceMapper)
     },
-    async deletingAllDevicesExceptId(user:any ,deviceId:string){
-        const deleted = await dataID.deleteOne({userId: user.id ,deviceId: deviceId})
+    async deletingAllDevicesExceptId(userId:any ,deviceId:string){
+        const deleted = await dataID.deleteOne({userId: userId ,deviceId: deviceId})
         return deleted.deletedCount === 1
     },
     async deletingAllDevices(user:any,device:any){
