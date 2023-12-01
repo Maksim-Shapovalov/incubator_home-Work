@@ -82,6 +82,10 @@ export const userRepository = {
         const result = await dataUser.insertOne({...newUser})
         return userToPostMapper({...newUser, _id: result.insertedId})
     },
+    async getNewUserToRegistr(newUser: UserDbType): Promise<UserToCodeOutputModel>{
+        const result = await dataUser.insertOne({...newUser})
+        return UserToCodeMapper({...newUser, _id: result.insertedId})
+    },
     async deleteUserById(userId:string): Promise<boolean>{
         const findUser = await dataUser.deleteOne({_id:new ObjectId(userId)})
         return findUser.deletedCount === 1

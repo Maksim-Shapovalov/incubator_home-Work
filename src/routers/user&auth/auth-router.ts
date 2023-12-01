@@ -69,7 +69,7 @@ authRouter.post("/registration",
     AuthValidation(),
     ErrorMiddleware,
     async (req: Request ,res:Response) => {
-    const user = await serviceUser.getNewUser(req.body.login,req.body.password, req.body.email)
+    const user = await serviceUser.getNewUserToRegistr(req.body.login,req.body.password, req.body.email)
         console.log('registr',user)
         await authService.doOperation(user)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
