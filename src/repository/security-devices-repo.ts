@@ -33,8 +33,8 @@ export const securityDevicesRepo = {
         }
         return devices.map(deviceMapper)
     },
-    async deletingAllDevicesExceptId(userId:any ,deviceId:string){
-        const deleted = await dataID.deleteOne({userId: userId ,deviceId: deviceId})
+    async deletingDevicesExceptId(userId:any ,deviceId:string){
+        const deleted = await dataID.deleteOne({userId: userId.toISOString() ,deviceId: deviceId})
         return deleted.deletedCount === 1
     },
     async deletingAllDevices(user:any,device:any){
