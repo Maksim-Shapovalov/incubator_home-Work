@@ -4,6 +4,7 @@ import {OutpatModeldevicesUser} from "../../types/device-of-user";
 import {HTTP_STATUS} from "../../index";
 import {securityDeviceService} from "../../service-rep/security-device-service";
 import {securityDevicesRepo} from "../../repository/security-devices-repo";
+import {ObjectId} from "mongodb";
 
 export const securityDevices = Router();
 
@@ -20,16 +21,24 @@ securityDevices.get("/",ValidationRefreshToken,
 securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, res:Response) => {
 
     const user = req.body.user
-    const findDevice = await securityDevicesRepo.getDevice(req.params.idDevice,user._id)
-    if (findDevice?.userId !== user._id){
-        return res.sendStatus(HTTP_STATUS.Forbidden_403)
-    }
+    console.log('user-----123',user)
+    const findDevice:any = await securityDevicesRepo.getDevice(req.params.idDevice,user._id)
+    console.log('find device -----',findDevice)
+
+
     if (!findDevice){
+
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+    }
+    if (findDevice  === 5){
+
+        return res.sendStatus(HTTP_STATUS.Forbidden_403)
     }
 
     const deletedDevice = await securityDeviceService.deletingAllDevicesExceptId(user,req.params.idDevice)
+    console.log(deletedDevice)
     if (!deletedDevice){
+
         res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return
     }

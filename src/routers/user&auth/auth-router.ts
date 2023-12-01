@@ -8,9 +8,9 @@ import {authService} from "../../domain/auth-service";
 import {AuthValidation, AuthValidationEmail} from "../../middleware/input-middleware/validation/auth-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {ValidationRefreshToken} from "../../middleware/token-middleware";
-import {securityDevicesRepo} from "../../repository/security-devices-repo";
+
 import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
-import {securityDeviceService} from "../../service-rep/security-device-service";
+
 
 
 export const authRouter = Router()

@@ -2,6 +2,7 @@ import {dataID} from "../DB/data-base";
 import {DevicesUserDB, OutpatModeldevicesUser} from "../types/device-of-user";
 import {WithId} from "mongodb";
 import {refreshTokenRepo} from "./refreshToken-repo";
+import {ifError} from "assert";
 
 
 export const securityDevicesRepo = {
@@ -9,8 +10,11 @@ export const securityDevicesRepo = {
 
     async getDevice(sessionId:string, id:string){
         const device = await dataID.findOne({deviceId: sessionId})
-        if (!device){
+        if (!device ){
             return null
+        }
+        if ( device.userId !== id){
+            return 5
         }
         return device
     },

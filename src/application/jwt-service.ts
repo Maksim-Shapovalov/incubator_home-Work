@@ -44,6 +44,7 @@ export const jwtService = {
     async parseJWTRefreshToken(refreshToken: string){
         try {
             const payload = jwt.verify(refreshToken, setting.JWT_REFRESH_SECRET)
+            console.log(payload)
 
             return payload as PayloadType
         }catch (e){
