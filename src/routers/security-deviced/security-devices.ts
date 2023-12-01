@@ -21,7 +21,7 @@ securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, 
 
     const user = req.body.user
     const findDevice = await securityDevicesRepo.getDevice(req.params.idDevice,user._id)
-    if (findDevice!.userId !== user._id){
+    if (findDevice?.userId !== user._id){
         return res.sendStatus(HTTP_STATUS.Forbidden_403)
     }
     if (!findDevice){
