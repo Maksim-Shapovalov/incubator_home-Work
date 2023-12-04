@@ -48,7 +48,8 @@ authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,r
     return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
 authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
-    await deletedTokenRepoRepository.deletedTokens(req.cookies.refreshToken)
+    const token = req.cookies.refreshToken
+    await deletedTokenRepoRepository.deletedTokens(token)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 
 })
