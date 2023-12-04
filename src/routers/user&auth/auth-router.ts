@@ -49,7 +49,10 @@ authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,r
 })
 authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
     const token = req.cookies.refreshToken
-    await deletedTokenRepoRepository.deletedTokens(token)
+    const bannedToken = await deletedTokenRepoRepository.deletedTokens(token)
+    if (!bannedToken){
+        return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+    }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 
 })

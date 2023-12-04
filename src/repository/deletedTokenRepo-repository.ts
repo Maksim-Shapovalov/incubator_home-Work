@@ -2,7 +2,8 @@ import {dataBlackListForToken} from "../DB/data-base";
 
 export const deletedTokenRepoRepository = {
     async deletedTokens (token: any){
-        await dataBlackListForToken.insertOne(token)
+        const bannedToken = await dataBlackListForToken.insertOne(token)
+        return bannedToken
     },
     async findRefreshTokenInDB(token:string){
         const refreshToken = await dataBlackListForToken.findOne({token})
