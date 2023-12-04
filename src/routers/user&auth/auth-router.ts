@@ -45,7 +45,7 @@ authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,r
 
     res.cookie('refreshToken', refreshToken, {httpOnly: true,secure: true})
 
-    return res.status(HTTP_STATUS.OK_200).send({accessToken})
+    return res.status(HTTP_STATUS.OK_200).send(accessToken)
 })
 authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
     const token = req.cookies.refreshToken
