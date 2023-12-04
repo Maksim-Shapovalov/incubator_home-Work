@@ -3,7 +3,6 @@ import {HTTP_STATUS} from "../index";
 import {jwtService} from "../application/jwt-service";
 import {userRepository} from "../repository/user-repository";
 import {ObjectId} from "mongodb";
-import {dataBlackListForToken} from "../DB/data-base";
 import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
