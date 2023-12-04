@@ -34,18 +34,22 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
 authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
     // const deviceId = req.body.deviceId
     const oldRefreshToken = req.cookies.refreshToken
+    console.log('oldRefreshToken',oldRefreshToken)
 
     const user = req.body.user;
+    console.log(user)
 
     const {accessToken, refreshToken} = await jwtService.updateJWT(userMapper(user))//update
     // const newDateDevice = await securityDeviceService.updateDevice(deviceId)
     // if (!newDateDevice) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+    console.log("regsd")
+
 
     await deletedTokenRepoRepository.deletedTokens(oldRefreshToken)
-
+    console.log('12345')
     res.cookie('refreshToken', refreshToken, {httpOnly: true,secure: true})
 
-    return res.status(HTTP_STATUS.OK_200).send(accessToken)
+    return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
 authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
     const token = req.cookies.refreshToken
