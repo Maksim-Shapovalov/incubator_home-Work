@@ -1,8 +1,7 @@
 import {dataID} from "../DB/data-base";
 import {DevicesUserDB, OutpatModeldevicesUser} from "../types/device-of-user";
 import {ObjectId, WithId} from "mongodb";
-import {refreshTokenRepo} from "./refreshToken-repo";
-import {ifError} from "assert";
+
 
 
 export const securityDevicesRepo = {
@@ -33,13 +32,15 @@ export const securityDevicesRepo = {
         }
         return devices.map(deviceMapper)
     },
-    async deletingDevicesExceptId(userId:any ,deviceId:string){
-        const deleted = await dataID.deleteOne({userId: userId.toISOString() ,deviceId: deviceId})
+    async deletingDevicesExceptId(userId:string ,deviceId:string){
+        console.log('userId-----------------', userId)
+        const deleted = await dataID.deleteOne({userId, deviceId})
         return deleted.deletedCount === 1
     },
-    async deletingAllDevices(user:any,device:any){
-        const deleted = await dataID.deleteMany({userId: user.id, deviceId: {$ne: device}})
-        return deleted.deletedCount === 1
+    async deletingAllDevices(user:string,device:string){
+        console.log('tresh-------',user,device)
+        const deleted = await dataID.deleteMany({userId: user, deviceId: {$ne: device}})
+        return deleted.deletedCount > 1
     }
 }
 const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => {

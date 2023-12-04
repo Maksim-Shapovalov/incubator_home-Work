@@ -19,7 +19,7 @@ securityDevices.get("/",ValidationRefreshToken,
         res.status(HTTP_STATUS.OK_200).send(devices)
 })
 securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, res:Response) => {
-
+console.log('inside delete device by id')
     const user = req.body.user
     const findDevice:any = await securityDevicesRepo.getDevice(req.params.idDevice,user._id)
 
@@ -33,7 +33,7 @@ securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, 
         return res.sendStatus(HTTP_STATUS.Forbidden_403)
     }
 
-    const deletedDevice = await securityDeviceService.deletingDevicesExceptId(user._id,req.params.idDevice)
+    const deletedDevice = await securityDeviceService.deletingDevicesExceptId(user._id.toString(),req.params.idDevice)
     console.log(deletedDevice)
     if (!deletedDevice){
         return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -46,6 +46,8 @@ securityDevices.delete("/:idDevice", ValidationRefreshToken,async (req:Request, 
 securityDevices.delete("/",ValidationRefreshToken,async (req:Request, res:Response) => {
     const user = req.body.user
     const device = req.body.deviceId
-    const deletedDevice = await securityDeviceService.deletingAllDevices(user,device)
+    console.log(device)
+    const deletedDevice = await securityDeviceService.deletingAllDevices(user._id.toString(),device.deviceId)
+    console.log('deletedDevice ---------',deletedDevice)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })

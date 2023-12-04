@@ -26,26 +26,26 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
         res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         return
     }
-    const token = await jwtService.createdJWTAndInsertDevice(userMapper(user), userAgent)
+    const {accessToken, refreshToken} = await jwtService.createdJWTAndInsertDevice(userMapper(user), userAgent)
 
-    res.cookie('refreshToken', token[1], {httpOnly: true,secure: true})
-   return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
+    res.cookie('refreshToken',refreshToken, {httpOnly: true,secure: true})
+   return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
 authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
-    const deviceId = req.body.deviceId
-    const refreshToken = req.cookies.refreshToken
+    // const deviceId = req.body.deviceId
+    const oldRefreshToken = req.cookies.refreshToken
 
     const user = req.body.user;
 
-    const token = await jwtService.createdJWT(userMapper(user))
+    const {accessToken, refreshToken} = await jwtService.updateJWT(userMapper(user))//update
     // const newDateDevice = await securityDeviceService.updateDevice(deviceId)
     // if (!newDateDevice) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
-    await deletedTokenRepoRepository.deletedTokens(refreshToken)
+    await deletedTokenRepoRepository.deletedTokens(oldRefreshToken)
 
-    res.cookie('refreshToken', token[1], {httpOnly: true,secure: true})
+    res.cookie('refreshToken', refreshToken, {httpOnly: true,secure: true})
 
-    return res.status(HTTP_STATUS.OK_200).send({accessToken:token[0]})
+    return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
 authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
     await deletedTokenRepoRepository.deletedTokens(req.cookies.refreshToken)

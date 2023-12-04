@@ -21,13 +21,16 @@ export const jwtService = {
         }
         await refreshTokenRepo.AddRefreshTokenInData(createRefreshTokenMeta)
         const accessToken:string = jwt.sign({userId: user.id},
-            setting.JWT_SECRET, {expiresIn: '10sec'})
+            setting.JWT_SECRET, {expiresIn: '10000sec'})
         const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
-            setting.JWT_REFRESH_SECRET, {expiresIn: '20sec'})
-        return [accessToken, refreshToken]
+            setting.JWT_REFRESH_SECRET, {expiresIn: '20000sec'})
+
+        const payload = jwt.decode(refreshToken, )//{userId, deviceId, iat, exp}
+        console.log('payload:', payload)
+        return {accessToken, refreshToken}
 
     },
-    async createdJWT(user: UserToPostsOutputModel) {
+    async updateJWT(user: UserToPostsOutputModel) {
         const createRefreshTokenMeta = {
             lastActiveDate: new Date().toISOString(),
             deviceId: uuidv4(),
@@ -35,19 +38,19 @@ export const jwtService = {
         }
 
         const accessToken:string = jwt.sign({userId: user.id},
-            setting.JWT_SECRET, {expiresIn: '10sec'})
+            setting.JWT_SECRET, {expiresIn: '10000sec'})
         const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
-            setting.JWT_REFRESH_SECRET, {expiresIn: '20sec'})
-        return [accessToken, refreshToken]
-
+            setting.JWT_REFRESH_SECRET, {expiresIn: '0sec'})
+        return {accessToken, refreshToken}
     },
     async parseJWTRefreshToken(refreshToken: string){
         try {
             const payload = jwt.verify(refreshToken, setting.JWT_REFRESH_SECRET)
-            console.log(payload)
+            console.log('payload',payload)
 
             return payload as PayloadType
         }catch (e){
+            console.error('error in verify token:', e)
           return null
         }
     },
