@@ -14,11 +14,11 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         res.status(HTTP_STATUS.UNAUTHORIZED_401).send('no refresh token')
         return
     }
-    // if (findRefreshToken){
-    //     console.log('findRefreshToken------',findRefreshToken)
-    //     res.status(HTTP_STATUS.UNAUTHORIZED_401).send('guzno')
-    //     return
-    // }
+    if (findRefreshToken){
+        console.log('findRefreshToken------',findRefreshToken)
+        res.status(HTTP_STATUS.UNAUTHORIZED_401).send('guzno')
+        return
+    }
 
 
     const payload = await jwtService.parseJWTRefreshToken(refreshToken);
