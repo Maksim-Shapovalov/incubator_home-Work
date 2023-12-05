@@ -56,7 +56,7 @@ authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Respon
     const user = req.body.user
     const device = req.body.deviceId
     const token = req.cookies.refreshToken
-    const deletedDevice = await securityDeviceService.deletingDevicesExceptId(user._id,device.deviceId)
+    const deletedDevice = await securityDeviceService.deletingDevicesExceptId(user._id.toString(),device.deviceId)
     const bannedToken = await deletedTokenRepoRepository.deletedTokens(token)
     if (!bannedToken){
         return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
