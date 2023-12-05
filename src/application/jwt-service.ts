@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import jwt, {JwtPayload} from 'jsonwebtoken'
 import {UserToPostsOutputModel} from "../types/user-type";
 import {setting} from "../setting";
 import {ObjectId} from "mongodb";
@@ -9,6 +9,13 @@ import {DevicesUserDB} from "../types/device-of-user";
 type PayloadType = {
     userId: string
 }
+type PayloadTypeRefresh = {
+    userId: string,
+    deviceId: string,
+    iat: number,
+    exp: number
+
+} | null
 
 export const jwtService = {
     async createdJWTAndInsertDevice(user: UserToPostsOutputModel, userAgent:any = null) {
@@ -25,15 +32,20 @@ export const jwtService = {
         const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
             setting.JWT_REFRESH_SECRET, {expiresIn: '20000sec'})
 
-        const payload = jwt.decode(refreshToken, )//{userId, deviceId, iat, exp}
+        const payload = jwt.decode(refreshToken)//{userId, deviceId, iat, exp}
         console.log('payload:', payload)
         return {accessToken, refreshToken}
 
     },
-    async updateJWT(user: UserToPostsOutputModel) {
+    async updateJWT(user: UserToPostsOutputModel,oldRefreshToken:string) {
+        const parser =(jwt.decode(oldRefreshToken) as PayloadTypeRefresh)
+        if (!parser){
+            return null
+        }
+        console.log('PARSER_________',parser)
         const createRefreshTokenMeta = {
-            lastActiveDate: new Date().toISOString(),
-            deviceId: uuidv4(),
+            lastActiveDate: new Date(parser .iat),
+            deviceId: parser.deviceId,
             userId: user.id
         }
 
@@ -54,16 +66,16 @@ export const jwtService = {
           return null
         }
     },
-    async parseJWTAccessToken(accessToken: string){
-        console.log('parse')
-        try {
-            const payload = jwt.verify(accessToken, setting.JWT_SECRET)
-            console.log('paylod in parse')
-            return payload as PayloadType
-        }catch (e){
-            return null
-        }
-    },
+    // async parseJWTAccessToken(accessToken: string){
+    //     console.log('parse')
+    //     try {
+    //         const payload = jwt.verify(accessToken, setting.JWT_SECRET)
+    //         console.log('paylod in parse')
+    //         return payload as PayloadType
+    //     }catch (e){
+    //         return null
+    //     }
+    // },
 
     async getUserIdByToken(token: string) {
         try {

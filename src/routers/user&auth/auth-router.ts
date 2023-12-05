@@ -39,7 +39,7 @@ authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,r
     const user = req.body.user;
     console.log(user)
 
-    const {accessToken, refreshToken} = await jwtService.updateJWT(userMapper(user))//update
+    const {accessToken, refreshToken} = await jwtService.updateJWT(userMapper(user),oldRefreshToken)//update
     // const newDateDevice = await securityDeviceService.updateDevice(deviceId)
     // if (!newDateDevice) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
     console.log("regsd")
