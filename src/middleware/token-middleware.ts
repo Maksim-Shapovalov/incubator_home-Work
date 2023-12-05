@@ -4,6 +4,7 @@ import {jwtService} from "../application/jwt-service";
 import {userRepository} from "../repository/user-repository";
 import {ObjectId} from "mongodb";
 import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
+import {securityDevicesRepo} from "../repository/security-devices-repo";
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
@@ -25,8 +26,13 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         const userId = new ObjectId(payload.userId) ;
         const user = await userRepository.getUserById(userId)
 
-        if(!user){
 
+        if(!user){
+            res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+            return
+        }
+        const device = await securityDevicesRepo.getDevice(payload.deviceId,user._id.toString())
+        if(!device){
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
             return
         }

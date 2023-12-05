@@ -10,6 +10,7 @@ import {securityDevicesRepo} from "../repository/security-devices-repo";
 
 type PayloadType = {
     userId: string
+    deviceId:string
 }
 type PayloadTypeRefresh = {
     userId: string,
@@ -60,6 +61,7 @@ export const jwtService = {
     async parseJWTRefreshToken(refreshToken: string){
         try {
             const payload = jwt.verify(refreshToken, setting.JWT_REFRESH_SECRET)
+            console.log("PAYLOAD___________________",payload)
 
 
             return payload as PayloadType

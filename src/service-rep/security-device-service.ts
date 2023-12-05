@@ -11,12 +11,13 @@ export const securityDeviceService={
         }
         return devices
     },
-    async updateDevice (deviceId: string){
-      const device = await  securityDevicesRepo.updateDevice(deviceId)
-        return device
 
-
-    },
+    // async updateDevice (deviceId: string){
+    //   const device = await  securityDevicesRepo.updateDevice(deviceId)
+    //     return device
+    //
+    //
+    // },
     async deletingDevicesExceptId(userId:string,deviceId: string){
         const deletedDevice = await securityDevicesRepo.deletingDevicesExceptId(userId,deviceId)
         return deletedDevice
