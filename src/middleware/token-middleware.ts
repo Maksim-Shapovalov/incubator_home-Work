@@ -32,7 +32,7 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
             return
         }
         const device = await securityDevicesRepo.getDevice(payload.deviceId,user._id.toString())
-        if(!device){
+        if(!device || device === 5){
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
             return
         }
