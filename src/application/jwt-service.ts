@@ -43,7 +43,7 @@ export const jwtService = {
             return null
         }
         const createRefreshTokenMeta = {
-            lastActiveDate: new Date(parser .iat),
+            lastActiveDate: new Date().toISOString(),
             deviceId: parser.deviceId,
             userId: user.id
         }
