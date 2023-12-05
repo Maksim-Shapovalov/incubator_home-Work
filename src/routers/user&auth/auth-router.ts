@@ -10,6 +10,7 @@ import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {ValidationRefreshToken} from "../../middleware/token-middleware";
 
 import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
+import {securityDeviceService} from "../../service-rep/security-device-service";
 
 
 
@@ -52,9 +53,15 @@ authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,r
     return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
 authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Response) => {
+    const user = req.body.user
+    const device = req.body.deviceId
     const token = req.cookies.refreshToken
+    const deletedDevice = await securityDeviceService.deletingDevicesExceptId(user._id,device.deviceId)
     const bannedToken = await deletedTokenRepoRepository.deletedTokens(token)
     if (!bannedToken){
+        return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+    }
+    if (!deletedDevice){
         return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)

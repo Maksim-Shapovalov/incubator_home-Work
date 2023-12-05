@@ -49,7 +49,7 @@ export const jwtService = {
             deviceId: parser.deviceId,
             userId: user.id
         }
-        const updateToken = await securityDevicesRepo.updateDevice(createRefreshTokenMeta.deviceId)
+        await securityDevicesRepo.updateDevice(createRefreshTokenMeta.deviceId)
 
         const accessToken:string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '10000sec'})
