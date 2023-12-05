@@ -8,29 +8,25 @@ import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-reposit
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
     const findRefreshToken = await deletedTokenRepoRepository.findRefreshTokenInDB(refreshToken)
-    // console.log('refresh token------',refreshToken)
+
     if (!refreshToken){
         res.status(HTTP_STATUS.UNAUTHORIZED_401).send('no refresh token')
         return
     }
     if (findRefreshToken){
-        console.log('findRefreshToken------',findRefreshToken)
+
         res.status(HTTP_STATUS.UNAUTHORIZED_401).send('guzno')
         return
     }
 
-
     const payload = await jwtService.parseJWTRefreshToken(refreshToken);
-
 
     if (payload){
         const userId = new ObjectId(payload.userId) ;
-        // console.log('userId-----' , userId)
         const user = await userRepository.getUserById(userId)
-        // console.log('user-----',user)
 
         if(!user){
-            console.log('no user')
+
             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
             return
         }
@@ -42,7 +38,7 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         next()
         return;
     }else{
-        console.log('no payload')
+
         return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     }
 }

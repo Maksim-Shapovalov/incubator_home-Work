@@ -5,6 +5,8 @@ import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
 import {refreshTokenRepo} from "../repository/refreshToken-repo";
 import {DevicesUserDB} from "../types/device-of-user";
+import {dataID} from "../DB/data-base";
+import {securityDevicesRepo} from "../repository/security-devices-repo";
 
 type PayloadType = {
     userId: string
@@ -32,22 +34,22 @@ export const jwtService = {
         const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
             setting.JWT_REFRESH_SECRET, {expiresIn: '20000sec'})
 
-        const payload = jwt.decode(refreshToken)//{userId, deviceId, iat, exp}
-        console.log('payload:', payload)
+        //{userId, deviceId, iat, exp}
+
         return {accessToken, refreshToken}
 
     },
     async updateJWT(user: UserToPostsOutputModel,oldRefreshToken:string) {
         const parser =(jwt.decode(oldRefreshToken) as PayloadTypeRefresh)
+        console.log("PARSER________",parser)
         if (!parser){
             return null
         }
         const createRefreshTokenMeta = {
-            lastActiveDate: new Date().toISOString(),
             deviceId: parser.deviceId,
             userId: user.id
         }
-        console.log(createRefreshTokenMeta)
+        const updateToken = await securityDevicesRepo.updateDevice(createRefreshTokenMeta.deviceId)
 
         const accessToken:string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '10000sec'})
@@ -58,7 +60,7 @@ export const jwtService = {
     async parseJWTRefreshToken(refreshToken: string){
         try {
             const payload = jwt.verify(refreshToken, setting.JWT_REFRESH_SECRET)
-            console.log('payload',payload)
+
 
             return payload as PayloadType
         }catch (e){
