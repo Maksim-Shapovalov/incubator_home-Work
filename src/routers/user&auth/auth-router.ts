@@ -7,7 +7,7 @@ import {authMiddleware, CheckingAuthorizationValidationCode} from "../../middlew
 import {authService} from "../../domain/auth-service";
 import {AuthValidation, AuthValidationEmail} from "../../middleware/input-middleware/validation/auth-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
-import {FindDeviceInDBToRefreshToken, ValidationRefreshToken} from "../../middleware/token-middleware";
+import { ValidationRefreshToken} from "../../middleware/token-middleware";
 
 import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
 import {securityDeviceService} from "../../service-rep/security-device-service";
@@ -32,7 +32,7 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
     res.cookie('refreshToken',refreshToken, {httpOnly: true,secure: true})
    return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
-authRouter.post("/refresh-token", ValidationRefreshToken,FindDeviceInDBToRefreshToken ,async (req: Request ,res:Response) => {
+authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
     const deviceId = req.body.deviceId
     console.log("deviceID_____________",deviceId)
     const oldRefreshToken = req.cookies.refreshToken
