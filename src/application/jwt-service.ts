@@ -42,12 +42,12 @@ export const jwtService = {
         if (!parser){
             return null
         }
-        console.log('PARSER_________',parser)
         const createRefreshTokenMeta = {
             lastActiveDate: new Date(parser .iat),
             deviceId: parser.deviceId,
             userId: user.id
         }
+        console.log(createRefreshTokenMeta)
 
         const accessToken:string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '10000sec'})
