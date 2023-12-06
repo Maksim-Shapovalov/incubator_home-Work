@@ -26,7 +26,7 @@ export const HTTP_STATUS = {
     Forbidden_403: 403,
     NOT_FOUND_404: 404
 }
-
+app.set('trust proxy', true)
 app.use(express.json());
 app.use(cookieParser())
 

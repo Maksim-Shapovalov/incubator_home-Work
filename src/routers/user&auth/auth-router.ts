@@ -7,7 +7,7 @@ import {authMiddleware, CheckingAuthorizationValidationCode} from "../../middlew
 import {authService} from "../../domain/auth-service";
 import {AuthValidation, AuthValidationEmail} from "../../middleware/input-middleware/validation/auth-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
-import { ValidationRefreshToken} from "../../middleware/token-middleware";
+import {IPRequestCounter, ValidationRefreshToken} from "../../middleware/token-middleware";
 
 import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
 import {securityDeviceService} from "../../service-rep/security-device-service";
@@ -17,7 +17,7 @@ import {securityDeviceService} from "../../service-rep/security-device-service";
 export const authRouter = Router()
 
 
-authRouter.post("/login", async (req: Request ,res:Response)=>{
+authRouter.post("/login", IPRequestCounter,async (req: Request ,res:Response)=>{
     const userAgent = {
         IP: req.socket.remoteAddress || req.headers['x-forwarded-for'],
         deviceName: req.headers["user-agent"]
@@ -32,7 +32,7 @@ authRouter.post("/login", async (req: Request ,res:Response)=>{
     res.cookie('refreshToken',refreshToken, {httpOnly: true,secure: true})
    return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
-authRouter.post("/refresh-token", ValidationRefreshToken ,async (req: Request ,res:Response) => {
+authRouter.post("/refresh-token", ValidationRefreshToken,IPRequestCounter ,async (req: Request ,res:Response) => {
     const deviceId = req.body.deviceId
     console.log("deviceID_____________",deviceId)
     const oldRefreshToken = req.cookies.refreshToken
@@ -69,6 +69,7 @@ authRouter.post("/logout",ValidationRefreshToken,async (req: Request ,res:Respon
 })
 
 authRouter.post("/registration-confirmation",
+    IPRequestCounter,
     CheckingAuthorizationValidationCode(),
     ErrorMiddleware,
     async (req: Request ,res:Response) => {
@@ -90,6 +91,7 @@ authRouter.post("/registration",
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 authRouter.post("/registration-email-resending",
+    IPRequestCounter,
     AuthValidationEmail(),
     ErrorMiddleware,
     async (req: Request ,res:Response) => {
