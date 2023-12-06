@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUS} from "../index";
+import {app, HTTP_STATUS} from "../index";
 import {jwtService} from "../application/jwt-service";
 import {userRepository} from "../repository/user-repository";
 import {ObjectId} from "mongodb";
@@ -48,19 +48,16 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     }
 }
-
+const requestCounts: { [key: string]: number[] } = {};
 export const IPRequestCounter = async (req: Request, res: Response , next: NextFunction) =>{
-    const requestCounts: { [key: string]: number[] } = {};
-
-
         const ip = req.ip
-
 
         if (!requestCounts[ip]) {
             requestCounts[ip] = [];
         }
 
         const currentTime = new Date().getTime();
+
         requestCounts[ip] = requestCounts[ip].filter((time) => time > currentTime - 10000);
 
         if (requestCounts[ip].length >= 5) {
@@ -70,7 +67,6 @@ export const IPRequestCounter = async (req: Request, res: Response , next: NextF
         requestCounts[ip].push(currentTime);
 
         next();
-
 }
 
 

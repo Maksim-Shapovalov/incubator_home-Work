@@ -106,7 +106,8 @@ authRouter.post("/registration-email-resending",
         //ToDo: create service to router
 })
 authRouter.get("/me",
-    authMiddleware ,
+    IPRequestCounter,
+    // authMiddleware ,
     async (req: Request ,res:Response)=> {
     const user = req.body.user
 
