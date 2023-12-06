@@ -48,7 +48,7 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     }
 }
-const requestCounts: { [key: string]: number[] } = {};
+let requestCounts: { [key: string]: number[] } = {};
 export const IPRequestCounter = async (req: Request, res: Response , next: NextFunction) =>{
         const ip = req.ip
 
@@ -61,6 +61,7 @@ export const IPRequestCounter = async (req: Request, res: Response , next: NextF
         requestCounts[ip] = requestCounts[ip].filter((time) => time > currentTime - 10000);
 
         if (requestCounts[ip].length >= 5) {
+            requestCounts = {}
             return res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
         }
 
