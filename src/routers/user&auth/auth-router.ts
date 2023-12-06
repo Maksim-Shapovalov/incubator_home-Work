@@ -82,6 +82,7 @@ authRouter.post("/registration-confirmation",
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 authRouter.post("/registration",
+    IPRequestCounter,
     AuthValidation(),
     ErrorMiddleware,
     async (req: Request ,res:Response) => {
@@ -106,8 +107,8 @@ authRouter.post("/registration-email-resending",
         //ToDo: create service to router
 })
 authRouter.get("/me",
-    IPRequestCounter,
-    // authMiddleware ,
+    // IPRequestCounter,
+    authMiddleware ,
     async (req: Request ,res:Response)=> {
     const user = req.body.user
 
