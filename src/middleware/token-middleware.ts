@@ -64,7 +64,7 @@ export const IPRequestCounter = async (req: Request, res: Response , next: NextF
         requestCounts[ip] = requestCounts[ip].filter((time) => time > currentTime - 10000); // Очищаем старые записи
 
         if (requestCounts[ip].length >= 5) {
-            return res.status(429).send('Слишком много запросов. Пожалуйста, повторите позже.');
+            return res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
         }
 
         requestCounts[ip].push(currentTime);
