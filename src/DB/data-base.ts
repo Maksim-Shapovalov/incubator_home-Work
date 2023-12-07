@@ -7,6 +7,7 @@ import {CommentsTypeDb} from "../types/comment-type";
 import {BlackListForTokenType} from "../types/blackListForToken-type";
 import {RateLimitDB} from "../types/rate-limit";
 import {DevicesUserDB} from "../types/device-of-user";
+import {neSytTypes} from "../types/neSyt-types";
 config()
 
 
@@ -23,6 +24,7 @@ export const dataUser = db.collection<UserDbType>("user")
 export const dataComments = db.collection<CommentsTypeDb>("comments")
 export const dataBlackListForToken = db.collection<BlackListForTokenType>("blackList")
 export const dataID = db.collection<DevicesUserDB>('info')
+export const neSyt = db.collection<neSytTypes>('neSyt')
 export const runDB = async () => {
     try{
         await client.connect()

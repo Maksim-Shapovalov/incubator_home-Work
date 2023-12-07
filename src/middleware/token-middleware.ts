@@ -2,9 +2,12 @@ import {NextFunction, Request, Response} from "express";
 import {app, HTTP_STATUS} from "../index";
 import {jwtService} from "../application/jwt-service";
 import {userRepository} from "../repository/user-repository";
-import {ObjectId} from "mongodb";
+import {FindCursor, ObjectId, WithId} from "mongodb";
 import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
 import {securityDevicesRepo} from "../repository/security-devices-repo";
+import {neSyt} from "../DB/data-base";
+import {neSytTypes} from "../types/neSyt-types";
+import {cy} from "date-fns/locale";
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
@@ -48,55 +51,56 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
         return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
     }
 }
-let requestCounts: { [key: string]: number[] } = {};
+
 export const IPRequestCounter = async (req: Request, res: Response , next: NextFunction) =>{
-        const ip = req.ip
+    const current = new Date()
 
-        if (!requestCounts[ip]) {
-            requestCounts[ip] = [];
-        }
+    if(!req.ip){
+        return next()
+    }
 
-        const currentTime = new Date().getTime();
+    console.log(current, 'current')
+   const newElement: neSytTypes = {
+       ip: req.ip.toString(),
+       way: req.url,
+       createdAt: current.toISOString(),
+   }
 
-        requestCounts[ip] = requestCounts[ip].filter((time) => time > currentTime - 10000);
+    await neSyt.insertOne(newElement)
 
-        if (requestCounts[ip].length > 5) {
-            requestCounts = {}
-            return res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
-        }
+    const timeThreshold = current;
+    timeThreshold.setSeconds(current.getSeconds() - 10);
 
-        requestCounts[ip].push(currentTime);
+    console.log(timeThreshold, 'timeThreshold')
 
-        next();
+    const findReqInDB = await neSyt.find(
+        {ip: newElement.ip.toString(), way: newElement.way,
+            createdAt: { $gte: timeThreshold.toISOString() }})
+        .toArray()
+
+    console.log(findReqInDB,'neSytTypes')
+
+    if (findReqInDB.length > 5){
+        return res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
+    }
+
+    next()
 }
-
-
-// export const ValidationAccessToken = async (req: Request, res: Response , next: NextFunction) => {
-//     const accessToken = req.body.accessToken
-//     console.log(accessToken,'access')
+// let requestCounts: { [key: string]: number[] } = {};
+// const ip = req.ip
 //
-//     if (!accessToken){
-//         res.status(HTTP_STATUS.UNAUTHORIZED_401).send('no access token')
-//         return
-//     }
-//
-//     const payload = await jwtService.parseJWTAccessToken(accessToken);
-//     console.log(payload)
-//     if (payload){
-//         const userId = new ObjectId(payload.userId) ;
-//         const user = await userRepository.getUserById(userId)
-//
-//         if(!user){
-//             console.log("no user")
-//             res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-//             return
-//         }
-//
-//         req.body.user = user
-//
-//         next()
-//         return;
-//     }else{
-//         return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-//     }
+// if (!requestCounts[ip]) {
+//     requestCounts[ip] = [];
 // }
+//
+// const currentTime = new Date().getTime();
+//
+// requestCounts[ip].push(currentTime);
+//
+// requestCounts[ip] = requestCounts[ip].filter((time) => time > currentTime - 10000);
+//
+// if (requestCounts[ip].length > 5) {
+//     return res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
+// }
+//
+// next();
