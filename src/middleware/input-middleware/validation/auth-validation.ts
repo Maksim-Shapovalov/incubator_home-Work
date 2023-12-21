@@ -71,7 +71,7 @@ export const AuthBodyToSendNewPassword = ()=>(
             .isString()
             .isLength({min:6, max: 20})
             .withMessage('Invalid newPassword'),
-        body('newPassword')
+        body('recoveryCode')
             .trim()
             .isString
 
