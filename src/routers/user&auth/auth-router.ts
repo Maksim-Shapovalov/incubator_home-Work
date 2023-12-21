@@ -49,7 +49,7 @@ authRouter.post("/new-password",AuthBodyToSendNewPassword() ,IPRequestCounter,Er
     }
     if (!requestEmail ) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     const user = await authService.findUserByRecoveryCode(requestEmail)
-    if (!user) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
+    if (!user) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 authRouter.post("/refresh-token", ValidationRefreshToken,IPRequestCounter ,async (req: Request ,res:Response) => {
