@@ -75,6 +75,7 @@ export const userRepository = {
     async findUserByRecoveryCode(newDataUser: newDataUser){
       const user = await  UserModelClass.findOne({recoveryCode: newDataUser.recoveryCode})
         if (!user) return false
+        if (user.passwordHash === newDataUser.newPassword) return false
         user.passwordHash = newDataUser.newPassword
         console.log("passwordHash---------",user.passwordHash)
         return user
