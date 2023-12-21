@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {dbVideos} from "../../db-items/db-videos";
 import {HTTP_STATUS} from "../../index";
-import {availableResolutionsEnum, VideoType} from "../../types/video-type";
+import {AvailableResolutionsEnum, VideoType} from "../../types/video-type";
 import {ValidationErrorType} from "../../middleware/input-middleware/validation/Error-validation";
 import {ValidationVideo} from "../../middleware/input-middleware/validation/video-validation";
 
@@ -55,7 +55,7 @@ VideoRouter.post('/',
         )
     }
     for (const resolution of availableResolutions){
-        if (!Object.values(availableResolutionsEnum).includes(resolution) || !newVideo.availableResolutions){
+        if (!Object.values(AvailableResolutionsEnum).includes(resolution) || !newVideo.availableResolutions){
             errorsMessages.push({
                     message: 'Incorrect availableResolutions',
                     field: 'availableResolutions'
@@ -73,10 +73,9 @@ VideoRouter.post('/',
 })
 
 VideoRouter.put('/:id',
-    ValidationVideo(),
+   // ValidationVideo(),
     (req: Request, res: Response) => {
     let video  = dbVideos.videos.find(v => v.id === +req.params.id);
-    console.log(video, 'update')
     if(!video) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
     const {availableResolutions} = req.body
 
@@ -104,7 +103,7 @@ VideoRouter.put('/:id',
         )
     }
     for (const resolution of availableResolutions){
-        if (!Object.values(availableResolutionsEnum).includes(resolution)){
+        if (!Object.values(AvailableResolutionsEnum).includes(resolution)){
             errorsMessages.push({
                 'message': 'Incorrect availableResolutions',
                 'field': 'availableResolutions'
@@ -112,7 +111,7 @@ VideoRouter.put('/:id',
             )
         }
     }
-    if (!req.body.canBeDownloaded || typeof req.body.canBeDownloaded !== 'boolean' ){
+    if (req.body.canBeDownloaded && typeof req.body.canBeDownloaded !== 'boolean' ){
         errorsMessages.push({
                 'message': 'Incorrect canBeDownloaded',
                 'field': 'canBeDownloaded'
@@ -132,6 +131,7 @@ VideoRouter.put('/:id',
             })
         }
     if (errorsMessages.length){
+        console.log(errorsMessages, 'errr')
         return res.status(HTTP_STATUS.BAD_REQUEST_400).send({errorsMessages})
     }else {
         video.title = req.body.title;
@@ -140,6 +140,7 @@ VideoRouter.put('/:id',
         video.canBeDownloaded = req.body.canBeDownloaded;
         video.minAgeRestriction = req.body.minAgeRestriction;
         video.publicationDate = req.body.publicationDate
+
         res.status(HTTP_STATUS.NO_CONTENT_204).send(video)
     }
 

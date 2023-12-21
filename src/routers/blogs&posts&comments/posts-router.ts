@@ -7,7 +7,6 @@ import {authGuardMiddleware} from "../../middleware/register-middleware";
 import {queryFilter} from "../../repository/qurey-repo/query-filter";
 import {postsRepository} from "../../repository/posts-repository";
 import {commentsRepository} from "../../repository/comments-repository";
-import {serviceUser} from "../../service-rep/service-user";
 import {serviceComments} from "../../service-rep/service-comments";
 import {authMiddleware} from "../../middleware/auth-middleware";
 import {CommentValidation} from "../../middleware/input-middleware/comment-validation";
@@ -55,8 +54,13 @@ postsRouter.post('/',
     PostsValidation(),
     ErrorMiddleware,
     async (req:Request, res: Response) =>{
-    const {title, shortDescription, content, blogId} = req.body
-    const newBlogs = await postsService.createNewPosts(title,shortDescription,content,blogId)
+    // const {title, shortDescription, content, blogId} = req.body
+        const postBody = {
+            title : req.body.title,
+            shortDescription : req.body.shortDescription,
+            content : req.body.content,
+        }
+    const newBlogs = await postsService.createNewPosts(postBody,req.body.blogId)
     res.status(HTTP_STATUS.CREATED_201).send(newBlogs)
 })
 postsRouter.put('/:id',

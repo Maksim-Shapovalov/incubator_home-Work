@@ -1,18 +1,29 @@
-import {BlogsOutputModel, BlogsType} from "../types/blogs-type";
+import {BlogRequest, BlogsOutputModel, BlogsType} from "../types/blogs-type";
 import {WithId} from "mongodb";
 import {blogsRepository} from '../repository/blogs-repository'
+import {BlogModelClass} from "../schemas/blog-schemas";
 
 export const blogsService = {
-    async createNewBlogs(name:string, description: string, websiteUrl: string): Promise<BlogsOutputModel> {
-        const newBlogs : BlogsType = {
-            name: name,
-            description: description,
-            websiteUrl: websiteUrl,
-            createdAt: new Date().toISOString(),
-            isMembership: false
-        }
-        const res = await blogsRepository.createNewBlogs(newBlogs)
-        return res
+    async createNewBlogs(blog: BlogRequest): Promise<BlogsOutputModel> {
+
+        const newBlogs = new BlogModelClass()
+
+        newBlogs.name = blog.name
+        newBlogs.description = blog.description
+        newBlogs.websiteUrl = blog.websiteUrl
+        newBlogs.createdAt = new Date().toISOString()
+        newBlogs.isMembership = false
+
+        // const newBlogs : BlogsType = {
+        //     name: name,
+        //     description: description,
+        //     websiteUrl: websiteUrl,
+        //     createdAt: new Date().toISOString(),
+        //     isMembership: false
+        // }
+        const res = await blogsRepository.saveBlog(newBlogs)
+        const correctBlog = blogMapper(res)
+        return correctBlog
     },
     async updateBlogById(id: string, name:string, description: string, websiteUrl: string): Promise<boolean> {
         return await blogsRepository.updateBlogById(id, name, description, websiteUrl)

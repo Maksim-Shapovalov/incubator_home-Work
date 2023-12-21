@@ -1,12 +1,11 @@
 import jwt, {JwtPayload} from 'jsonwebtoken'
-import {UserToPostsOutputModel} from "../types/user-type";
 import {setting} from "../setting";
 import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
 import {refreshTokenRepo} from "../repository/refreshToken-repo";
 import {DevicesUserDB} from "../types/device-of-user";
-import {dataID} from "../DB/data-base";
 import {securityDevicesRepo} from "../repository/security-devices-repo";
+import {UserToPostsOutputModel} from "../types/user-type";
 
 type PayloadType = {
     userId: string

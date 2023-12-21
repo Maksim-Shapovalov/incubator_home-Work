@@ -1,5 +1,4 @@
-
-
+import {WithId} from "mongodb";
 export type UserOutputModel = {
     id: string
     login: string
@@ -8,45 +7,47 @@ export type UserOutputModel = {
     passwordSalt: string
     createdAt: string
 }
-
+//
 export type UserToPostsOutputModel = {
     id: string
     login: string
     email: string
     createdAt: string
 }
-export type UserToPostsDBModel = {
+//
+export type UserToShow = {
+    id: string
     login: string
     email: string
     createdAt: string
 }
+//
+// export type UserToCodeOutputModel = {
+//     login: string
+//     email: string
+//     createdAt: string
+//     emailConfirmation: EmailConfirmations
+// }
 
-
-
-export type UserToCodeOutputModel = {
+export type UserBasicRequestBody = {
     login: string
     email: string
-    createdAt: string
-    emailConfirmation: emailConfirmations
+    password: string
 }
 
 
-export type UserDbType = {
+
+export type UserMongoDbType = WithId<{
     login: string
     email: string
     passwordHash: any
     passwordSalt: string
     createdAt: string
-    emailConfirmation: emailConfirmations
-}
-type emailConfirmations = {
+    emailConfirmation: EmailConfirmations
+}>
+
+export type EmailConfirmations = {
     confirmationCode: string
     expirationDate: string
     isConfirmed: boolean
-}
-export type RegistrationType = {
-    ip: string
-}
-export type SentEmailType = {
-    sentData: Date
 }

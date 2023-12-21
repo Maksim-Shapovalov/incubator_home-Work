@@ -1,25 +1,38 @@
-import {PostOutputModel, PostsType} from "../types/posts-type";
-import {postsRepository} from "../repository/posts-repository";
+import {BodyPostToRequest, PostOutputModel, PostsType} from "../types/posts-type";
+import {postMapper, postsRepository} from "../repository/posts-repository";
 import {blogsRepository} from "../repository/blogs-repository";
+import {PostModelClass} from "../schemas/post-schema";
 
 export const postsService = {
     async createNewPosts
-    (title:string,shortDescription:string,content:string,blogId:string): Promise<PostOutputModel | null> {
+    (bodyPost: BodyPostToRequest,blogId:string): Promise<PostOutputModel | null> {
         const findBlogName = await blogsRepository.getBlogsById(blogId)
-        console.log(findBlogName)
         if (!findBlogName){
             return null
         }
-        const newPosts: PostsType  = {
-            title: title,
-            shortDescription: shortDescription,
-            content: content,
-            blogId: blogId,
-            blogName: findBlogName.name,
-            createdAt: new Date().toISOString(),
-        }
-        const result = await postsRepository.createNewPosts(newPosts)
-        return result
+
+        const newPosts = new PostModelClass()
+
+        newPosts.title =  bodyPost.title,
+        newPosts.shortDescription =  bodyPost.shortDescription,
+        newPosts.content =  bodyPost.content,
+        newPosts.blogId =  blogId,
+        newPosts.blogName =  findBlogName.name ,
+        newPosts.createdAt =  new Date().toISOString()
+
+
+
+        // const newPosts: PostsType  = {
+        //     title: bodyPost.title,
+        //     shortDescription: bodyPost.shortDescription,
+        //     content: bodyPost.content,
+        //     blogId: blogId,
+        //     blogName: findBlogName.name,
+        //     createdAt: new Date().toISOString(),
+        // }
+        const result = await postsRepository.savePost(newPosts)
+        const correctPost = postMapper(result)
+        return correctPost
     },
     async updatePostsById
     (id: string, title:string,shortDescription:string,content:string,blogId:string): Promise<boolean> {

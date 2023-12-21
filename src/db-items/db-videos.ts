@@ -1,3 +1,6 @@
+import {Request, Response, Router} from "express";
+import {HTTP_STATUS} from "../index";
+
 export const dbVideos ={
     videos: [
         {
@@ -14,3 +17,11 @@ export const dbVideos ={
         }
     ]
 }
+
+
+export const AllDataVideoClear = Router();
+
+AllDataVideoClear.delete('/', (req:Request, res: Response) => {
+    dbVideos.videos = [];
+    return res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+})

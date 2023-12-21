@@ -1,34 +1,29 @@
 import { PaginationType, UserPaginationQueryType} from "./qurey-repo/query-filter";
-import {dataBlog, dataUser} from "../DB/data-base";
 import {
-    UserDbType,
-    UserOutputModel,
-    UserToCodeOutputModel,
-    UserToPostsDBModel,
-    UserToPostsOutputModel
+    UserMongoDbType, UserOutputModel, UserToShow,
 } from "../types/user-type";
 import {ObjectId, WithId} from "mongodb";
-import {blogMapper} from "./blogs-repository";
 import add from "date-fns/add";
+import {UserModelClass} from "../schemas/user-schemas";
 
 export const userRepository = {
-    async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToPostsOutputModel> | null>{
+    async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToShow> | null>{
         const filterQuery = {$or: [
             {login: {$regex:filter.searchLoginTerm, $options: 'i'}},
                 {email: {$regex: filter.searchEmailTerm, $options: 'i'}}
             ]}
 
         const pageSizeInQuery: number = filter.pageSize;
-        const totalCountUsers = await dataUser.countDocuments(filterQuery)
+        const totalCountUsers = await UserModelClass.countDocuments(filterQuery)
 
         const pageCountUsers: number = Math.ceil(totalCountUsers / pageSizeInQuery)
         const pageBlog: number = ((filter.pageNumber - 1) * pageSizeInQuery)
-        const result = await dataUser
+        const result = await UserModelClass
             .find(filterQuery)
             .sort({[filter.sortBy]: filter.sortDirection})
             .skip(pageBlog)
             .limit(pageSizeInQuery)
-            .toArray()
+            .lean()
         const items = result.map((u) => userToPostMapper(u))
         return {
             pagesCount: pageCountUsers,
@@ -38,19 +33,17 @@ export const userRepository = {
             items: items
         }
     },
-    async getUserById(id:ObjectId){
-        const findUser = await dataUser.findOne({_id: id})
+    async getUserById(id:ObjectId):Promise<UserMongoDbType | null>{
+        return UserModelClass.findOne({_id: id}).lean()
 
-        return findUser
     },
     async findUsersbyCode(codeUser:string){
-        const res = await dataUser.findOne({'emailConfirmation.confirmationCode': codeUser})
-        console.log(res)
-        return res
+        return  UserModelClass.findOne({'emailConfirmation.confirmationCode': codeUser})
+
 
     },
     async getUserByCode(codeUser:string): Promise<boolean>{
-       const res = await dataUser.updateOne({'emailConfirmation.confirmationCode': codeUser}, {
+       const res = await UserModelClass.updateOne({'emailConfirmation.confirmationCode': codeUser}, {
             $set: {
                 'emailConfirmation.isConfirmed' : true
             }
@@ -58,14 +51,15 @@ export const userRepository = {
         return res.matchedCount === 1
 
     },
+
     async findByLoginOrEmail(loginOrEmail: string){
-        const findUser = await dataUser.findOne({ $or: [{login: loginOrEmail}, {email: loginOrEmail}]})
+        const findUser = await UserModelClass.findOne({ $or: [{login: loginOrEmail}, {email: loginOrEmail}]})
         return findUser
 
     },
 
     async updateCodeToResendingMessage(userEmail: string, info: any){
-        await dataUser.updateOne({email : userEmail}, {
+        await UserModelClass.updateOne({email : userEmail}, {
             $set:{
                 'emailConfirmation.confirmationCode': info.confirmationCode,
                 'emailConfirmation.expirationDate': add(new Date(), {
@@ -74,25 +68,33 @@ export const userRepository = {
                 }).toISOString()
             }
         })
-        const user = await dataUser.findOne({email:userEmail})
+        const user = await UserModelClass.findOne({email:userEmail})
         console.log('result',user)
         return user
     },
-    async getNewUser(newUser: UserDbType): Promise<UserToPostsOutputModel>{
-        const result = await dataUser.insertOne({...newUser})
-        return userToPostMapper({...newUser, _id: result.insertedId})
-    },
-    async getNewUserToRegistr(newUser: UserDbType): Promise<UserToCodeOutputModel>{
-        const result = await dataUser.insertOne({...newUser})
-        return UserToCodeMapper({...newUser, _id: result.insertedId})
-    },
+    // async getNewUser(newUser: UserMongoDbType): Promise<UserMongoDbType>{
+    //     const result = await UserModelClass.insertMany([newUser])
+    //     return userMapper({...newUser})
+    // },
     async deleteUserById(userId:string): Promise<boolean>{
-        const findUser = await dataUser.deleteOne({_id:new ObjectId(userId)})
+        const findUser = await UserModelClass.deleteOne({_id:new ObjectId(userId)})
         return findUser.deletedCount === 1
+    },
+
+    async saveUser(user:UserMongoDbType): Promise<UserMongoDbType>{
+
+        // const userModel = new UserModelClass(user)
+        // console.log("user Model-----", JSON.stringify(userModel), JSON.stringify(userModel.save()))
+        // await UserModelClass.insertMany([user])
+
+        return UserModelClass.create(user)
+
+
     }
+
 }
 
-export const userMapper = (user: WithId<UserDbType>): UserOutputModel => {
+export const userMapper = (user: WithId<UserMongoDbType>): UserOutputModel => {
     return {
         id: user._id.toHexString(),
         login: user.login,
@@ -102,7 +104,7 @@ export const userMapper = (user: WithId<UserDbType>): UserOutputModel => {
         createdAt: user.createdAt
     }
 }
-export const userToPostMapper = (user: WithId<UserToPostsDBModel>): UserToPostsOutputModel => {
+export const userToPostMapper = (user: WithId<UserMongoDbType>): UserToShow => {
     return {
         id: user._id.toHexString(),
         login: user.login,
@@ -110,12 +112,12 @@ export const userToPostMapper = (user: WithId<UserToPostsDBModel>): UserToPostsO
         createdAt: user.createdAt
     }
 }
-export const UserToCodeMapper = (user: WithId<UserDbType>): UserToCodeOutputModel => {
-    return {
-        login: user.login,
-        email: user.email,
-        createdAt: user.createdAt,
-        emailConfirmation: user.emailConfirmation
-    }
-
-}
+// export const UserToCodeMapper = (user: WithId<UserMongoDbType>): UserToCodeOutputModel => {
+//     return {
+//         login: user.login,
+//         email: user.email,
+//         createdAt: user.createdAt,
+//         emailConfirmation: user.emailConfirmation
+//     }
+//
+// }

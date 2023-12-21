@@ -19,7 +19,7 @@ userRouter.get("/",
     res.send(result)
 })
 userRouter.get("/:codeId", async (req: Request, res: Response)=>{
-    const result = await userRepository.getUserByCode(req.body.codeId)
+    const result = await userRepository.findUsersbyCode(req.body.codeId)
     res.send(result)
 })
 userRouter.post("/",
@@ -27,7 +27,11 @@ userRouter.post("/",
     UserValidation(),
     ErrorMiddleware,
     async (req: Request, res: Response)=> {
-    const result = await serviceUser.getNewUser(req.body.login, req.body.password, req.body.email)
+    let user = {
+        login : req.body.login,
+        password : req.body.password,
+        email: req.body.email}
+    const result = await serviceUser.getNewUser(user)
     res.status(HTTP_STATUS.CREATED_201).send(result)
 })
 

@@ -1,4 +1,6 @@
 import {body} from "express-validator";
+import {AvailableResolutionsEnum} from "../../../types/video-type";
+import {throws} from "assert";
 
 
 export const ValidationVideo = () => (
@@ -14,9 +16,18 @@ export const ValidationVideo = () => (
             .isString()
             .isLength({min:1,max:20}),
         body('availableResolutions')
-            .trim()
-            .isString()
-            .isLength({min:1,max:100}),
+            .isArray()
+            .custom((value) => {
+                if(Array.isArray(value)){
+                    value.forEach((v) => {
+                        if(!Object.values(AvailableResolutionsEnum).includes(v)){
+                            console.log('v', v)
+                            throw new Error('')
+                        }
+                    })
+                }
 
+                return true
+            })
     ]
 )

@@ -1,4 +1,6 @@
-export type CommentsTypeDb = {
+import {WithId} from "mongodb";
+
+export type CommentsTypeDb = WithId<{
     content: string
     commentatorInfo: {
         userId: string
@@ -6,7 +8,7 @@ export type CommentsTypeDb = {
     },
     postId: string,
     "createdAt": string
-}
+}>
 
 export type CommentsOutputType = {
     id: string

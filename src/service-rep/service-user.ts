@@ -1,67 +1,47 @@
 import {
-    UserDbType,
-    UserOutputModel,
-    UserToCodeOutputModel,
-    UserToPostsDBModel,
-    UserToPostsOutputModel
+    UserBasicRequestBody,
+    UserMongoDbType, UserToShow,
+    // UserOutputModel,
+    // UserToCodeOutputModel,
+    // UserToPostsDBModel,
+    // UserToPostsOutputModel
 } from "../types/user-type";
-import {userRepository} from "../repository/user-repository";
+import {userRepository, userToPostMapper} from "../repository/user-repository";
 import bcrypt, {hash, compare} from "bcrypt"
 import {v4 as uuidv4} from "uuid";
 import add from 'date-fns/add'
+import {UserModelClass} from "../schemas/user-schemas";
+import {randomUUID} from "crypto";
 
 export const serviceUser = {
-    async getNewUser(login: string, password: string, email: string): Promise<UserToPostsOutputModel> {
+    async getNewUser(user: UserBasicRequestBody): Promise<UserToShow> {
 
         const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await this._generateHash(password, passwordSalt)
+        const passwordHash = await this._generateHash(user.password, passwordSalt)
 
         const now = new Date()
 
-        const newUser: UserDbType = {
-            login,
-            email,
-            passwordHash: passwordHash,
-            passwordSalt: passwordSalt,
-            createdAt: now.toISOString(),
-            emailConfirmation: {
-                confirmationCode: uuidv4(),
-                expirationDate: add(now, {
-                    hours: 1,
-                    minutes: 3
-                }).toISOString(),
-                isConfirmed: false
-            }
+        const newUser = new UserModelClass()
+
+        newUser.login = user.login
+        newUser.email = user.email
+        newUser.passwordHash = passwordHash
+        newUser.passwordSalt = passwordSalt
+        newUser.createdAt = now.toISOString()
+        newUser.emailConfirmation = {
+            confirmationCode: randomUUID(),
+            expirationDate: add(now, {
+                hours: 1,
+                minutes: 3
+            }).toISOString(),
+           isConfirmed: false
         }
-        console.log(newUser)
-        const result = await userRepository.getNewUser(newUser)
-        return result
-    },
-    async getNewUserToRegistr(login: string, password: string, email: string): Promise<UserToCodeOutputModel> {
 
-        const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await this._generateHash(password, passwordSalt)
 
-        const now = new Date()
 
-        const newUser: UserDbType = {
-            login,
-            email,
-            passwordHash: passwordHash,
-            passwordSalt: passwordSalt,
-            createdAt: now.toISOString(),
-            emailConfirmation: {
-                confirmationCode: uuidv4(),
-                expirationDate: add(now, {
-                    hours: 1,
-                    minutes: 3
-                }).toISOString(),
-                isConfirmed: false
-            }
-        }
-        console.log(newUser)
-        const result = await userRepository.getNewUserToRegistr(newUser)
-        return result
+        const result:UserMongoDbType = await userRepository.saveUser(newUser)
+        const correctUser = userToPostMapper(result)
+        return correctUser
     },
     async deleteUserById(userId: string): Promise<boolean> {
         return await userRepository.deleteUserById(userId)

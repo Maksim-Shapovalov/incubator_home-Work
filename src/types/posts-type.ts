@@ -1,3 +1,5 @@
+import {WithId} from "mongodb";
+
 export type PostOutputModel = {
     id: string
     title: string
@@ -8,10 +10,14 @@ export type PostOutputModel = {
     createdAt: string
 }
 
+export type BodyPostToRequest = {
+    title : string,
+    shortDescription : string,
+    content : string,
+}
 
 
-
-export type PostsType = {
+export type PostsType = WithId<{
     // id: string
     title: string
     shortDescription: string
@@ -19,4 +25,4 @@ export type PostsType = {
     blogId: string
     blogName: string
     createdAt: string
-}
+}>

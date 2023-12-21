@@ -1,22 +1,22 @@
 import {PostOutputModel, PostsType} from "../types/posts-type";
-import {dataBlog, dataPost} from "../DB/data-base";
 import {ObjectId, WithId} from "mongodb";
-import {blogMapper, blogsRepository} from "./blogs-repository";
+import {blogsRepository} from "./blogs-repository";
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
+import {PostModelClass} from "../schemas/post-schema";
 
 export const postsRepository = {
     async getAllPosts(filter:PaginationQueryType): Promise<PaginationType<PostOutputModel>>{
         const pageSizeInQuery: number = filter.pageSize;
-        const totalCountBlogs = await dataPost.countDocuments({})
+        const totalCountBlogs = await PostModelClass.countDocuments({})
 
         const pageCountBlogs: number = Math.ceil(totalCountBlogs / pageSizeInQuery)
         const pageBlog: number = ((filter.pageNumber - 1) * pageSizeInQuery)
-        const result = await dataPost
+        const result = await PostModelClass
             .find({})
             .sort({[filter.sortBy]: filter.sortDirection})
             .skip(pageBlog)
             .limit(pageSizeInQuery)
-            .toArray()
+            .lean()
         const items = result.map((p) => postMapper(p))
         return {
             pagesCount: pageCountBlogs,
@@ -27,7 +27,7 @@ export const postsRepository = {
         }
     },
     async getPostsById(id: string):Promise<PostOutputModel | null> {
-        const findPosts = await dataPost
+        const findPosts = await PostModelClass
             .findOne({_id: new ObjectId(id)});
         console.log(findPosts)
         if (!findPosts){
@@ -45,17 +45,17 @@ export const postsRepository = {
 
 
         const pageSizeInQuery: number = filter.pageSize;
-        const totalCountBlogs = await dataPost.countDocuments(filterQuery)
+        const totalCountBlogs = await PostModelClass.countDocuments(filterQuery)
 
         const pageCountBlogs: number = Math.ceil(totalCountBlogs / pageSizeInQuery)
         const pageBlog: number = ((filter.pageNumber - 1) * pageSizeInQuery)
 
-        const res = await dataPost
+        const res = await PostModelClass
             .find(filterQuery)
             .sort({[filter.sortBy]: filter.sortDirection})
             .skip(pageBlog)
             .limit(pageSizeInQuery)
-            .toArray()
+            .lean()
         const items = res.map((p) => postMapper(p))
         return {
             pagesCount: pageCountBlogs,
@@ -66,18 +66,22 @@ export const postsRepository = {
         }
 
     },
-    async createNewPosts
-    (newPosts: PostsType): Promise<PostOutputModel> {
-        const result = await dataPost.insertOne({...newPosts})
-        return postMapper({...newPosts, _id: result.insertedId})
+
+    async savePost(post:PostsType): Promise<PostsType> {
+        return PostModelClass.create(post)
     },
+    // async createNewPosts
+    // (newPosts: PostsType): Promise<PostOutputModel> {
+    //     const result = await dataPost.insertOne({...newPosts})
+    //     return postMapper({...newPosts, _id: result.insertedId})
+    // },
     async updatePostsById
     (id: string, title:string,shortDescription:string,content:string,blogId:string): Promise<boolean> {
-        const res = await dataPost.updateOne({_id: new ObjectId(id)}, {$set: {title,shortDescription, content, blogId}})
+        const res = await PostModelClass.updateOne({_id: new ObjectId(id)}, {$set: {title,shortDescription, content, blogId}})
         return res.matchedCount === 1
     },
     async deletePostsById(id: string): Promise<boolean>{
-        const findPost = await dataPost.deleteOne({_id: new ObjectId(id)})
+        const findPost = await PostModelClass.deleteOne({_id: new ObjectId(id)})
         return findPost.deletedCount === 1
 
     }

@@ -10,9 +10,11 @@ import {commentsRouter} from "./routers/blogs&posts&comments/comments-router";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 import {securityDevices} from "./routers/security-deviced/security-devices";
+import {AllDataVideoClear} from "./db-items/db-videos";
+import {initApp} from "./initApp";
 
 dotenv.config()
-export const app = express()
+
 export const port = process.env.PORT || 3000
 
 console.log(port)
@@ -27,19 +29,8 @@ export const HTTP_STATUS = {
     NOT_FOUND_404: 404,
     TOO_MANY_REQUESTS_429: 429
 }
-app.set('trust proxy', true)
-app.use(express.json());
-app.use(cookieParser())
 
-app.use("/videos", VideoRouter)
-app.use("/testing/all-data", AllDataClear)
-app.use("/blogs", blogsRouter)
-app.use("/posts", postsRouter)
-app.use("/users", userRouter)
-app.use("/auth", authRouter)
-app.use("/comments", commentsRouter)
-app.use("/security/devices", securityDevices)
-
+const app = initApp()
 
 const startApp = async () => {
     await runDB()

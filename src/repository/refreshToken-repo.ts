@@ -1,8 +1,10 @@
-import {dataID} from "../DB/data-base";
+
+import {DataIDModelClass} from "../schemas/dataID-schemas";
+import {DevicesUserDB} from "../types/device-of-user";
 
 export const refreshTokenRepo= {
-    async AddRefreshTokenInData(token: any){
-         await dataID.insertOne(token)
+    async AddRefreshTokenInData(token: DevicesUserDB){
+         await DataIDModelClass.insertMany(token)
         return true
     }
 }

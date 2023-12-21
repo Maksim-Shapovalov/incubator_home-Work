@@ -1,13 +1,13 @@
 import {NextFunction, Request, Response} from "express";
-import {app, HTTP_STATUS} from "../index";
+import {HTTP_STATUS} from "../index";
 import {jwtService} from "../application/jwt-service";
 import {userRepository} from "../repository/user-repository";
-import {FindCursor, ObjectId, WithId} from "mongodb";
+import { ObjectId} from "mongodb";
 import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
 import {securityDevicesRepo} from "../repository/security-devices-repo";
 import {neSyt} from "../DB/data-base";
 import {neSytTypes} from "../types/neSyt-types";
-import {cy} from "date-fns/locale";
+
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken

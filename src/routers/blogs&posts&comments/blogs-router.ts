@@ -9,6 +9,7 @@ import {postsRepository} from "../../repository/posts-repository";
 import {queryFilter, searchNameInBlog} from "../../repository/qurey-repo/query-filter";
 import {postsService} from "../../service-rep/service-posts";
 import { PostspParamsValidation} from "../../repository/qurey-repo/query-posts-repository";
+import {BlogsOutputModel} from "../../types/blogs-type";
 
 
 export const blogsRouter = Router()
@@ -28,20 +29,25 @@ blogsRouter.get('/:id',
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         }
     })
-blogsRouter.get('/:id/posts',
+blogsRouter.get('/:id/posts',//TODO : не зыбыть
     async (req: Request, res: Response) => {
         const filter = queryFilter(req.query);
         const result = await postsRepository.getPostInBlogs(req.params.id, filter)
         if(!result) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         return res.send(result)
     })
-blogsRouter.post('/:blogId/posts',
+blogsRouter.post('/:blogId/posts',//TODO : не зыбыть
     authGuardMiddleware,
     PostspParamsValidation(),
     ErrorMiddleware,
     async (req: Request, res: Response) => {
-        const {title, shortDescription, content} = req.body
-        const newPost = await postsService.createNewPosts(title, shortDescription, content, req.params.blogId)
+
+        const postBody = {
+            title : req.body.title,
+            shortDescription : req.body.shortDescription,
+            content : req.body.content,
+        }
+        const newPost = await postsService.createNewPosts(postBody, req.params.blogId)
         if (!newPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return
@@ -53,7 +59,12 @@ blogsRouter.post('/',
     BlogsValidation(),
     ErrorMiddleware,
     async (req: Request, res: Response) => {
-        const newBlog = await blogsService.createNewBlogs(req.body.name, req.body.description, req.body.websiteUrl)
+        const blog = {
+            name:req.body.name,
+            description: req.body.description,
+            websiteUrl: req.body.websiteUrl
+        }
+        const newBlog = await blogsService.createNewBlogs(blog)
         res.status(HTTP_STATUS.CREATED_201).send(newBlog)
     })
 blogsRouter.put('/:id',
