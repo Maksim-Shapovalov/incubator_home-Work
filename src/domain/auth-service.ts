@@ -34,6 +34,7 @@ export const authService = {
             email: email,
             recoveryCode: recoveryCode
         }
+        console.log("recoveryCode----------",typeof possibleUser.recoveryCode, possibleUser.recoveryCode)
         await userRepository.findByEmailAndAddRecoveryode(possibleUser)
         await emailManager.sendEmailWithTheCode(email, recoveryCode)
     }

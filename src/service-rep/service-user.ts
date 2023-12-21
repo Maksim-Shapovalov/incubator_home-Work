@@ -36,6 +36,7 @@ export const serviceUser = {
             }).toISOString(),
            isConfirmed: false
         }
+        newUser.recoveryCode = ''
 
 
 

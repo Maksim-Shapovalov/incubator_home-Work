@@ -66,18 +66,21 @@ export const userRepository = {
     },
 
     async findByEmailAndAddRecoveryode(possibleUser:possibleUser){
-        const findUser = await UserModelClass.findOne({email: possibleUser.email})
+        const findUser = await UserModelClass.findOneAndUpdate({email: possibleUser.email},{recoveryCode: possibleUser.recoveryCode})
         if (!findUser) return false
-        findUser.recoveryCode = possibleUser.recoveryCode
+        // findUser.recoveryCode = possibleUser.recoveryCode
         return findUser
 
     },
     async findUserByRecoveryCode(newDataUser: newDataUser){
-      const user = await  UserModelClass.findOne({recoveryCode: newDataUser.recoveryCode})
+      const user = await  UserModelClass.findOneAndUpdate({recoveryCode: newDataUser.recoveryCode},{passwordHash: newDataUser.newPassword})
+        console.log("passwordHash---------",newDataUser.newPassword)
+        console.log("passwordHash---------",newDataUser.recoveryCode)
         if (!user) return false
-        if (user.passwordHash === newDataUser.newPassword) return false
-        user.passwordHash = newDataUser.newPassword
-        console.log("passwordHash---------",user.passwordHash)
+        // if (user.passwordHash === newDataUser.newPassword) return false
+
+
+        console.log("user-----",user)
         return user
     },
 
