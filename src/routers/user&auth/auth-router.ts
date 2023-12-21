@@ -44,7 +44,8 @@ authRouter.post("/password-recovery",AuthValidationEmailToSendMessage(),IPReques
 authRouter.post("/new-password",AuthBodyToSendNewPassword() ,IPRequestCounter,ErrorMiddleware, async (req: Request ,res:Response) => {
     const requestEmail = {
         newPassword: req.body.newPassword,
-        recoveryCode:req.body.recoveryCode
+        recoveryCode:req.body.recoveryCode,
+        newSalt: ''
     }
     if (!requestEmail ) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     const user = await authService.findUserByRecoveryCode(requestEmail)

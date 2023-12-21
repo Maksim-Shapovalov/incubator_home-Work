@@ -13,6 +13,11 @@ export type newDataUser={
     newPassword: string,
     recoveryCode: string
 }
+export type newDataUser2={
+    newPassword: string,
+    newSalt: string,
+    recoveryCode: string
+}
 export const userRepository = {
     async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToShow> | null>{
         const filterQuery = {$or: [
@@ -72,8 +77,9 @@ export const userRepository = {
         return findUser
 
     },
-    async findUserByRecoveryCode(newDataUser: newDataUser){
-      const user = await  UserModelClass.findOneAndUpdate({recoveryCode: newDataUser.recoveryCode},{passwordHash: newDataUser.newPassword})
+    async findUserByRecoveryCode(newDataUser: newDataUser2){
+      const user = await  UserModelClass.findOneAndUpdate({recoveryCode: newDataUser.recoveryCode},
+          {passwordHash: newDataUser.newPassword,passwordSalt: newDataUser.newSalt})
         console.log("passwordHash---------",newDataUser.newPassword)
         console.log("passwordHash---------",newDataUser.recoveryCode)
         if (!user) return false

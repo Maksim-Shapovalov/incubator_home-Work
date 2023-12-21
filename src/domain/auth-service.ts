@@ -1,5 +1,5 @@
 import {emailManager} from "../manager/email-manager";
-import {newDataUser, userRepository} from "../repository/user-repository";
+import {newDataUser, newDataUser2, userRepository} from "../repository/user-repository";
 import {v4 as uuidv4} from "uuid";
 import {randomUUID} from "crypto";
 import bcrypt from "bcrypt";
@@ -12,11 +12,12 @@ export const authService = {
     async confirmatorUser(code:string){
         return await userRepository.getUserByCode(code)
     },
-    async findUserByRecoveryCode(newDataUser: newDataUser){
+    async findUserByRecoveryCode(newDataUser: newDataUser2){
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await serviceUser._generateHash(newDataUser.newPassword, passwordSalt)
 
         newDataUser.newPassword = passwordHash
+        newDataUser.newSalt = passwordSalt
 
         const findUserByCode = await userRepository.findUserByRecoveryCode(newDataUser)
         return findUserByCode
