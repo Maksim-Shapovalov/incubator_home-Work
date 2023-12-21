@@ -5,7 +5,12 @@ import {jwtService} from "../../application/jwt-service";
 import {userMapper, userRepository} from "../../repository/user-repository";
 import {authMiddleware, CheckingAuthorizationValidationCode} from "../../middleware/auth-middleware";
 import {authService} from "../../domain/auth-service";
-import {AuthValidation, AuthValidationEmail} from "../../middleware/input-middleware/validation/auth-validation";
+import {
+    AuthBodyToSendNewPassword,
+    AuthValidation,
+    AuthValidationEmail,
+    AuthValidationEmailToSendMessage
+} from "../../middleware/input-middleware/validation/auth-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {IPRequestCounter, ValidationRefreshToken} from "../../middleware/token-middleware";
 import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
@@ -30,10 +35,19 @@ authRouter.post("/login", IPRequestCounter, async (req: Request ,res:Response)=>
    res.cookie('refreshToken',refreshToken, {httpOnly: true,secure: true})
    return res.status(HTTP_STATUS.OK_200).send({accessToken})
 })
-authRouter.post("/password-recovery",AuthValidationEmail,IPRequestCounter,ErrorMiddleware, async (req: Request<{},{},{email:string}> ,res:Response) => {
+authRouter.post("/password-recovery",AuthValidationEmailToSendMessage(),IPRequestCounter,ErrorMiddleware, async (req: Request<{},{},{email:string}> ,res:Response) => {
     const requestEmail: string = req.body.email
     if (!requestEmail ) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
     await authService.sendEmailMessage(requestEmail)
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+})
+authRouter.post("/new-password",AuthBodyToSendNewPassword() ,IPRequestCounter,ErrorMiddleware, async (req: Request ,res:Response) => {
+    const requestEmail = {
+        newPassword: req.body.newPassword,
+        recoveryCode:req.body.recoveryCode
+    }
+    if (!requestEmail ) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+    await authService.findUserByRecoveryCode(requestEmail)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 authRouter.post("/refresh-token", ValidationRefreshToken,IPRequestCounter ,async (req: Request ,res:Response) => {

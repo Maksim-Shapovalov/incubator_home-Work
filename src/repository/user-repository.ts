@@ -5,7 +5,14 @@ import {
 import {ObjectId, WithId} from "mongodb";
 import add from "date-fns/add";
 import {UserModelClass} from "../schemas/user-schemas";
-
+type possibleUser = {
+    email: string,
+    recoveryCode: string
+}
+export type newDataUser={
+    newPassword: string,
+    recoveryCode: string
+}
 export const userRepository = {
     async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToShow> | null>{
         const filterQuery = {$or: [
@@ -56,6 +63,21 @@ export const userRepository = {
         const findUser = await UserModelClass.findOne({ $or: [{login: loginOrEmail}, {email: loginOrEmail}]})
         return findUser
 
+    },
+
+    async findByEmailAndAddRecoveryode(possibleUser:possibleUser){
+        const findUser = await UserModelClass.findOne({email: possibleUser.email})
+        if (!findUser) return false
+        findUser.recoveryCode = possibleUser.recoveryCode
+        return findUser
+
+    },
+    async findUserByRecoveryCode(newDataUser: newDataUser){
+      const user = await  UserModelClass.findOne({recoveryCode: newDataUser.recoveryCode})
+        if (!user) return false
+        user.passwordHash = newDataUser.newPassword
+        console.log("passwordHash---------",user.passwordHash)
+        return user
     },
 
     async updateCodeToResendingMessage(userEmail: string, info: any){

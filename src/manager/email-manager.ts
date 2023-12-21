@@ -16,10 +16,10 @@ export const emailManager = {
         </p>`
         await emailAdapter.resendEmail(userEmail,userlogin, textForSend)
     },
-    async sendEmailWithTheCode(email:string){
+    async sendEmailWithTheCode(email:string, recoveryCode:string){
         const textForSend = `<h1>Password recovery</h1>
        <p>To finish password recovery please follow the link below:
-          <a href='https://somesite.com/password-recovery?recoveryCode=your_recovery_code'>recovery password</a>
+          <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password = ${recoveryCode}</a>
       </p>`
         await emailAdapter.sendEmailToCode(email,textForSend)
     }

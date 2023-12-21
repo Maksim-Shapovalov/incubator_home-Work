@@ -54,7 +54,6 @@ export const ValidationRefreshToken = async (req: Request, res: Response , next:
 
 export const IPRequestCounter = async (req: Request, res: Response , next: NextFunction) =>{
     const current = new Date()
-
     if(!req.ip){
         return next()
     }

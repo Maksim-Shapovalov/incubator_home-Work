@@ -1,5 +1,6 @@
 import {body} from "express-validator";
 import {userRepository} from "../../../repository/user-repository";
+import {log} from "util";
 
 
 export const AuthValidation = ()=>(
@@ -50,5 +51,29 @@ export const AuthValidationEmail = ()=>(
                 .isString()
                 .matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
                 .withMessage('Invalid email')
+
         ]
+)
+export const AuthValidationEmailToSendMessage = ()=>(
+    [
+        body('email')
+            .trim()
+            .isString()
+            .matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
+            .withMessage('Invalid email')
+
+    ]
+)
+export const AuthBodyToSendNewPassword = ()=>(
+    [
+        body('newPassword')
+            .trim()
+            .isString()
+            .isLength({min:6, max: 20})
+            .withMessage('Invalid newPassword'),
+        body('newPassword')
+            .trim()
+            .isString
+
+    ]
 )

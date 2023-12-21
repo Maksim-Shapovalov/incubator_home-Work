@@ -44,6 +44,7 @@ export type UserMongoDbType = WithId<{
     passwordSalt: string
     createdAt: string
     emailConfirmation: EmailConfirmations
+    recoveryCode:string
 }>
 
 export type EmailConfirmations = {

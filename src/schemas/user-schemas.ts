@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema<UserMongoDbType>({
             confirmationCode: {type: String, required: true},
             expirationDate: {type: String, required: true},
             isConfirmed: {type: Boolean, required: true}
-        }, required: true}
+        }, required: true},
+    recoveryCode: {type: String, required: false}
 })
 export const UserModelClass = mongoose.model('users', userSchema)
