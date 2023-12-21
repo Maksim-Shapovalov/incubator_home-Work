@@ -16,6 +16,9 @@ export const authService = {
         const result = await userRepository.updateCodeToResendingMessage(user.email, newConfirmationCode)
         await emailManager.repeatSendEmailRecoveryMessage(result!.email, result!.login, result!.emailConfirmation.confirmationCode)//email, code
     },
+    async sendEmailMessage(email:string) {
+        await emailManager.sendEmailWithTheCode(email)
+    }
 
 
 }

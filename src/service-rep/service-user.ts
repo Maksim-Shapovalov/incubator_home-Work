@@ -59,5 +59,10 @@ export const serviceUser = {
             return false
         }
         return user
-    }
+    },
+    // async searchUserByEmail(loginOrEmail: string) {
+    //     const user = await userRepository.findByLoginOrEmail(loginOrEmail)
+    //     if (!user) return false
+    //     return user
+    // }
 }

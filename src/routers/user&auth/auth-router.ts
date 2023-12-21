@@ -13,15 +13,11 @@ import {securityDeviceService} from "../../service-rep/security-device-service";
 
 
 
+
 export const authRouter = Router()
 
 
-authRouter.post("/login",
-
-    IPRequestCounter,
-
-    async (req: Request ,res:Response)=>{
-
+authRouter.post("/login", IPRequestCounter, async (req: Request ,res:Response)=>{
     const userAgent = {
         IP: req.socket.remoteAddress || req.headers['x-forwarded-for'],
         deviceName: req.headers["user-agent"]
@@ -33,6 +29,12 @@ authRouter.post("/login",
 
    res.cookie('refreshToken',refreshToken, {httpOnly: true,secure: true})
    return res.status(HTTP_STATUS.OK_200).send({accessToken})
+})
+authRouter.post("/password-recovery",AuthValidationEmail,IPRequestCounter,ErrorMiddleware, async (req: Request<{},{},{email:string}> ,res:Response) => {
+    const requestEmail: string = req.body.email
+    if (!requestEmail ) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+    await authService.sendEmailMessage(requestEmail)
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })
 authRouter.post("/refresh-token", ValidationRefreshToken,IPRequestCounter ,async (req: Request ,res:Response) => {
     const oldRefreshToken = req.cookies.refreshToken
@@ -94,7 +96,7 @@ authRouter.post("/registration",
         password: req.body.password,
         email: req.body.email
     }
-    const createUser = await serviceUser.getNewUser(user)
+    // const createUser: UserToShow = await serviceUser.getNewUser(user)
     await authService.doOperation(user)
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })

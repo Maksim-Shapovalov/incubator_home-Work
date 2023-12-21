@@ -58,6 +58,29 @@ export const emailAdapter = {
         }catch(e){
             console.log('error',e)
         }
+    },
+    async sendEmailToCode(email:string, textForSend: string){
+        try {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'maksim.shapovalov.01@gmail.com',
+                    pass: 'wewedrlwgkkmoswq'
+                }
+            })
+            let info =
+                {
+
+                    from: 'Maksim <maksim.shapovalov.01@gmail.com>',
+                    to: email,
+                    subject: email,
+                    html: textForSend
+                }
+            const result = await transporter.sendMail(info)
+            return result
+        }catch (e){
+            console.log('error',e)
+        }
     }
 
 
