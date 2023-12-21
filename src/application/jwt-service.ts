@@ -1,4 +1,4 @@
-import jwt, {JwtPayload} from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import {setting} from "../setting";
 import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
@@ -34,7 +34,6 @@ export const jwtService = {
         const refreshToken:string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
             setting.JWT_REFRESH_SECRET, {expiresIn: '20000sec'})
 
-        //{userId, deviceId, iat, exp}
 
         return {accessToken, refreshToken}
 
@@ -69,17 +68,6 @@ export const jwtService = {
           return null
         }
     },
-    // async parseJWTAccessToken(accessToken: string){
-    //     console.log('parse')
-    //     try {
-    //         const payload = jwt.verify(accessToken, setting.JWT_SECRET)
-    //         console.log('paylod in parse')
-    //         return payload as PayloadType
-    //     }catch (e){
-    //         return null
-    //     }
-    // },
-
     async getUserIdByToken(token: string) {
         try {
             const result: any = jwt.verify(token, setting.JWT_SECRET)

@@ -1,4 +1,4 @@
-import {BodyPostToRequest, PostOutputModel, PostsType} from "../types/posts-type";
+import {BodyPostToRequest, PostOutputModel} from "../types/posts-type";
 import {postMapper, postsRepository} from "../repository/posts-repository";
 import {blogsRepository} from "../repository/blogs-repository";
 import {PostModelClass} from "../schemas/post-schema";
@@ -21,15 +21,6 @@ export const postsService = {
         newPosts.createdAt =  new Date().toISOString()
 
 
-
-        // const newPosts: PostsType  = {
-        //     title: bodyPost.title,
-        //     shortDescription: bodyPost.shortDescription,
-        //     content: bodyPost.content,
-        //     blogId: blogId,
-        //     blogName: findBlogName.name,
-        //     createdAt: new Date().toISOString(),
-        // }
         const result = await postsRepository.savePost(newPosts)
         const correctPost = postMapper(result)
         return correctPost

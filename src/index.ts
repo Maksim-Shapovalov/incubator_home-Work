@@ -1,16 +1,5 @@
-import express from 'express'
-import {VideoRouter} from "./routers/videos/video-router";
-import {AllDataClear} from "./routers/all-data-clear";
 import {runDB} from "./DB/data-base";
-import {userRouter} from "./routers/user&auth/User-router";
-import {authRouter} from "./routers/user&auth/auth-router";
-import {blogsRouter} from "./routers/blogs&posts&comments/blogs-router";
-import {postsRouter} from "./routers/blogs&posts&comments/posts-router";
-import {commentsRouter} from "./routers/blogs&posts&comments/comments-router";
-import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
-import {securityDevices} from "./routers/security-deviced/security-devices";
-import {AllDataVideoClear} from "./db-items/db-videos";
 import {initApp} from "./initApp";
 
 dotenv.config()

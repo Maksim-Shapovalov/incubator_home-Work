@@ -1,5 +1,5 @@
 import {commentsMapper, commentsRepository} from "../repository/comments-repository";
-import {CommentsOutputType, CommentsTypeDb} from "../types/comment-type";
+import {CommentsOutputType} from "../types/comment-type";
 import {WithId} from "mongodb";
 import {UserMongoDbType} from "../types/user-type";
 import {postsRepository} from "../repository/posts-repository";
@@ -23,15 +23,7 @@ export const serviceComments = {
         newComment.createdAt = new Date().toISOString()
 
 
-        // const newComment: CommentsTypeDb = {
-        //     content: content,
-        //     commentatorInfo: {
-        //         userId: user._id.toString(),
-        //         userLogin: user.login
-        //     },
-        //     postId: postId,
-        //     createdAt: new Date().toISOString()
-        // }
+
         const res = await commentsRepository.saveComments(newComment)
         const correctComment = commentsMapper(res)
         return correctComment

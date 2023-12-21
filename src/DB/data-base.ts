@@ -26,8 +26,8 @@ const db = client.db("duplicate-code")
 // export const dataUser = db.collection<UserDbType>("user")
 // export const dataComments = db.collection<CommentsTypeDb>("comments")
 // export const dataBlackListForToken = db.collection<BlackListForTokenType>("blackList")
-export const dataID = db.collection<DevicesUserDB>('info')
-export const neSyt = db.collection<neSytTypes>('neSyt')
+// export const dataID = db.collection<DevicesUserDB>('info')
+// export const neSyt = db.collection<neSytTypes>('neSyt')
 
 
 

@@ -5,8 +5,8 @@ import {userRepository} from "../repository/user-repository";
 import { ObjectId} from "mongodb";
 import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
 import {securityDevicesRepo} from "../repository/security-devices-repo";
-import {neSyt} from "../DB/data-base";
 import {neSytTypes} from "../types/neSyt-types";
+import {NeSytModelClass} from "../schemas/neSyt-schemas";
 
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
@@ -66,17 +66,17 @@ export const IPRequestCounter = async (req: Request, res: Response , next: NextF
        createdAt: current.toISOString(),
    }
 
-    await neSyt.insertOne(newElement)
+    await NeSytModelClass.insertMany(newElement)
 
     const timeThreshold = current;
     timeThreshold.setSeconds(current.getSeconds() - 10);
 
     console.log(timeThreshold, 'timeThreshold')
 
-    const findReqInDB = await neSyt.find(
+    const findReqInDB = await NeSytModelClass.find(
         {ip: newElement.ip.toString(), way: newElement.way,
             createdAt: { $gte: timeThreshold.toISOString() }})
-        .toArray()
+        .lean()
 
     console.log(findReqInDB,'neSytTypes')
 

@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import {AvailableResolutionsEnum} from "../../../types/video-type";
-import {throws} from "assert";
+
 
 
 export const ValidationVideo = () => (

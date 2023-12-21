@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import {BlogsType} from "../types/blogs-type";
 import {PostsType} from "../types/posts-type";
 
 const postSchema = new mongoose.Schema<PostsType>({
