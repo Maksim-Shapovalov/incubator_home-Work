@@ -72,6 +72,10 @@ export const AuthBodyToSendNewPassword = ()=>(
             .isLength({min:6, max: 20})
             .withMessage('Invalid newPassword'),
         body('recoveryCode')
+            .custom(async (i) => {
+                const user = await userRepository.findUserByCodeInValidation(i)
+                if (!user) throw new Error ('incorrect recoveryCode')
+            })
             .trim()
             .isString()
             .withMessage('Invalid recoveryCode')

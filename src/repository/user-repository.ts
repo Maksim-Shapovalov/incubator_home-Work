@@ -77,6 +77,11 @@ export const userRepository = {
         return findUser
 
     },
+    async findUserByCodeInValidation(code:string){
+        const user = await UserModelClass.findOne({recoveryCode: code})
+        if (!user) return false
+        return user
+    },
     async findUserByRecoveryCode(newDataUser: newDataUser2){
       const user = await  UserModelClass.findOneAndUpdate({recoveryCode: newDataUser.recoveryCode},
           {passwordHash: newDataUser.newPassword,passwordSalt: newDataUser.newSalt})
