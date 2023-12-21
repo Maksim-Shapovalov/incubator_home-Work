@@ -73,7 +73,9 @@ export const AuthBodyToSendNewPassword = ()=>(
             .withMessage('Invalid newPassword'),
         body('recoveryCode')
             .trim()
-            .isString
+            .isString()
+            .withMessage('Invalid recoveryCode')
+
 
     ]
 )
