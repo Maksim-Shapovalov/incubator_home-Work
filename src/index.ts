@@ -1,5 +1,5 @@
 import {runDB} from "./DB/data-base";
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import {initApp} from "./initApp";
 
 dotenv.config()
