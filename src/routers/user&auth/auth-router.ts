@@ -89,7 +89,7 @@ class AuthController {
 
     async registrationConfirmation(req: Request, res: Response) {
 
-        const result = await authService.confirmatorUser(req.body.code)
+        const result = await authService.confirmatoryUser(req.body.code)
         if (!result) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return

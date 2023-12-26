@@ -9,18 +9,16 @@ export class AuthService{
     async doOperation(user: any){
         await emailManager.sendEmailRecoveryMessage(user)
     }
-    async confirmatorUser(code:string){
+    async confirmatoryUser(code:string){
         return await userRepository.getUserByCode(code)
     }
     async findUserByRecoveryCode(newDataUser: newDataUser2){
-        const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await serviceUser._generateHash(newDataUser.newPassword, passwordSalt)
 
-        newDataUser.newPassword = passwordHash
-        newDataUser.newSalt = passwordSalt
+        newDataUser.newSalt = await bcrypt.genSalt(10)
+        newDataUser.newPassword = await serviceUser._generateHash(newDataUser.newPassword, newDataUser.newSalt)
 
-        const findUserByCode = await userRepository.findUserByRecoveryCode(newDataUser)
-        return findUserByCode
+
+        return  userRepository.findUserByRecoveryCode(newDataUser)
     }
     async findUserByEmail(user:any){
         const newConfirmationCode = {

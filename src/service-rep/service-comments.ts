@@ -3,7 +3,7 @@ import {CommentsClass, CommentsOutputType} from "../types/comment-type";
 import {WithId} from "mongodb";
 import {UserMongoDbType} from "../types/user-type";
 import {postsRepository} from "../repository/posts-repository";
-import {CommentsModelClass} from "../schemas/comments-schemas";
+
 
 export class ServiceComments {
     async createdNewComments(postId: string, content: string, user: WithId<UserMongoDbType>): Promise<CommentsOutputType | null> {
@@ -25,8 +25,8 @@ export class ServiceComments {
 
 
         const res = await commentsRepository.saveComments(newComment)
-        const correctComment = commentsMapper(res)
-        return correctComment
+        return commentsMapper(res)
+
     }
 
     async updateComment(commentId: string, content: string) {

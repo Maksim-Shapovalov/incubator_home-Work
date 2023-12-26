@@ -3,7 +3,7 @@ import {setting} from "../setting";
 import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
 import {refreshTokenRepo} from "../repository/refreshToken-repo";
-import {DeviceClass, DevicesUserDB} from "../types/device-of-user";
+import {DeviceClass} from "../types/device-of-user";
 import {securityDevicesRepo} from "../repository/security-devices-repo";
 import {UserToPostsOutputModel} from "../types/user-type";
 
@@ -19,7 +19,7 @@ type PayloadTypeRefresh = {
 
 } | null
 
-export class JwtService{
+export class JwtService {
     async createdJWTAndInsertDevice(user: UserToPostsOutputModel, userAgent: any = null) {
         const createRefreshTokenMeta = new DeviceClass(
             userAgent.IP || '123',
@@ -39,9 +39,9 @@ export class JwtService{
         return {accessToken, refreshToken}
 
     }
+
     async updateJWT(user: UserToPostsOutputModel, oldRefreshToken: string) {
         const parser = (jwt.decode(oldRefreshToken) as PayloadTypeRefresh)
-        console.log("PARSER________", parser)
         if (!parser) {
             return null
         }
@@ -57,18 +57,16 @@ export class JwtService{
             setting.JWT_REFRESH_SECRET, {expiresIn: '1000sec'})
         return {accessToken, refreshToken}
     }
+
     async parseJWTRefreshToken(refreshToken: string) {
         try {
             const payload = jwt.verify(refreshToken, setting.JWT_REFRESH_SECRET)
-            console.log("PAYLOAD___________________", payload)
-
-
             return payload as PayloadType
         } catch (e) {
-            console.error('error in verify token:', e)
             return null
         }
     }
+
     async getUserIdByToken(token: string) {
         try {
             const result: any = jwt.verify(token, setting.JWT_SECRET)
