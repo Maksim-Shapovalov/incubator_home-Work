@@ -1,8 +1,10 @@
-import {BlogsOutputModel, BlogsType} from "../types/blogs-type";
+import {BlogClass, BlogsOutputModel, BlogsType} from "../types/blogs-type";
 import {ObjectId, WithId} from "mongodb";
 import {BlogsPaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {BlogModelClass} from "../schemas/blog-schemas";
-export const blogsRepository = {
+
+
+export class BlogsRepository{
     async getAllBlogs(filter: BlogsPaginationQueryType): Promise<PaginationType<BlogsOutputModel>> {
         const filterQuery = {name: {$regex: filter.searchNameTerm, $options: 'i'}}
 
@@ -26,21 +28,16 @@ export const blogsRepository = {
             totalCount: totalCountBlogs,
             items: items
         }
-    },
-
+    }
     async getBlogsById(id: string): Promise<BlogsOutputModel | null> {
         if (!ObjectId.isValid(id)) return null
         const findCursor = await BlogModelClass.findOne({_id: new ObjectId(id)});
         if (!findCursor) return null
         return blogMapper(findCursor)
-    },
-    // async createNewBlogs(newBlogs: BlogsType): Promise<BlogsOutputModel> {
-    //     const res = await BlogModelClass.insertMany({...newBlogs})
-    //     return blogMapper({...newBlogs, _id: res.insertedId})
-    // },
-    async saveBlog(blog:BlogsType): Promise<BlogsType> {
+    }
+    async saveBlog(blog:BlogClass): Promise<BlogsType> {
         return BlogModelClass.create(blog)
-    },
+    }
     async updateBlogById(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
         const res = await BlogModelClass.updateOne({_id: new ObjectId(id)}, {
             $set: {
@@ -50,14 +47,16 @@ export const blogsRepository = {
             }
         })
         return res.matchedCount === 1
-    },
+    }
     async deleteBlogsById(id: string): Promise<boolean> {
         const findBlog = await BlogModelClass.deleteOne({_id: new ObjectId(id)})
         return findBlog.deletedCount === 1
 
     }
-
 }
+
+
+export const blogsRepository = new BlogsRepository()
 export const blogMapper = (blog: WithId<BlogsType>): BlogsOutputModel => {
     return {
         id: blog._id.toHexString(),

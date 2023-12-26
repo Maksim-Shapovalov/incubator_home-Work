@@ -1,11 +1,12 @@
-import {PostOutputModel, PostsType} from "../types/posts-type";
+import {PostClass, PostOutputModel, PostsType} from "../types/posts-type";
 import {ObjectId, WithId} from "mongodb";
 import {blogsRepository} from "./blogs-repository";
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {PostModelClass} from "../schemas/post-schema";
 
-export const postsRepository = {
-    async getAllPosts(filter:PaginationQueryType): Promise<PaginationType<PostOutputModel>>{
+
+export class PostsRepository {
+    async getAllPosts(filter: PaginationQueryType): Promise<PaginationType<PostOutputModel>> {
         const pageSizeInQuery: number = filter.pageSize;
         const totalCountBlogs = await PostModelClass.countDocuments({})
 
@@ -25,16 +26,18 @@ export const postsRepository = {
             totalCount: totalCountBlogs,
             items: items
         }
-    },
-    async getPostsById(id: string):Promise<PostOutputModel | null> {
+    }
+
+    async getPostsById(id: string): Promise<PostOutputModel | null> {
         const findPosts = await PostModelClass
             .findOne({_id: new ObjectId(id)});
-        console.log(findPosts)
-        if (!findPosts){
+
+        if (!findPosts) {
             return null
         }
         return postMapper(findPosts)
-    },
+    }
+
     async getPostInBlogs(blogId: string, filter: PaginationQueryType): Promise<PaginationType<PostOutputModel> | null> {
         const findBlog = await blogsRepository.getBlogsById(blogId)
         if (!findBlog) {
@@ -65,28 +68,33 @@ export const postsRepository = {
             items: items
         }
 
-    },
+    }
 
-    async savePost(post:PostsType): Promise<PostsType> {
+    async savePost(post: PostClass): Promise<PostsType> {
         return PostModelClass.create(post)
-    },
-    // async createNewPosts
-    // (newPosts: PostsType): Promise<PostOutputModel> {
-    //     const result = await dataPost.insertOne({...newPosts})
-    //     return postMapper({...newPosts, _id: result.insertedId})
-    // },
-    async updatePostsById
-    (id: string, title:string,shortDescription:string,content:string,blogId:string): Promise<boolean> {
-        const res = await PostModelClass.updateOne({_id: new ObjectId(id)}, {$set: {title,shortDescription, content, blogId}})
+    }
+
+    async updatePostsById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<boolean> {
+        const res = await PostModelClass.updateOne({_id: new ObjectId(id)}, {
+            $set: {
+                title,
+                shortDescription,
+                content,
+                blogId
+            }
+        })
         return res.matchedCount === 1
-    },
-    async deletePostsById(id: string): Promise<boolean>{
+    }
+
+    async deletePostsById(id: string): Promise<boolean> {
         const findPost = await PostModelClass.deleteOne({_id: new ObjectId(id)})
         return findPost.deletedCount === 1
 
     }
-
 }
+
+export const postsRepository = new PostsRepository()
+
 
 export const postMapper = (post: WithId<PostsType>): PostOutputModel => {
     return {

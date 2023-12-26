@@ -1,5 +1,6 @@
 import { PaginationType, UserPaginationQueryType} from "./qurey-repo/query-filter";
 import {
+    UserDbType,
     UserMongoDbType, UserOutputModel, UserToShow,
 } from "../types/user-type";
 import {ObjectId, WithId} from "mongodb";
@@ -18,10 +19,11 @@ export type newDataUser2={
     newSalt: string,
     recoveryCode: string
 }
-export const userRepository = {
+
+export class UserRepository {
     async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToShow> | null>{
         const filterQuery = {$or: [
-            {login: {$regex:filter.searchLoginTerm, $options: 'i'}},
+                {login: {$regex:filter.searchLoginTerm, $options: 'i'}},
                 {email: {$regex: filter.searchEmailTerm, $options: 'i'}}
             ]}
 
@@ -44,31 +46,31 @@ export const userRepository = {
             totalCount: totalCountUsers,
             items: items
         }
-    },
+    }
     async getUserById(id:ObjectId):Promise<UserMongoDbType | null>{
         return UserModelClass.findOne({_id: id}).lean()
 
-    },
+    }
     async findUsersbyCode(codeUser:string){
         return  UserModelClass.findOne({'emailConfirmation.confirmationCode': codeUser})
 
 
-    },
+    }
     async getUserByCode(codeUser:string): Promise<boolean>{
-       const res = await UserModelClass.updateOne({'emailConfirmation.confirmationCode': codeUser}, {
+        const res = await UserModelClass.updateOne({'emailConfirmation.confirmationCode': codeUser}, {
             $set: {
                 'emailConfirmation.isConfirmed' : true
             }
         })
         return res.matchedCount === 1
 
-    },
+    }
 
     async findByLoginOrEmail(loginOrEmail: string){
-        const findUser = await UserModelClass.findOne({ $or: [{login: loginOrEmail}, {email: loginOrEmail}]})
-        return findUser
+        return UserModelClass.findOne({ $or: [{login: loginOrEmail}, {email: loginOrEmail}]})
 
-    },
+
+    }
 
     async findByEmailAndAddRecoveryode(possibleUser:possibleUser){
         const findUser = await UserModelClass.findOneAndUpdate({email: possibleUser.email},{recoveryCode: possibleUser.recoveryCode})
@@ -76,15 +78,15 @@ export const userRepository = {
         // findUser.recoveryCode = possibleUser.recoveryCode
         return findUser
 
-    },
+    }
     async findUserByCodeInValidation(code:string){
         const user = await UserModelClass.findOne({recoveryCode: code})
         if (!user) return false
         return user
-    },
+    }
     async findUserByRecoveryCode(newDataUser: newDataUser2){
-      const user = await  UserModelClass.findOneAndUpdate({recoveryCode: newDataUser.recoveryCode},
-          {passwordHash: newDataUser.newPassword,passwordSalt: newDataUser.newSalt})
+        const user = await  UserModelClass.findOneAndUpdate({recoveryCode: newDataUser.recoveryCode},
+            {passwordHash: newDataUser.newPassword,passwordSalt: newDataUser.newSalt})
         console.log("passwordHash---------",newDataUser.newPassword)
         console.log("passwordHash---------",newDataUser.recoveryCode)
         if (!user) return false
@@ -93,7 +95,7 @@ export const userRepository = {
 
         console.log("user-----",user)
         return user
-    },
+    }
 
     async updateCodeToResendingMessage(userEmail: string, info: any){
         await UserModelClass.updateOne({email : userEmail}, {
@@ -108,7 +110,7 @@ export const userRepository = {
         const user = await UserModelClass.findOne({email:userEmail})
         console.log('result',user)
         return user
-    },
+    }
     // async getNewUser(newUser: UserMongoDbType): Promise<UserMongoDbType>{
     //     const result = await UserModelClass.insertMany([newUser])
     //     return userMapper({...newUser})
@@ -116,9 +118,9 @@ export const userRepository = {
     async deleteUserById(userId:string): Promise<boolean>{
         const findUser = await UserModelClass.deleteOne({_id:new ObjectId(userId)})
         return findUser.deletedCount === 1
-    },
+    }
 
-    async saveUser(user:UserMongoDbType): Promise<UserMongoDbType>{
+    async saveUser(user:UserDbType): Promise<UserMongoDbType>{
 
         // const userModel = new UserModelClass(user)
         // console.log("user Model-----", JSON.stringify(userModel), JSON.stringify(userModel.save()))
@@ -129,8 +131,11 @@ export const userRepository = {
 
     }
 
+
+
 }
 
+export const userRepository = new UserRepository()
 export const userMapper = (user: WithId<UserMongoDbType>): UserOutputModel => {
     return {
         id: user._id.toHexString(),
@@ -149,12 +154,3 @@ export const userToPostMapper = (user: WithId<UserMongoDbType>): UserToShow => {
         createdAt: user.createdAt
     }
 }
-// export const UserToCodeMapper = (user: WithId<UserMongoDbType>): UserToCodeOutputModel => {
-//     return {
-//         login: user.login,
-//         email: user.email,
-//         createdAt: user.createdAt,
-//         emailConfirmation: user.emailConfirmation
-//     }
-//
-// }

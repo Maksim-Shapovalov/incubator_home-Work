@@ -1,3 +1,17 @@
+export class VideoClass {
+    constructor(
+        public id: number,
+        public title: string,
+        public author: string,
+        public canBeDownloaded: boolean,
+        public minAgeRestriction: any,
+        public createdAt: string,
+        public publicationDate: string,
+        public availableResolutions: Array<string>){}
+
+}
+
+
 export enum AvailableResolutionsEnum {
     P144 = "P144",
     P240 = "P240",

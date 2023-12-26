@@ -1,42 +1,29 @@
 import {securityDevicesRepo} from "../repository/security-devices-repo";
-import {DevicesUserDB, OutpatModeldevicesUser} from "../types/device-of-user";
-import {ObjectId, WithId} from "mongodb";
+import { OutpatModeldevicesUser} from "../types/device-of-user";
+import {ObjectId} from "mongodb";
 
 
-export const securityDeviceService={
-    async getAllDevices(userId:string): Promise<OutpatModeldevicesUser[] | null>{
+export class SecurityDeviceService {
+    async getAllDevices(userId: string): Promise<OutpatModeldevicesUser[] | null> {
         const devices = await securityDevicesRepo.getAllDevices(new ObjectId(userId).toString())
-        if (!devices){
+        if (!devices) {
             return null
         }
         return devices
-    },
+    }
 
-    // async updateDevice (deviceId: string){
-    //   const device = await  securityDevicesRepo.updateDevice(deviceId)
-    //     return device
-    //
-    //
-    // },
-    async deletingDevicesExceptId(userId:string,deviceId: string){
-        const deletedDevice = await securityDevicesRepo.deletingDevicesExceptId(userId,deviceId)
-        return deletedDevice
-    },
-    async deletingAllDevices(user: string,device:string){
-        const deletedDevice = await securityDevicesRepo.deletingAllDevices(user,device)
-        return deletedDevice
+    async deletingDevicesExceptId(userId: string, deviceId: string) {
+        return securityDevicesRepo.deletingDevicesExceptId(userId, deviceId)
+
+    }
+
+    async deletingAllDevices(user: string, device: string) {
+        return securityDevicesRepo.deletingAllDevices(user, device)
+
     }
 }
 
+export const securityDeviceService = new SecurityDeviceService()
 
-// export const deviceMapper =(device: WithId<PostsType>) => {
-//
-//     return {
-//         title: device.title,
-//         shortDescription: device.shortDescription,
-//         content: device.content,
-//         blogId: device.blogId,
-//         blogName: device.blogName,
-//         createdAt: device.createdAt
-//     }
+
 

@@ -1,3 +1,4 @@
+// @ts-ignore
 import request from 'supertest'
 import { HTTP_STATUS} from "../src/index";
 import {initApp} from "../src/initApp";

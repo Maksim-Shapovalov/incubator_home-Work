@@ -12,13 +12,13 @@ export type UserPaginationQueryType = PaginationQueryType & {
     searchEmailTerm: string
 }
 
-export function searchLogAndEmailInUsers(queryLog: any ): UserPaginationQueryType{
+export function searchLogAndEmailInUsers(queryLog: any): UserPaginationQueryType {
     const defaultFilter: UserPaginationQueryType = {
         searchEmailTerm: '',
         searchLoginTerm: '',
         ...queryFilter(queryLog)
     }
-    if (queryLog.searchEmailTerm){
+    if (queryLog.searchEmailTerm) {
         defaultFilter.searchEmailTerm = queryLog.searchEmailTerm
     }
     if (queryLog.searchLoginTerm) {
@@ -33,12 +33,13 @@ export function searchNameInBlog(request: any): BlogsPaginationQueryType {
         ...queryFilter(request)
     }
 
-    if(request.searchNameTerm){
+    if (request.searchNameTerm) {
         defaultFilter.searchNameTerm = request.searchNameTerm
     }
 
     return defaultFilter
 }
+
 export function queryFilter(query: any): PaginationQueryType {
     const defaultFilter: PaginationQueryType = {
         sortBy: 'createdAt',
@@ -47,22 +48,21 @@ export function queryFilter(query: any): PaginationQueryType {
         pageSize: 10
     }
 
-    if(query.sortBy){
+    if (query.sortBy) {
         defaultFilter.sortBy = query.sortBy
     }
-    if(query.sortDirection && query.sortDirection === 'asc'){
+    if (query.sortDirection && query.sortDirection === 'asc') {
         defaultFilter.sortDirection = query.sortDirection
     }
-    if(query.pageSize && !isNaN(Number(query.pageSize)) && Number(query.pageSize) > 0){
+    if (query.pageSize && !isNaN(Number(query.pageSize)) && Number(query.pageSize) > 0) {
         defaultFilter.pageSize = Number(query.pageSize)
     }
-    if(query.pageNumber && !isNaN(Number(query.pageNumber)) && Number(query.pageNumber) > 0){
+    if (query.pageNumber && !isNaN(Number(query.pageNumber)) && Number(query.pageNumber) > 0) {
         defaultFilter.pageNumber = Number(query.pageNumber)
     }
 
     return defaultFilter
 }
-
 
 
 export type PaginationType<I> = {

@@ -1,4 +1,18 @@
 import {WithId} from "mongodb";
+
+export class UserDbType {
+    constructor(
+                public login: string,
+                public email: string,
+                public passwordHash: any,
+                public passwordSalt: string,
+                public createdAt: string,
+                public emailConfirmation: EmailConfirmations,
+                public recoveryCode: string) {
+    }
+
+}
+
 export type UserOutputModel = {
     id: string
     login: string
@@ -36,7 +50,6 @@ export type UserBasicRequestBody = {
 }
 
 
-
 export type UserMongoDbType = WithId<{
     login: string
     email: string
@@ -44,7 +57,7 @@ export type UserMongoDbType = WithId<{
     passwordSalt: string
     createdAt: string
     emailConfirmation: EmailConfirmations
-    recoveryCode:string
+    recoveryCode: string
 }>
 
 export type EmailConfirmations = {

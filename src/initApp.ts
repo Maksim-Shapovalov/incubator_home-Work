@@ -25,7 +25,7 @@ export const initApp = () => {
     app.use("/auth", authRouter)
     app.use("/comments", commentsRouter)
     app.use("/security/devices", securityDevices)
-    app.use("/AllDataVideoClear",AllDataVideoClear)
+    app.use("/AllDataVideoClear", AllDataVideoClear)
 
     return app;
 }

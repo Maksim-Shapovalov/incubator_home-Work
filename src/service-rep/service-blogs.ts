@@ -1,39 +1,33 @@
-import {BlogRequest, BlogsOutputModel, BlogsType} from "../types/blogs-type";
+import {BlogClass, BlogRequest, BlogsOutputModel, BlogsType} from "../types/blogs-type";
 import {WithId} from "mongodb";
 import {blogsRepository} from '../repository/blogs-repository'
-import {BlogModelClass} from "../schemas/blog-schemas";
 
-export const blogsService = {
+export class ServiceBlogs {
     async createNewBlogs(blog: BlogRequest): Promise<BlogsOutputModel> {
 
-        const newBlogs = new BlogModelClass()
+        const newBlogs = new BlogClass(
+            blog.name,
+            blog.description,
+            blog.websiteUrl,
+            new Date().toISOString(),
+            false
+        )
 
-        newBlogs.name = blog.name
-        newBlogs.description = blog.description
-        newBlogs.websiteUrl = blog.websiteUrl
-        newBlogs.createdAt = new Date().toISOString()
-        newBlogs.isMembership = false
 
-        // const newBlogs : BlogsType = {
-        //     name: name,
-        //     description: description,
-        //     websiteUrl: websiteUrl,
-        //     createdAt: new Date().toISOString(),
-        //     isMembership: false
-        // }
         const res = await blogsRepository.saveBlog(newBlogs)
-        const correctBlog = blogMapper(res)
-        return correctBlog
-    },
-    async updateBlogById(id: string, name:string, description: string, websiteUrl: string): Promise<boolean> {
+        return  blogMapper(res)
+
+    }
+    async updateBlogById(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
         return await blogsRepository.updateBlogById(id, name, description, websiteUrl)
-    },
-    async deleteBlogsById(id: string) :Promise<boolean> {
+    }
+    async deleteBlogsById(id: string): Promise<boolean> {
         return await blogsRepository.deleteBlogsById(id)
 
     }
-
 }
+
+export const blogsService = new ServiceBlogs()
 const blogMapper = (blog: WithId<BlogsType>): BlogsOutputModel => {
     return {
         id: blog._id.toHexString(),
