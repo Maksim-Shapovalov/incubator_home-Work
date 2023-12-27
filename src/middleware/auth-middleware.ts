@@ -21,7 +21,8 @@ export const authMiddlewareForGetCommentById = async (req: Request, res: Respons
         }
     }
 
-    return null
+    return next()
+
 }
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
