@@ -39,7 +39,7 @@ export type CommentsOutputType = {
         userLogin: string
     }
     "createdAt": string
-    likeStatus: {
+    likeStatus:{
         likeCount: number,
         dislikeCount: number,
         myStatus: string

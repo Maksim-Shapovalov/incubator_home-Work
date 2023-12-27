@@ -79,7 +79,7 @@ export class CommentsRepository {
 
 export const commentsRepository = new CommentsRepository()
 export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<CommentsOutputType> => {
-    const likeCount = await CommentsModelClass.countDocuments({likeStatus: "like",postId: comment.postId}).exec()
+    const likeCount = await CommentsModelClass.countDocuments({likeStatus: "like"}).exec()
     const dislikeCount = await CommentsModelClass.countDocuments({likeStatus: "dislike"}).exec()
     return {
         id: comment._id.toHexString(),
@@ -96,3 +96,4 @@ export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<C
         }
     }
 }
+//,postId: comment.postId
