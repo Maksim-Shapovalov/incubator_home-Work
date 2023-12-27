@@ -66,7 +66,7 @@ export class CommentsRepository {
     async updateStatusLikeUser(commentId: string, status: string) {
         const updateStatus = await CommentsModelClass.updateOne({_id: new ObjectId(commentId)}, {
             $set: {
-                likeStatus: status
+                likeStatus: status.toLowerCase()
             }
         })
         return updateStatus.matchedCount === 1
