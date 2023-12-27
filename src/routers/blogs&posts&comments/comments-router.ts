@@ -10,7 +10,7 @@ export const commentsRouter = Router();
 
 class CommentsController {
     async getCommentsById(req: Request, res: Response) {
-        const findComments = await commentsRepository.getCommentById(req.params.id)
+        const findComments = await commentsRepository.getCommentById(req.params.id, null)
         if (!findComments) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return
@@ -20,7 +20,7 @@ class CommentsController {
 
     async updateCommentByCommentId(req: Request, res: Response) {
         const user = req.body.user
-        const comment = await commentsRepository.getCommentById(req.params.commentId)
+        const comment = await commentsRepository.getCommentById(req.params.commentId, user._id.toString())
 
         const updateComment = await serviceComments.updateComment(req.params.commentId, req.body.content)
 
@@ -37,7 +37,7 @@ class CommentsController {
     }
     async appropriationLike (req: Request, res: Response){
         const value = req.body.user
-        const comment = await commentsRepository.getCommentById(req.params.commentId)
+        const comment = await commentsRepository.getCommentById(req.params.commentId, value._id.toString())
 
         const updateComment = await serviceComments.updateStatusLikeInUser(req.params.commentId, value._id.toString(), req.body.likeStatus)
         if (!updateComment) {
@@ -54,7 +54,7 @@ class CommentsController {
 
     async deleteCommentByCommentId(req: Request, res: Response) {
         const user = req.body.user
-        const comment = await commentsRepository.getCommentById(req.params.commentId)
+        const comment = await commentsRepository.getCommentById(req.params.commentId, user._id.toString())
 
         const deletedComment = await serviceComments.deletedComment(req.params.commentId)
 

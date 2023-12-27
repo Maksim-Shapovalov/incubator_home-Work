@@ -30,7 +30,7 @@ export class CommentsRepository {
 
         // const items = res.map((c) => commentsMapper(c))
 
-        const itemsPromises = res.map((c) => commentsMapper(c))
+        const itemsPromises = res.map((c) => commentsMapper(c, null))
         const items = await Promise.all(itemsPromises)
 
         return {
@@ -46,13 +46,13 @@ export class CommentsRepository {
         return CommentsModelClass.create(comments)
     }
 
-    async getCommentById(commentId: string): Promise<CommentsOutputType | null> {
+    async getCommentById(commentId: string, userId: string | null): Promise<CommentsOutputType | null> {
         if (!ObjectId.isValid(commentId)) return null
         const findComments = await CommentsModelClass.findOne({_id: new ObjectId(commentId)})
         if (!findComments) {
             return null
         }
-        return commentsMapper(findComments)
+        return commentsMapper(findComments, userId)
     }
 
     async updateCommentsByCommentId(commentId: string, content: string): Promise<boolean> {
@@ -95,7 +95,7 @@ export class CommentsRepository {
 }
 
 export const commentsRepository = new CommentsRepository()
-export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<CommentsOutputType> => {
+export const commentsMapper = async (comment: WithId<CommentsTypeDb>, userId: string | null): Promise<CommentsOutputType> => {
     const likeCount = await LikesModelClass.countDocuments({
         likeStatus: AvailableStatusEnum.like,
         commentId: comment._id.toString()
@@ -106,7 +106,7 @@ export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<C
     })
 
     const myStatus = await LikesModelClass.findOne({
-        userId: comment.commentatorInfo.userId,
+        userId,
         commentId: comment._id.toString()
     }).exec()
 
