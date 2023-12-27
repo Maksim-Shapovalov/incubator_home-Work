@@ -21,7 +21,7 @@ export class ServiceComments {
             },
             postId,
             new Date().toISOString(),
-            AvailableStatusEnum.none
+            []
         )
 
 
@@ -33,8 +33,8 @@ export class ServiceComments {
     async updateComment(commentId: string, content: string) {
         return await commentsRepository.updateCommentsByCommentId(commentId, content)
     }
-    async updateStatusLikeInUser(commentId:string, status:string){
-        return commentsRepository.updateStatusLikeUser(commentId, status)
+    async updateStatusLikeInUser(commentId:string, userId: string, status:string){
+        return commentsRepository.updateStatusLikeUser(commentId, userId, status)
     }
 
     async deletedComment(commentId: string) {

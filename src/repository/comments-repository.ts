@@ -2,7 +2,7 @@ import {ObjectId, WithId} from "mongodb";
 import {AvailableStatusEnum, CommentsClass, CommentsOutputType, CommentsTypeDb} from "../types/comment-type";
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {postsRepository} from "./posts-repository";
-import {CommentsModelClass} from "../schemas/comments-schemas";
+import {CommentsModelClass, LikesModelClass} from "../schemas/comments-schemas";
 
 export class CommentsRepository {
     async getCommentsInPost(postId: string, filter: PaginationQueryType): Promise<PaginationType<CommentsOutputType> | null> {
@@ -63,12 +63,42 @@ export class CommentsRepository {
         return updateComment.matchedCount === 1
     }
 
-    async updateStatusLikeUser(commentId: string, status: string) {
-        const updateStatus = await CommentsModelClass.updateOne({_id: new ObjectId(commentId)}, {
-            $set: {
-                likeStatus: status.toLowerCase()
-            }
-        })
+    async updateStatusLikeUser(commentId: string, userId: string, status: string) {
+
+        const commentWithUserId = await CommentsModelClass.findOne({
+            _id: new ObjectId((commentId)),
+            "statuses.userId": userId
+        }).exec()
+
+        const comment = await CommentsModelClass.findOne({_id: new ObjectId((commentId))}).exec()
+
+        let updateStatus = {
+            matchedCount: 0
+        }
+
+        if (commentWithUserId) {
+            updateStatus = await CommentsModelClass.updateOne({
+                _id: new ObjectId(commentId),
+                "statuses.userId": userId
+            }, {
+                $set: {
+                    likeStatus: status.toLowerCase(),
+                }
+            })
+        }
+
+        if (comment) {
+            updateStatus = await CommentsModelClass.updateOne({_id: new ObjectId(commentId)}, {
+                statuses: {
+                    $push: {
+                        userId,
+                        likeStatus: status.toLowerCase(),
+                        commentId
+                    }
+                }
+            })
+        }
+
         return updateStatus.matchedCount === 1
     }
 
@@ -80,8 +110,19 @@ export class CommentsRepository {
 
 export const commentsRepository = new CommentsRepository()
 export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<CommentsOutputType> => {
-    const likeCount = await CommentsModelClass.countDocuments({likeStatus: AvailableStatusEnum.like})
-    const dislikeCount = await CommentsModelClass.countDocuments({likeStatus: AvailableStatusEnum.dislike})
+    const likeCount = await LikesModelClass.countDocuments({
+        likeStatus: AvailableStatusEnum.like,
+        commentId: comment._id.toString()
+    })
+    const dislikeCount = await LikesModelClass.countDocuments({
+        likeStatus: AvailableStatusEnum.dislike,
+        commentId: comment._id.toString()
+    })
+
+    const myStatus = await LikesModelClass.findOne({
+        userId: comment.commentatorInfo.userId,
+        commentId: comment._id.toString()
+    }).exec()
 
     return {
         id: comment._id.toHexString(),
@@ -94,8 +135,8 @@ export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<C
         likesInfo: {
             likesCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus: "Like"
+            myStatus: myStatus ? myStatus.likeStatus : 'None'
         }
     }
 }
-//,postId: comment.postId
+//

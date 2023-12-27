@@ -39,7 +39,7 @@ class CommentsController {
         const value = req.body.user
         const comment = await commentsRepository.getCommentById(req.params.commentId)
 
-        const updateComment = await serviceComments.updateStatusLikeInUser(req.params.commentId, req.body.likeStatus)
+        const updateComment = await serviceComments.updateStatusLikeInUser(req.params.commentId, value._id.toString(), req.body.likeStatus)
         if (!updateComment) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return

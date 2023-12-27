@@ -9,7 +9,7 @@ export class CommentsClass {
     },
     public postId: string,
     public createdAt: string,
-    public likeStatus: AvailableStatusEnum) {
+    public statuses: LikesTypeDb[]) {
     }
 
 }
@@ -22,7 +22,13 @@ export type CommentsTypeDb = WithId<{
     },
     postId: string
     createdAt: string
+    statuses: LikesTypeDb[]
+}>
+
+export type LikesTypeDb = WithId<{
+    userId: string
     likeStatus: string
+    commentId: string
 }>
 
 export enum AvailableStatusEnum {
