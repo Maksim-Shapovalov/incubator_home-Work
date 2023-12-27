@@ -25,7 +25,7 @@ export class ServiceComments {
 
 
         const res = await commentsRepository.saveComments(newComment)
-        return commentsMapper(res)
+        return commentsMapper(res, user._id.toString())
 
     }
 

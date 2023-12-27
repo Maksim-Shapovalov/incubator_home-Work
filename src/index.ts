@@ -1,6 +1,6 @@
 import {runDB} from "./DB/data-base";
 import * as dotenv from 'dotenv';
-import {initApp} from "./initApp";
+import {app} from "./initApp";
 
 dotenv.config()
 
@@ -19,7 +19,6 @@ export const HTTP_STATUS = {
     TOO_MANY_REQUESTS_429: 429
 }
 
-const app = initApp()
 
 const startApp = async () => {
     await runDB()

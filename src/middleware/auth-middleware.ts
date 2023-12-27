@@ -3,11 +3,29 @@ import {HTTP_STATUS} from "../index";
 import {jwtService} from "../application/jwt-service";
 import {userRepository} from "../repository/user-repository";
 import {body} from "express-validator";
+export const authMiddlewareForGetCommentById = async (req: Request, res: Response, next: NextFunction) => {
+    const registr = req.headers.authorization
+    if (!registr){
+        return false
+    }
+    const token = registr.split(' ')[1]
+
+    const userId = await jwtService.getUserIdByToken(token)
+    if (userId){
+        const user = await userRepository.getUserById(userId)
+
+        if(user){
+            req.body.user = await userRepository.getUserById(userId)
+            return next()
+        }
+    }
+
+    return false
+}
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const registr = req.headers.authorization
     if (!registr){
-        console.log(registr, 'regist')
         res.send(HTTP_STATUS.UNAUTHORIZED_401)
         return
     }

@@ -10,8 +10,8 @@ import {commentsRouter} from "./routers/blogs&posts&comments/comments-router";
 import {securityDevices} from "./routers/security-deviced/security-devices";
 import {AllDataVideoClear} from "./db-items/db-videos";
 
-export const initApp = () => {
-    const app = express()
+
+    export const app = express()
 
     app.set('trust proxy', true)
     app.use(express.json());
@@ -26,6 +26,3 @@ export const initApp = () => {
     app.use("/comments", commentsRouter)
     app.use("/security/devices", securityDevices)
     app.use("/AllDataVideoClear", AllDataVideoClear)
-
-    return app;
-}
