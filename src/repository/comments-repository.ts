@@ -27,7 +27,10 @@ export class CommentsRepository {
             .limit(pageSizeInQuery)
             .lean()
 
-        const items = res.map((c) => commentsMapper(c))
+        // const items = res.map((c) => commentsMapper(c))
+
+        const itemsPromises = res.map((c) => commentsMapper(c))
+        const items = await Promise.all(itemsPromises)
 
         return {
             pagesCount: pageCountBlogs,
@@ -75,7 +78,9 @@ export class CommentsRepository {
 }
 
 export const commentsRepository = new CommentsRepository()
-export const commentsMapper = (comment: WithId<CommentsTypeDb>): CommentsOutputType => {
+export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<CommentsOutputType> => {
+    const likeCount = await CommentsModelClass.countDocuments({likeStatus: "like",postId: comment.postId}).exec()
+    const dislikeCount = await CommentsModelClass.countDocuments({likeStatus: "dislike"}).exec()
     return {
         id: comment._id.toHexString(),
         content: comment.content,
@@ -83,6 +88,11 @@ export const commentsMapper = (comment: WithId<CommentsTypeDb>): CommentsOutputT
             userId: comment.commentatorInfo.userId,
             userLogin: comment.commentatorInfo.userLogin
         },
-        createdAt: comment.createdAt
+        createdAt: comment.createdAt,
+        likeStatus: {
+            likeCount: likeCount,
+            dislikeCount: dislikeCount,
+            myStatus:"Like"
+        }
     }
 }

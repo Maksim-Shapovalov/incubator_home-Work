@@ -22,7 +22,7 @@ export type CommentsTypeDb = WithId<{
     },
     postId: string
     createdAt: string
-    likeStatus: AvailableStatusEnum
+    likeStatus: string
 }>
 
 export enum AvailableStatusEnum {
@@ -37,6 +37,7 @@ export type CommentsOutputType = {
     commentatorInfo: {
         userId: string
         userLogin: string
-    },
+    }
     "createdAt": string
+    likeStatus: Object
 }
