@@ -76,14 +76,14 @@ export class CommentsRepository {
         if (likeWithUserId) {
             const updateStatus = await LikesModelClass.updateOne({commentId, userId}, {
                 $set: {
-                    likeStatus: status.toLowerCase(),
+                    likeStatus: status,
                 }
             })
 
             return updateStatus.matchedCount === 1
         }
 
-        await LikesModelClass.create({commentId, userId, likeStatus: status.toLowerCase()})
+        await LikesModelClass.create({commentId, userId, likeStatus: status})
 
         return true
     }
