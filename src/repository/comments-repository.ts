@@ -3,6 +3,7 @@ import {AvailableStatusEnum, CommentsClass, CommentsOutputType, CommentsTypeDb} 
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {postsRepository} from "./posts-repository";
 import {CommentsModelClass, LikesModelClass} from "../schemas/comments-schemas";
+import {tr} from "date-fns/locale";
 
 export class CommentsRepository {
     async getCommentsInPost(postId: string, filter: PaginationQueryType): Promise<PaginationType<CommentsOutputType> | null> {
@@ -64,34 +65,27 @@ export class CommentsRepository {
     }
 
     async updateStatusLikeUser(commentId: string, userId: string, status: string) {
-
         const likeWithUserId = await LikesModelClass.findOne({userId, commentId}).exec()
 
         const comment = await CommentsModelClass.findOne({_id: new ObjectId((commentId))}).exec()
 
-        let updateStatus = {
-            matchedCount: 0
+        if (!comment) {
+            return false
         }
 
-        if(!comment){
+        if (likeWithUserId) {
+            const updateStatus = await LikesModelClass.updateOne({commentId, userId}, {
+                $set: {
+                    likeStatus: status.toLowerCase(),
+                }
+            })
+
             return updateStatus.matchedCount === 1
         }
 
-        if (comment) {
-            if (likeWithUserId) {
-                updateStatus = await LikesModelClass.updateOne({commentId, userId}, {
-                    $set: {
-                        likeStatus: status.toLowerCase(),
-                    }
-                })
+        await LikesModelClass.create({commentId, userId, likeStatus: status.toLowerCase()})
 
-                return updateStatus.matchedCount === 1
-            }
-
-            await LikesModelClass.create({commentId, userId, likeStatus: status.toLowerCase()})
-        }
-
-        return updateStatus.matchedCount === 1
+        return true
     }
 
     async deleteCommentsByCommentId(commentId: string): Promise<boolean> {
