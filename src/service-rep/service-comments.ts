@@ -21,7 +21,6 @@ export class ServiceComments {
             },
             postId,
             new Date().toISOString(),
-            []
         )
 
 

@@ -9,7 +9,8 @@ export class CommentsClass {
     },
     public postId: string,
     public createdAt: string,
-    public statuses: LikesTypeDb[]) {
+   // public statuses: LikesTypeDb[]
+     ) {
     }
 
 }
@@ -22,7 +23,7 @@ export type CommentsTypeDb = WithId<{
     },
     postId: string
     createdAt: string
-    statuses: LikesTypeDb[]
+   // statuses: LikesTypeDb[]
 }>
 
 export type LikesTypeDb = WithId<{

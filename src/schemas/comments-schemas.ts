@@ -19,7 +19,7 @@ const commentSchema = new mongoose.Schema<CommentsTypeDb>({
     }, required: true},
     postId: {type: String, required: true},
     createdAt: {type: String, required: true},
-    statuses: {type: [likesSchema]},
+    //statuses: {type: [likesSchema]},
 })
 
 export const LikesModelClass = mongoose.model('likes', likesSchema)

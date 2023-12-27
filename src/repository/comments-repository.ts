@@ -65,10 +65,7 @@ export class CommentsRepository {
 
     async updateStatusLikeUser(commentId: string, userId: string, status: string) {
 
-        const commentWithUserId = await CommentsModelClass.findOne({
-            _id: new ObjectId((commentId)),
-            "statuses.userId": userId
-        }).exec()
+        const likeWithUserId = await LikesModelClass.findOne({userId, commentId}).exec()
 
         const comment = await CommentsModelClass.findOne({_id: new ObjectId((commentId))}).exec()
 
@@ -76,27 +73,22 @@ export class CommentsRepository {
             matchedCount: 0
         }
 
-        if (commentWithUserId) {
-            updateStatus = await CommentsModelClass.updateOne({
-                _id: new ObjectId(commentId),
-                "statuses.userId": userId
-            }, {
-                $set: {
-                    likeStatus: status.toLowerCase(),
-                }
-            })
+        if(!comment){
+            return updateStatus.matchedCount === 1
         }
 
         if (comment) {
-            updateStatus = await CommentsModelClass.updateOne({_id: new ObjectId(commentId)}, {
-                statuses: {
-                    $push: {
-                        userId,
+            if (likeWithUserId) {
+                updateStatus = await LikesModelClass.updateOne({commentId, userId}, {
+                    $set: {
                         likeStatus: status.toLowerCase(),
-                        commentId
                     }
-                }
-            })
+                })
+
+                return updateStatus.matchedCount === 1
+            }
+
+            await LikesModelClass.create({commentId, userId, likeStatus: status.toLowerCase()})
         }
 
         return updateStatus.matchedCount === 1
