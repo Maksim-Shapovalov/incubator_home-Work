@@ -25,7 +25,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             return next()
         }
     }
-    console.log(req, 'request')
+
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
 }
 

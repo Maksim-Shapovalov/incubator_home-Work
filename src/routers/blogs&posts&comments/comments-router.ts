@@ -35,6 +35,22 @@ class CommentsController {
         }
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
+    async appropriationLike (req: Request, res: Response){
+        const value = req.body.user
+        const comment = await commentsRepository.getCommentById(req.params.commentId)
+
+        const updateComment = await serviceComments.updateStatusLikeInUser(req.params.commentId, req.body.likeStatus)
+        if (!updateComment) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+            return
+        }
+        if (comment?.commentatorInfo.userId != value._id.toString()) {
+            res.sendStatus(HTTP_STATUS.Forbidden_403)
+            return
+        }
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+
+    }
 
     async deleteCommentByCommentId(req: Request, res: Response) {
         const user = req.body.user
@@ -52,9 +68,12 @@ class CommentsController {
         }
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
+
 }
 
 const commentsControllerInstance = new CommentsController()
 commentsRouter.get("/:id", commentsControllerInstance.getCommentsById)
 commentsRouter.put("/:commentId", authMiddleware, CommentValidation(), ErrorMiddleware, commentsControllerInstance.updateCommentByCommentId)
+commentsRouter.put("/:commentId/like-status",authMiddleware,ErrorMiddleware,commentsControllerInstance.appropriationLike)
 commentsRouter.delete("/:commentId", authMiddleware, commentsControllerInstance.deleteCommentByCommentId)
+

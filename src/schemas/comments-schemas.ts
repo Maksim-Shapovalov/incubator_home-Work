@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {CommentsTypeDb} from "../types/comment-type";
+import {AvailableStatusEnum, CommentsTypeDb} from "../types/comment-type";
 
 const commentSchema = new mongoose.Schema<CommentsTypeDb>({
     content: {type: String, required: true},
@@ -9,6 +9,10 @@ const commentSchema = new mongoose.Schema<CommentsTypeDb>({
     }, required: true},
     postId: {type: String, required: true},
     createdAt: {type: String, required: true},
+    likeStatus: {
+        type: String,
+        enum: Object.values(AvailableStatusEnum),
+        required:true}
 
 })
 export const CommentsModelClass = mongoose.model('comments', commentSchema)

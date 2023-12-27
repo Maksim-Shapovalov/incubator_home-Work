@@ -8,8 +8,10 @@ export class CommentsClass {
         userLogin: string
     },
     public postId: string,
-    public createdAt: string) {
+    public createdAt: string,
+    public likeStatus: AvailableStatusEnum) {
     }
+
 }
 
 export type CommentsTypeDb = WithId<{
@@ -18,9 +20,16 @@ export type CommentsTypeDb = WithId<{
         userId: string
         userLogin: string
     },
-    postId: string,
-    "createdAt": string
+    postId: string
+    createdAt: string
+    likeStatus: AvailableStatusEnum
 }>
+
+export enum AvailableStatusEnum {
+    like = "like",
+    none = 'none',
+    dislike = 'dislike'
+}
 
 export type CommentsOutputType = {
     id: string

@@ -1,5 +1,5 @@
 import {commentsMapper, commentsRepository} from "../repository/comments-repository";
-import {CommentsClass, CommentsOutputType} from "../types/comment-type";
+import {AvailableStatusEnum, CommentsClass, CommentsOutputType} from "../types/comment-type";
 import {WithId} from "mongodb";
 import {UserMongoDbType} from "../types/user-type";
 import {postsRepository} from "../repository/posts-repository";
@@ -20,7 +20,8 @@ export class ServiceComments {
                 userLogin: user.login
             },
             postId,
-            new Date().toISOString()
+            new Date().toISOString(),
+            AvailableStatusEnum.none
         )
 
 
@@ -32,10 +33,14 @@ export class ServiceComments {
     async updateComment(commentId: string, content: string) {
         return await commentsRepository.updateCommentsByCommentId(commentId, content)
     }
+    async updateStatusLikeInUser(commentId:string, status:string){
+        return commentsRepository.updateStatusLikeUser(commentId, status)
+    }
 
     async deletedComment(commentId: string) {
         return await commentsRepository.deleteCommentsByCommentId(commentId)
     }
+
 }
 
 export const serviceComments = new ServiceComments()

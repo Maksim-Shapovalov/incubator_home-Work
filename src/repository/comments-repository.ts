@@ -59,6 +59,14 @@ export class CommentsRepository {
         })
         return updateComment.matchedCount === 1
     }
+    async updateStatusLikeUser(commentId:string, status:string){
+        const updateStatus = await CommentsModelClass.updateOne({_id: new ObjectId(commentId)},{
+            $set: {
+                likeStatus: status
+            }
+        })
+        return updateStatus.matchedCount === 1
+    }
 
     async deleteCommentsByCommentId(commentId: string): Promise<boolean> {
         const deletedComment = await CommentsModelClass.deleteOne({_id: new ObjectId(commentId)})
