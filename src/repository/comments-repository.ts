@@ -1,5 +1,5 @@
 import {ObjectId, WithId} from "mongodb";
-import {CommentsClass, CommentsOutputType, CommentsTypeDb} from "../types/comment-type";
+import {AvailableStatusEnum, CommentsClass, CommentsOutputType, CommentsTypeDb} from "../types/comment-type";
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {postsRepository} from "./posts-repository";
 import {CommentsModelClass} from "../schemas/comments-schemas";
@@ -62,8 +62,9 @@ export class CommentsRepository {
         })
         return updateComment.matchedCount === 1
     }
-    async updateStatusLikeUser(commentId:string, status:string){
-        const updateStatus = await CommentsModelClass.updateOne({_id: new ObjectId(commentId)},{
+
+    async updateStatusLikeUser(commentId: string, status: string) {
+        const updateStatus = await CommentsModelClass.updateOne({_id: new ObjectId(commentId)}, {
             $set: {
                 likeStatus: status
             }
@@ -79,8 +80,9 @@ export class CommentsRepository {
 
 export const commentsRepository = new CommentsRepository()
 export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<CommentsOutputType> => {
-    const likeCount = await CommentsModelClass.countDocuments({likeStatus: "like"}).exec()
-    const dislikeCount = await CommentsModelClass.countDocuments({likeStatus: "dislike"}).exec()
+    const likeCount = await CommentsModelClass.countDocuments({likeStatus: AvailableStatusEnum.like})
+    const dislikeCount = await CommentsModelClass.countDocuments({likeStatus: AvailableStatusEnum.dislike})
+
     return {
         id: comment._id.toHexString(),
         content: comment.content,
@@ -89,10 +91,10 @@ export const commentsMapper = async (comment: WithId<CommentsTypeDb>): Promise<C
             userLogin: comment.commentatorInfo.userLogin
         },
         createdAt: comment.createdAt,
-        likeStatus: {
-            likeCount: likeCount,
-            dislikeCount: dislikeCount,
-            myStatus:"Like"
+        likesInfo: {
+            likesCount: +likeCount,
+            dislikesCount: +dislikeCount,
+            myStatus: "Like"
         }
     }
 }

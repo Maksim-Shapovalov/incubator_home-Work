@@ -12,7 +12,7 @@ const commentSchema = new mongoose.Schema<CommentsTypeDb>({
     likeStatus: {
         type: String,
         enum: Object.values(AvailableStatusEnum),
-        required:true}
-
+        required:true
+    }
 })
 export const CommentsModelClass = mongoose.model('comments', commentSchema)

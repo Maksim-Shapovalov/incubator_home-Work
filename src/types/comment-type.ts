@@ -39,9 +39,9 @@ export type CommentsOutputType = {
         userLogin: string
     }
     "createdAt": string
-    likeStatus:{
-        likeCount: number,
-        dislikeCount: number,
+    likesInfo:{
+        likesCount: number,
+        dislikesCount: number,
         myStatus: string
     }
 }
