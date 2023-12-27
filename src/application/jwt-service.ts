@@ -31,7 +31,7 @@ export class JwtService {
 
         await refreshTokenRepo.AddRefreshTokenInData(createRefreshTokenMeta)
         const accessToken: string = jwt.sign({userId: user.id},
-            setting.JWT_SECRET, {expiresIn: '10000sec'})
+            setting.JWT_SECRET, {expiresIn: '5min'})
         const refreshToken: string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
             setting.JWT_REFRESH_SECRET, {expiresIn: '20000sec'})
 
@@ -52,7 +52,7 @@ export class JwtService {
         await securityDevicesRepo.updateDevice(createRefreshTokenMeta.deviceId)
 
         const accessToken: string = jwt.sign({userId: user.id},
-            setting.JWT_SECRET, {expiresIn: '10000sec'})
+            setting.JWT_SECRET, {expiresIn: '5min'})
         const refreshToken: string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
             setting.JWT_REFRESH_SECRET, {expiresIn: '1000sec'})
         return {accessToken, refreshToken}
