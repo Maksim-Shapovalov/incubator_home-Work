@@ -33,9 +33,9 @@ export type LikesTypeDb = WithId<{
 }>
 
 export enum AvailableStatusEnum {
-    like = "like",
-    none = 'none',
-    dislike = 'dislike'
+    like = "Like",
+    none = 'None',
+    dislike = 'Dislike'
 }
 
 export type CommentsOutputType = {
