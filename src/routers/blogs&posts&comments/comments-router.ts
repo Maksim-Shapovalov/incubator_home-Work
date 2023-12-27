@@ -19,6 +19,7 @@ class CommentsController {
                 return
 
             }
+            return res.status(HTTP_STATUS.OK_200).send(findComments)
         }
         const findComments = await commentsRepository.getCommentById(req.params.id, user._id)
 

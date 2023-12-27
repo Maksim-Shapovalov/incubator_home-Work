@@ -6,7 +6,7 @@ import {body} from "express-validator";
 export const authMiddlewareForGetCommentById = async (req: Request, res: Response, next: NextFunction) => {
     const registr = req.headers.authorization
     if (!registr){
-        return null
+        return next()
 
     }
     const token = registr.split(' ')[1]
