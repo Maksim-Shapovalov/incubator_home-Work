@@ -3,7 +3,7 @@ import {commentsRepository} from "../../repository/comments-repository";
 import {HTTP_STATUS} from "../../index";
 import {serviceComments} from "../../service-rep/service-comments";
 import {authMiddleware, authMiddlewareForGetCommentById} from "../../middleware/auth-middleware";
-import {CommentValidation} from "../../middleware/input-middleware/comment-validation";
+import {CommentValidation, LikeStatusValidation} from "../../middleware/input-middleware/comment-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 
 export const commentsRouter = Router();
@@ -87,6 +87,6 @@ class CommentsController {
 const commentsControllerInstance = new CommentsController()
 commentsRouter.get("/:id",authMiddlewareForGetCommentById, commentsControllerInstance.getCommentsById)
 commentsRouter.put("/:commentId", authMiddleware, CommentValidation(), ErrorMiddleware, commentsControllerInstance.updateCommentByCommentId)
-commentsRouter.put("/:commentId/like-status",authMiddleware,ErrorMiddleware,commentsControllerInstance.appropriationLike)
+commentsRouter.put("/:commentId/like-status",authMiddleware,LikeStatusValidation(),ErrorMiddleware,commentsControllerInstance.appropriationLike)
 commentsRouter.delete("/:commentId", authMiddleware, commentsControllerInstance.deleteCommentByCommentId)
 
