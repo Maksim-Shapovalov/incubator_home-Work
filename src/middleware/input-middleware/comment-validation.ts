@@ -1,4 +1,5 @@
 import {body} from "express-validator";
+import {AvailableStatusEnum} from "../../types/comment-type";
 
 export const CommentValidation = ()=>(
     [
@@ -8,6 +9,17 @@ export const CommentValidation = ()=>(
             .isLength({min:20,max:300})
             .notEmpty()
             .withMessage('Invalid content'),
+
+    ]
+)
+export const LikeStatusValidation = ()=>(
+    [
+        body('likeStatus')
+            .trim()
+            .isString()
+            .isIn(Object.values(AvailableStatusEnum))
+            .notEmpty()
+            .withMessage('Invalid likeStatus'),
 
     ]
 )
