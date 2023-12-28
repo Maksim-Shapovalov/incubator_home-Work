@@ -8,7 +8,7 @@ import {queryFilter} from "../../repository/qurey-repo/query-filter";
 import {postsRepository} from "../../repository/posts-repository";
 import {commentsRepository} from "../../repository/comments-repository";
 import {serviceComments} from "../../service-rep/service-comments";
-import {authMiddleware} from "../../middleware/auth-middleware";
+import {authMiddleware, authMiddlewareForGetCommentById} from "../../middleware/auth-middleware";
 import {CommentValidation} from "../../middleware/input-middleware/comment-validation";
 
 export const postsRouter = Router()
@@ -32,7 +32,8 @@ class PostsController {
 
     async getCommentByCommendIdInPosts(req: Request, res: Response) {
         const filter = queryFilter(req.query)
-        const result = await commentsRepository.getCommentsInPost(req.params.postId, filter)
+        const user = req.body.user
+        const result = await commentsRepository.getCommentsInPost(req.params.postId, filter, user.id)
         if (!result) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return
@@ -87,7 +88,7 @@ const postsControllerInstance = new PostsController()
 
 postsRouter.get('/', postsControllerInstance.getAllPostsInDB)
 postsRouter.get('/:id', postsControllerInstance.getPostByPostId)
-postsRouter.get("/:postId/comments", postsControllerInstance.getCommentByCommendIdInPosts)
+postsRouter.get("/:postId/comments",authMiddlewareForGetCommentById, postsControllerInstance.getCommentByCommendIdInPosts)
 postsRouter.post("/:postId/comments", authMiddleware, CommentValidation(), ErrorMiddleware, postsControllerInstance.createCommentsInPostById)
 postsRouter.post('/', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsControllerInstance.createNewPost)
 postsRouter.put('/:id', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsControllerInstance.updatePostByPostId)

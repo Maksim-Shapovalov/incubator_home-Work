@@ -6,7 +6,7 @@ import {CommentsModelClass, LikesModelClass} from "../schemas/comments-schemas";
 import {tr} from "date-fns/locale";
 
 export class CommentsRepository {
-    async getCommentsInPost(postId: string, filter: PaginationQueryType): Promise<PaginationType<CommentsOutputType> | null> {
+    async getCommentsInPost(postId: string, filter: PaginationQueryType, userId: string | null): Promise<PaginationType<CommentsOutputType> | null> {
         const findPost = await postsRepository.getPostsById(postId)
 
         if (!findPost) {
@@ -30,7 +30,7 @@ export class CommentsRepository {
 
         // const items = res.map((c) => commentsMapper(c))
 
-        const itemsPromises = res.map((c) => commentsMapper(c, null))
+        const itemsPromises = res.map((c) => commentsMapper(c,userId))
         const items = await Promise.all(itemsPromises)
 
         return {
@@ -96,35 +96,20 @@ export class CommentsRepository {
 
 export const commentsRepository = new CommentsRepository()
 export const commentsMapper = async (comment: WithId<CommentsTypeDb>, userId: string | null): Promise<CommentsOutputType> => {
-    const likeCounts = await LikesModelClass.countDocuments({
+    const likeCount = await LikesModelClass.countDocuments({
         likeStatus: AvailableStatusEnum.like,
         commentId: comment._id.toString()
     })
-    const dislikeCounts = await LikesModelClass.countDocuments({
+    const dislikeCount = await LikesModelClass.countDocuments({
         likeStatus: AvailableStatusEnum.dislike,
         commentId: comment._id.toString()
     })
 
-    const [likeCount, dislikeCount] = await Promise.all([
-        likeCounts,
-        dislikeCounts
-    ]);
-    let myStatus = 'None';
-    if (userId) {
-        const likeStatus = await LikesModelClass.findOne({
-            userId,
-            commentId: comment._id.toString()
-        }).exec();
 
-        if (likeStatus) {
-            myStatus = likeStatus.likeStatus;
-        }
-    }
-
-    // const myStatus = await LikesModelClass.findOne({
-    //     userId,
-    //     commentId: comment._id.toString()
-    // }).exec()
+    const myStatus = await LikesModelClass.findOne({
+        userId,
+        commentId: comment._id.toString()
+    }).exec()
 
 
     return {
@@ -138,9 +123,23 @@ export const commentsMapper = async (comment: WithId<CommentsTypeDb>, userId: st
         likesInfo: {
             likesCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus
+            myStatus: myStatus ? myStatus.likeStatus : 'None'
         }
-        //myStatus ? myStatus.likeStatus : 'None'
     }
+    //
 }
+// export const commentsMapperToGetAllComments = async (comment: WithId<CommentsTypeDb>): Promise<CommentsOutputType> => {
+//
+//     return {
+//         id: comment._id.toHexString(),
+//         content: comment.content,
+//         commentatorInfo: {
+//             userId: comment.commentatorInfo.userId,
+//             userLogin: comment.commentatorInfo.userLogin
+//         },
+//         createdAt: comment.createdAt,
+//
+//     }
+// }
+
 //
