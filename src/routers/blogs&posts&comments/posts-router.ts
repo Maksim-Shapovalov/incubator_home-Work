@@ -33,7 +33,7 @@ class PostsController {
     async getCommentByCommendIdInPosts(req: Request, res: Response) {
         const filter = queryFilter(req.query)
         const user = req.body.user
-        const result = await commentsRepository.getCommentsInPost(req.params.postId, filter, user.id)
+        const result = await commentsRepository.getCommentsInPost(req.params.postId, filter, user._id.toString())
         if (!result) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return

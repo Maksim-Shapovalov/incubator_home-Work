@@ -14,9 +14,11 @@ export const authMiddlewareForGetCommentById = async (req: Request, res: Respons
     const userId = await jwtService.getUserIdByToken(token)
     if (userId){
         const user = await userRepository.getUserById(userId)
+        console.log(user)
 
         if(user){
-            req.body.user = await userRepository.getUserById(userId)
+            req.body.user = user
+            console.log(req.body.user)
             return next()
         }
     }
