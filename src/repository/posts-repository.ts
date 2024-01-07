@@ -1,11 +1,15 @@
 import {PostClass, PostOutputModel, PostsType} from "../types/posts-type";
 import {ObjectId, WithId} from "mongodb";
-import {blogsRepository} from "./blogs-repository";
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {PostModelClass} from "../schemas/post-schema";
+import {BlogsRepository} from "./blogs-repository";
 
 
 export class PostsRepository {
+    blogsRepository: BlogsRepository;
+    constructor() {
+        this.blogsRepository = new BlogsRepository()
+    }
     async getAllPosts(filter: PaginationQueryType): Promise<PaginationType<PostOutputModel>> {
         const pageSizeInQuery: number = filter.pageSize;
         const totalCountBlogs = await PostModelClass.countDocuments({})
@@ -39,7 +43,7 @@ export class PostsRepository {
     }
 
     async getPostInBlogs(blogId: string, filter: PaginationQueryType): Promise<PaginationType<PostOutputModel> | null> {
-        const findBlog = await blogsRepository.getBlogsById(blogId)
+        const findBlog = await this.blogsRepository.getBlogsById(blogId)
         if (!findBlog) {
             return null
         }
@@ -92,8 +96,6 @@ export class PostsRepository {
 
     }
 }
-
-export const postsRepository = new PostsRepository()
 
 
 export const postMapper = (post: WithId<PostsType>): PostOutputModel => {

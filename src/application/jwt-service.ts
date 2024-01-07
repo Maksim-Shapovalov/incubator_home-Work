@@ -2,9 +2,9 @@ import jwt from 'jsonwebtoken'
 import {setting} from "../setting";
 import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
-import {refreshTokenRepo} from "../repository/refreshToken-repo";
+import {RefreshTokenRepo} from "../repository/refreshToken-repo";
 import {DeviceClass} from "../types/device-of-user";
-import {securityDevicesRepo} from "../repository/security-devices-repo";
+import {SecurityDevicesRepo} from "../repository/security-devices-repo";
 import {UserToPostsOutputModel} from "../types/user-type";
 
 type PayloadType = {
@@ -20,6 +20,12 @@ type PayloadTypeRefresh = {
 } | null
 
 export class JwtService {
+    refreshTokenRepo: RefreshTokenRepo;
+    securityDevicesRepo: SecurityDevicesRepo;
+    constructor() {
+        this.refreshTokenRepo = new RefreshTokenRepo()
+        this.securityDevicesRepo = new SecurityDevicesRepo()
+    }
     async createdJWTAndInsertDevice(user: UserToPostsOutputModel, userAgent: any = null) {
         const createRefreshTokenMeta = new DeviceClass(
             userAgent.IP || '123',
@@ -29,7 +35,7 @@ export class JwtService {
             user.id)
 
 
-        await refreshTokenRepo.AddRefreshTokenInData(createRefreshTokenMeta)
+        await this.refreshTokenRepo.AddRefreshTokenInData(createRefreshTokenMeta)
         const accessToken: string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '5min'})
         const refreshToken: string = jwt.sign({userId: user.id, deviceId: createRefreshTokenMeta.deviceId},
@@ -49,7 +55,7 @@ export class JwtService {
             deviceId: parser.deviceId,
             userId: user.id
         }
-        await securityDevicesRepo.updateDevice(createRefreshTokenMeta.deviceId)
+        await this.securityDevicesRepo.updateDevice(createRefreshTokenMeta.deviceId)
 
         const accessToken: string = jwt.sign({userId: user.id},
             setting.JWT_SECRET, {expiresIn: '5min'})
@@ -77,5 +83,3 @@ export class JwtService {
 
     }
 }
-
-export const jwtService = new JwtService()

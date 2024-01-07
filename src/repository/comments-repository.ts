@@ -1,13 +1,17 @@
 import {ObjectId, WithId} from "mongodb";
 import {AvailableStatusEnum, CommentsClass, CommentsOutputType, CommentsTypeDb} from "../types/comment-type";
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
-import {postsRepository} from "./posts-repository";
 import {CommentsModelClass, LikesModelClass} from "../schemas/comments-schemas";
-import {tr} from "date-fns/locale";
+
+import {PostsRepository} from "./posts-repository";
 
 export class CommentsRepository {
+    postsRepository: PostsRepository;
+    constructor() {
+        this.postsRepository = new PostsRepository()
+    }
     async getCommentsInPost(postId: string, filter: PaginationQueryType, userId: string | null): Promise<PaginationType<CommentsOutputType> | null> {
-        const findPost = await postsRepository.getPostsById(postId)
+        const findPost = await  this.postsRepository.getPostsById(postId)
 
         if (!findPost) {
             return null
@@ -28,7 +32,6 @@ export class CommentsRepository {
             .limit(pageSizeInQuery)
             .lean()
 
-        // const items = res.map((c) => commentsMapper(c))
 
         const itemsPromises = res.map((c) => commentsMapper(c,userId))
         const items = await Promise.all(itemsPromises)
@@ -94,7 +97,6 @@ export class CommentsRepository {
     }
 }
 
-export const commentsRepository = new CommentsRepository()
 export const commentsMapper = async (comment: WithId<CommentsTypeDb>, userId: string | null): Promise<CommentsOutputType> => {
     const likeCount = await LikesModelClass.countDocuments({
         likeStatus: AvailableStatusEnum.like,
@@ -126,20 +128,4 @@ export const commentsMapper = async (comment: WithId<CommentsTypeDb>, userId: st
             myStatus: myStatus ? myStatus.likeStatus : 'None'
         }
     }
-    //
 }
-// export const commentsMapperToGetAllComments = async (comment: WithId<CommentsTypeDb>): Promise<CommentsOutputType> => {
-//
-//     return {
-//         id: comment._id.toHexString(),
-//         content: comment.content,
-//         commentatorInfo: {
-//             userId: comment.commentatorInfo.userId,
-//             userLogin: comment.commentatorInfo.userLogin
-//         },
-//         createdAt: comment.createdAt,
-//
-//     }
-// }
-
-//

@@ -7,5 +7,3 @@ export class RefreshTokenRepo {
         return true
     }
 }
-
-export const refreshTokenRepo = new RefreshTokenRepo()

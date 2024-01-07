@@ -1,8 +1,11 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUS} from "../index";
-import {jwtService} from "../application/jwt-service";
-import {userRepository} from "../repository/user-repository";
+import {JwtService} from "../application/jwt-service";
 import {body} from "express-validator";
+import {UserRepository} from "../repository/user-repository";
+
+export const userRepo = new UserRepository()
+const jwtService = new JwtService()
 export const authMiddlewareForGetCommentById = async (req: Request, res: Response, next: NextFunction) => {
     const registr = req.headers.authorization
     if (!registr){
@@ -13,7 +16,7 @@ export const authMiddlewareForGetCommentById = async (req: Request, res: Respons
 
     const userId = await jwtService.getUserIdByToken(token)
     if (userId){
-        const user = await userRepository.getUserById(userId)
+        const user = await userRepo.getUserById(userId)
         console.log(user)
 
         if(user){
@@ -40,10 +43,10 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
 
     if (userId){
-        const user = await userRepository.getUserById(userId)
+        const user = await userRepo.getUserById(userId)
 
         if(user){
-            req.body.user = await userRepository.getUserById(userId)
+            req.body.user = await userRepo.getUserById(userId)
             return next()
         }
     }
@@ -54,7 +57,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 export const CheckingAuthorizationValidationCode = () => ([
     body("code")
         .custom(async (value)=>{
-            const codeUsers = await userRepository.findUsersbyCode(value)
+            const codeUsers = await userRepo.findUserByRecoveryCode(value)
             if (!codeUsers)throw new Error('user not found')
             if (codeUsers.emailConfirmation.isConfirmed === true)throw new Error('user is registered')
             if (codeUsers.emailConfirmation.expirationDate < new Date().toISOString())throw new Error('date')

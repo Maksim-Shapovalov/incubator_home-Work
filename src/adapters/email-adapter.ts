@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import {userRepository} from "../repository/user-repository";
 
 
 export const emailAdapter = {

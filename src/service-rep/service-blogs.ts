@@ -1,8 +1,13 @@
 import {BlogClass, BlogRequest, BlogsOutputModel, BlogsType} from "../types/blogs-type";
 import {WithId} from "mongodb";
-import {blogsRepository} from '../repository/blogs-repository'
+import {BlogsRepository} from "../repository/blogs-repository";
+
 
 export class ServiceBlogs {
+    blogsRepository: BlogsRepository;
+    constructor() {
+        this.blogsRepository = new BlogsRepository()
+    }
     async createNewBlogs(blog: BlogRequest): Promise<BlogsOutputModel> {
 
         const newBlogs = new BlogClass(
@@ -14,20 +19,18 @@ export class ServiceBlogs {
         )
 
 
-        const res = await blogsRepository.saveBlog(newBlogs)
+        const res = await this.blogsRepository.saveBlog(newBlogs)
         return  blogMapper(res)
 
     }
     async updateBlogById(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
-        return await blogsRepository.updateBlogById(id, name, description, websiteUrl)
+        return await this.blogsRepository.updateBlogById(id, name, description, websiteUrl)
     }
     async deleteBlogsById(id: string): Promise<boolean> {
-        return await blogsRepository.deleteBlogsById(id)
+        return await this.blogsRepository.deleteBlogsById(id)
 
     }
 }
-
-export const blogsService = new ServiceBlogs()
 const blogMapper = (blog: WithId<BlogsType>): BlogsOutputModel => {
     return {
         id: blog._id.toHexString(),

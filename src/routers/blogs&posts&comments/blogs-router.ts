@@ -1,27 +1,37 @@
 import {Request, Response, Router} from "express";
-import {blogsService} from "../../service-rep/service-blogs";
 import {HTTP_STATUS} from "../../index";
 import {authGuardMiddleware} from "../../middleware/register-middleware";
 import {BlogsValidation} from "../../middleware/input-middleware/blogs-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
-import {blogsRepository} from "../../repository/blogs-repository";
-import {postsRepository} from "../../repository/posts-repository";
 import {queryFilter, searchNameInBlog} from "../../repository/qurey-repo/query-filter";
-import {postsService} from "../../service-rep/service-posts";
 import {PostspParamsValidation} from "../../repository/qurey-repo/query-posts-repository";
+import {ServiceBlogs} from "../../service-rep/service-blogs";
+import {BlogsRepository} from "../../repository/blogs-repository";
+import {ServicePosts} from "../../service-rep/service-posts";
+import {PostsRepository} from "../../repository/posts-repository";
 
 
 export const blogsRouter = Router()
 
 class BlogController {
+    private postsService: ServicePosts;
+    private blogsService: ServiceBlogs;
+    private blogsRepository: BlogsRepository;
+    private postsRepository: PostsRepository;
+    constructor() {
+        this.blogsService = new ServiceBlogs()
+        this.blogsRepository = new BlogsRepository()
+        this.postsService = new ServicePosts()
+        this.postsRepository = new PostsRepository()
+    }
     async getAllBlogs(req: Request, res: Response) {
         const filter = searchNameInBlog(req.query);
-        const allBlogs = await blogsRepository.getAllBlogs(filter);
+        const allBlogs = await this.blogsRepository.getAllBlogs(filter);
         res.status(HTTP_STATUS.OK_200).send(allBlogs)
     }
 
     async getBlogById(req: Request, res: Response) {
-        const blog = await blogsRepository.getBlogsById(req.params.id)
+        const blog = await this.blogsRepository.getBlogsById(req.params.id)
         if (blog) {
             res.status(HTTP_STATUS.OK_200).send(blog)
         } else {
@@ -31,7 +41,7 @@ class BlogController {
 
     async getPostsByBlogId(req: Request, res: Response) {
         const filter = queryFilter(req.query);
-        const result = await postsRepository.getPostInBlogs(req.params.id, filter)
+        const result = await this.postsRepository.getPostInBlogs(req.params.id, filter)
         if (!result) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         return res.send(result)
     }
@@ -43,7 +53,7 @@ class BlogController {
             shortDescription: req.body.shortDescription,
             content: req.body.content,
         }
-        const newPost = await postsService.createNewPosts(postBody, req.params.blogId)
+        const newPost = await this.postsService.createNewPosts(postBody, req.params.blogId)
         if (!newPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return
@@ -57,12 +67,12 @@ class BlogController {
             description: req.body.description,
             websiteUrl: req.body.websiteUrl
         }
-        const newBlog = await blogsService.createNewBlogs(blog)
+        const newBlog = await this.blogsService.createNewBlogs(blog)
         res.status(HTTP_STATUS.CREATED_201).send(newBlog)
     }
 
     async updateBlogByBlogId(req: Request, res: Response) {
-        const result = await blogsService.updateBlogById(req.params.id, req.body.name, req.body.description, req.body.websiteUrl)
+        const result = await this.blogsService.updateBlogById(req.params.id, req.body.name, req.body.description, req.body.websiteUrl)
         if (!result) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         } else {
@@ -71,7 +81,7 @@ class BlogController {
     }
 
     async deleteBlogById(req: Request, res: Response) {
-        const deleted = await blogsService.deleteBlogsById(req.params.id)
+        const deleted = await this.blogsService.deleteBlogsById(req.params.id)
 
         if (!deleted) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
@@ -83,15 +93,15 @@ class BlogController {
 }
 
 const blogControllerInstance = new BlogController()
-blogsRouter.get('/', blogControllerInstance.getAllBlogs)
-blogsRouter.get('/:id', blogControllerInstance.getBlogById)
-blogsRouter.get('/:id/posts', blogControllerInstance.getPostsByBlogId)
+blogsRouter.get('/', blogControllerInstance.getAllBlogs.bind(blogControllerInstance))
+blogsRouter.get('/:id', blogControllerInstance.getBlogById.bind(blogControllerInstance))
+blogsRouter.get('/:id/posts', blogControllerInstance.getPostsByBlogId.bind(blogControllerInstance))
 blogsRouter.post('/:blogId/posts', authGuardMiddleware,
-    PostspParamsValidation(), ErrorMiddleware, blogControllerInstance.createPostInBlogByBlogId)
+    PostspParamsValidation(), ErrorMiddleware, blogControllerInstance.createPostInBlogByBlogId.bind(blogControllerInstance))
 blogsRouter.post('/', authGuardMiddleware,
-    BlogsValidation(), ErrorMiddleware, blogControllerInstance.createNewBlog)
+    BlogsValidation(), ErrorMiddleware, blogControllerInstance.createNewBlog.bind(blogControllerInstance))
 blogsRouter.put('/:id', authGuardMiddleware,
-    BlogsValidation(), ErrorMiddleware, blogControllerInstance.updateBlogByBlogId)
+    BlogsValidation(), ErrorMiddleware, blogControllerInstance.updateBlogByBlogId.bind(blogControllerInstance))
 blogsRouter.delete('/:id',
-    authGuardMiddleware, blogControllerInstance.deleteBlogById)
+    authGuardMiddleware, blogControllerInstance.deleteBlogById.bind(blogControllerInstance))
 

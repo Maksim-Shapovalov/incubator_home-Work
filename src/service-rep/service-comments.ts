@@ -1,13 +1,20 @@
-import {commentsMapper, commentsRepository} from "../repository/comments-repository";
-import {AvailableStatusEnum, CommentsClass, CommentsOutputType} from "../types/comment-type";
+import {commentsMapper, CommentsRepository} from "../repository/comments-repository";
+import {CommentsClass, CommentsOutputType} from "../types/comment-type";
 import {WithId} from "mongodb";
 import {UserMongoDbType} from "../types/user-type";
-import {postsRepository} from "../repository/posts-repository";
+import {PostsRepository} from "../repository/posts-repository";
+
 
 
 export class ServiceComments {
+    commentsRepository: CommentsRepository;
+    postsRepository: PostsRepository;
+    constructor() {
+        this.commentsRepository = new CommentsRepository()
+        this.postsRepository = new PostsRepository()
+    }
     async createdNewComments(postId: string, content: string, user: WithId<UserMongoDbType>): Promise<CommentsOutputType | null> {
-        const post = await postsRepository.getPostsById(postId);
+        const post = await this.postsRepository.getPostsById(postId);
 
         if (!post) {
             return null;
@@ -24,22 +31,20 @@ export class ServiceComments {
         )
 
 
-        const res = await commentsRepository.saveComments(newComment)
+        const res = await this.commentsRepository.saveComments(newComment)
         return commentsMapper(res, user._id.toString())
 
     }
 
     async updateComment(commentId: string, content: string) {
-        return await commentsRepository.updateCommentsByCommentId(commentId, content)
+        return await this.commentsRepository.updateCommentsByCommentId(commentId, content)
     }
     async updateStatusLikeInUser(commentId:string, userId: string, status:string){
-        return commentsRepository.updateStatusLikeUser(commentId, userId, status)
+        return this.commentsRepository.updateStatusLikeUser(commentId, userId, status)
     }
 
     async deletedComment(commentId: string) {
-        return await commentsRepository.deleteCommentsByCommentId(commentId)
+        return await this.commentsRepository.deleteCommentsByCommentId(commentId)
     }
 
 }
-
-export const serviceComments = new ServiceComments()

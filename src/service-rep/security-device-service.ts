@@ -1,11 +1,15 @@
-import {securityDevicesRepo} from "../repository/security-devices-repo";
+import {SecurityDevicesRepo} from "../repository/security-devices-repo";
 import { OutpatModeldevicesUser} from "../types/device-of-user";
 import {ObjectId} from "mongodb";
 
 
 export class SecurityDeviceService {
+    private securityDevicesRepo: SecurityDevicesRepo;
+    constructor() {
+        this.securityDevicesRepo = new SecurityDevicesRepo()
+    }
     async getAllDevices(userId: string): Promise<OutpatModeldevicesUser[] | null> {
-        const devices = await securityDevicesRepo.getAllDevices(new ObjectId(userId).toString())
+        const devices = await this.securityDevicesRepo.getAllDevices(new ObjectId(userId).toString())
         if (!devices) {
             return null
         }
@@ -13,17 +17,16 @@ export class SecurityDeviceService {
     }
 
     async deletingDevicesExceptId(userId: string, deviceId: string) {
-        return securityDevicesRepo.deletingDevicesExceptId(userId, deviceId)
+        return this.securityDevicesRepo.deletingDevicesExceptId(userId, deviceId)
 
     }
 
     async deletingAllDevices(user: string, device: string) {
-        return securityDevicesRepo.deletingAllDevices(user, device)
+        return this.securityDevicesRepo.deletingAllDevices(user, device)
 
     }
 }
 
-export const securityDeviceService = new SecurityDeviceService()
 
 
 

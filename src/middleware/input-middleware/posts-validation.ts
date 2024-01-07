@@ -1,5 +1,7 @@
 import {body} from "express-validator";
-import {blogsRepository} from "../../repository/blogs-repository";
+import {BlogsRepository} from "../../repository/blogs-repository";
+
+const blogsRepository = new BlogsRepository()
 
 export const PostsValidation = ()=>(
     [

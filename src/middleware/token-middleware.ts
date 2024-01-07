@@ -1,12 +1,17 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUS} from "../index";
-import {jwtService} from "../application/jwt-service";
-import {userRepository} from "../repository/user-repository";
+import {JwtService} from "../application/jwt-service";
+import {UserRepository} from "../repository/user-repository";
 import { ObjectId} from "mongodb";
-import {deletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
-import {securityDevicesRepo} from "../repository/security-devices-repo";
+import {DeletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
+import {SecurityDevicesRepo} from "../repository/security-devices-repo";
 import {neSytTypes} from "../types/neSyt-types";
 import {NeSytModelClass} from "../schemas/neSyt-schemas";
+
+const jwtService = new JwtService()
+const userRepository = new UserRepository()
+const deletedTokenRepoRepository = new DeletedTokenRepoRepository()
+const securityDevicesRepo = new SecurityDevicesRepo()
 
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
@@ -85,21 +90,3 @@ export const IPRequestCounter = async (req: Request, res: Response , next: NextF
 
     next()
 }
-// let requestCounts: { [key: string]: number[] } = {};
-// const ip = req.ip
-//
-// if (!requestCounts[ip]) {
-//     requestCounts[ip] = [];
-// }
-//
-// const currentTime = new Date().getTime();
-//
-// requestCounts[ip].push(currentTime);
-//
-// requestCounts[ip] = requestCounts[ip].filter((time) => time > currentTime - 10000);
-//
-// if (requestCounts[ip].length > 5) {
-//     return res.sendStatus(HTTP_STATUS.TOO_MANY_REQUESTS_429)
-// }
-//
-// next();

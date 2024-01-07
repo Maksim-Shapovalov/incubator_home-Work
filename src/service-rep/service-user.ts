@@ -2,11 +2,15 @@ import {
     UserBasicRequestBody, UserDbType,
     UserMongoDbType, UserToShow,
 } from "../types/user-type";
-import {userRepository, userToPostMapper} from "../repository/user-repository";
+import {UserRepository, userToPostMapper} from "../repository/user-repository";
 import bcrypt from "bcrypt"
 import add from 'date-fns/add'
 import {randomUUID} from "crypto";
 export class ServiceUser {
+    userRepository: UserRepository
+    constructor() {
+        this.userRepository = new UserRepository()
+    }
     async getNewUser(user: UserBasicRequestBody): Promise<UserToShow> {
 
         const passwordSalt = await bcrypt.genSalt(10)
@@ -31,17 +35,17 @@ export class ServiceUser {
         )
 
 
-        const result:UserMongoDbType = await userRepository.saveUser(newUser)
+        const result:UserMongoDbType = await this.userRepository.saveUser(newUser)
         return userToPostMapper(result)
     }
     async deleteUserById(userId: string): Promise<boolean> {
-        return await userRepository.deleteUserById(userId)
+        return await this.userRepository.deleteUserById(userId)
     }
     async _generateHash(password: string, salt: string) {
         return bcrypt.hash(password, salt)
     }
     async checkCredentials(loginOrEmail: string, password: string) {
-        const user = await userRepository.findByLoginOrEmail(loginOrEmail)
+        const user = await this.userRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) return false
 
         const passwordHash = await this._generateHash(password, user.passwordSalt)
@@ -52,4 +56,3 @@ export class ServiceUser {
     }
 
 }
-export const serviceUser = new ServiceUser()

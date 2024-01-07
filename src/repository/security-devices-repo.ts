@@ -41,7 +41,6 @@ export class SecurityDevicesRepo {
     }
 }
 
-export const securityDevicesRepo = new SecurityDevicesRepo()
 const deviceMapper = (device: WithId<DevicesUserDB>): OutpatModeldevicesUser => {
     return {
         ip: device.ip,

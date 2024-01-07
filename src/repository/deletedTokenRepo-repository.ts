@@ -14,5 +14,3 @@ export class DeletedTokenRepoRepository {
         return refreshToken.token
     }
 }
-
-export const deletedTokenRepoRepository = new DeletedTokenRepoRepository()

@@ -1,10 +1,7 @@
 import {Request, Response, Router} from "express";
-import {serviceUser} from "../../service-rep/service-user";
 import {HTTP_STATUS} from "../../index";
-import {jwtService} from "../../application/jwt-service";
-import {userMapper, userRepository} from "../../repository/user-repository";
-import {authMiddleware, CheckingAuthorizationValidationCode} from "../../middleware/auth-middleware";
-import {authService} from "../../domain/auth-service";
+import {JwtService} from "../../application/jwt-service";
+import {userMapper, UserRepository} from "../../repository/user-repository";
 import {
     AuthBodyToSendNewPassword,
     AuthValidation,
@@ -13,22 +10,41 @@ import {
 } from "../../middleware/input-middleware/validation/auth-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {IPRequestCounter, ValidationRefreshToken} from "../../middleware/token-middleware";
-import {deletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
-import {securityDeviceService} from "../../service-rep/security-device-service";
+import {AuthService} from "../../domain/auth-service";
+import {ServiceUser} from "../../service-rep/service-user";
+import {SecurityDeviceService} from "../../service-rep/security-device-service";
+import {DeletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
+import {authMiddleware, CheckingAuthorizationValidationCode} from "../../middleware/auth-middleware";
 
 
 export const authRouter = Router()
 
 class AuthController {
+    private authService: AuthService;
+    private serviceUser: ServiceUser;
+    private securityDeviceService: SecurityDeviceService;
+    private userRepository: UserRepository;
+    private deletedTokenRepoRepository: DeletedTokenRepoRepository;
+    private jwtService: JwtService;
+
+    constructor() {
+        this.authService = new AuthService()
+        this.serviceUser = new ServiceUser()
+        this.securityDeviceService = new SecurityDeviceService()
+        this.userRepository = new UserRepository()
+        this.deletedTokenRepoRepository = new DeletedTokenRepoRepository()
+        this.jwtService = new JwtService()
+    }
+
     async loginInApp(req: Request, res: Response) {
         const userAgent = {
             IP: req.socket.remoteAddress || req.headers['x-forwarded-for'],
             deviceName: req.headers["user-agent"]
         }
-        const user = await serviceUser.checkCredentials(req.body.loginOrEmail, req.body.password)
+        const user = await this.serviceUser.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (!user) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
 
-        const {accessToken, refreshToken} = await jwtService.createdJWTAndInsertDevice(userMapper(user), userAgent)
+        const {accessToken, refreshToken} = await this.jwtService.createdJWTAndInsertDevice(userMapper(user), userAgent)
 
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         return res.status(HTTP_STATUS.OK_200).send({accessToken})
@@ -37,7 +53,7 @@ class AuthController {
     async passwordRecovery(req: Request<{}, {}, { email: string }>, res: Response) {
         const requestEmail: string = req.body.email
         if (!requestEmail) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
-        await authService.sendEmailMessage(requestEmail)
+        await this.authService.sendEmailMessage(requestEmail)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
 
@@ -48,7 +64,7 @@ class AuthController {
             newSalt: ''
         }
         if (!requestEmail) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
-        const user = await authService.findUserByRecoveryCode(requestEmail)
+        const user = await this.authService.findUserByRecoveryCode(requestEmail)
         if (!user) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
@@ -57,13 +73,13 @@ class AuthController {
         const oldRefreshToken = req.cookies.refreshToken
         const user = req.body.user;
 
-        const token = await jwtService.updateJWT(userMapper(user), oldRefreshToken)//update
+        const token = await this.jwtService.updateJWT(userMapper(user), oldRefreshToken)//update
 
         if (!token) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
 
         const {accessToken, refreshToken} = token
 
-        await deletedTokenRepoRepository.deletedTokens(oldRefreshToken)
+        await this.deletedTokenRepoRepository.deletedTokens(oldRefreshToken)
 
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         return res.status(HTTP_STATUS.OK_200).send({accessToken})
@@ -75,8 +91,8 @@ class AuthController {
         const device = req.body.deviceId
         const token = req.cookies.refreshToken
 
-        const deletedDevice = await securityDeviceService.deletingDevicesExceptId(user._id.toString(), device.deviceId)
-        const bannedToken = await deletedTokenRepoRepository.deletedTokens(token)
+        const deletedDevice = await this.securityDeviceService.deletingDevicesExceptId(user._id.toString(), device.deviceId)
+        const bannedToken = await this.deletedTokenRepoRepository.deletedTokens(token)
 
         if (!bannedToken) {
             return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
@@ -89,7 +105,7 @@ class AuthController {
 
     async registrationConfirmation(req: Request, res: Response) {
 
-        const result = await authService.confirmatoryUser(req.body.code)
+        const result = await this.authService.confirmatoryUser(req.body.code)
         if (!result) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return
@@ -104,14 +120,14 @@ class AuthController {
             email: req.body.email
         }
         // const createUser: UserToShow = await serviceUser.getNewUser(user)
-        await authService.doOperation(user)
+        await this.authService.doOperation(user)
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
 
     async registrationEmailResending(req: Request, res: Response) {
-        const findUser = await userRepository.findByLoginOrEmail(req.body.email)
+        const findUser = await this.userRepository.findByLoginOrEmail(req.body.email)
         if (!findUser) return res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
-        await authService.findUserByEmail(findUser)
+        await this.authService.findUserByEmail(findUser)
         return res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
 
@@ -130,31 +146,31 @@ class AuthController {
 
 const authController = new AuthController()
 
-authRouter.post("/login", IPRequestCounter, authController.loginInApp)
+authRouter.post("/login", IPRequestCounter, authController.loginInApp.bind(authController))
 
 authRouter.post("/password-recovery",
     AuthValidationEmailToSendMessage(), IPRequestCounter,
-    ErrorMiddleware, authController.passwordRecovery)
+    ErrorMiddleware, authController.passwordRecovery.bind(authController))
 
 authRouter.post("/new-password", AuthBodyToSendNewPassword(),
-    IPRequestCounter, ErrorMiddleware, authController.createdNewPasswordForUserby)
+    IPRequestCounter, ErrorMiddleware, authController.createdNewPasswordForUserby.bind(authController))
 
 authRouter.post("/refresh-token",
-    ValidationRefreshToken, IPRequestCounter, authController.refreshToken)
+    ValidationRefreshToken, IPRequestCounter, authController.refreshToken.bind(authController))
 
 authRouter.post("/logout",
-    ValidationRefreshToken, authController.logoutInApp)
+    ValidationRefreshToken, authController.logoutInApp.bind(authController))
 
 authRouter.post("/registration-confirmation",
     IPRequestCounter, CheckingAuthorizationValidationCode(),
-    ErrorMiddleware, authController.registrationConfirmation)
+    ErrorMiddleware, authController.registrationConfirmation.bind(authController))
 
 authRouter.post("/registration",
-    IPRequestCounter, AuthValidation(), ErrorMiddleware, authController.registrationConfirmation)
+    IPRequestCounter, AuthValidation(), ErrorMiddleware, authController.registrationConfirmation.bind(authController))
 
 authRouter.post("/registration-email-resending",
     IPRequestCounter, AuthValidationEmail(),
-    ErrorMiddleware, authController.registrationEmailResending)
+    ErrorMiddleware, authController.registrationEmailResending.bind(authController))
 
 authRouter.get("/me",
-    authMiddleware, authController.me)
+    authMiddleware, authController.me.bind(authController))

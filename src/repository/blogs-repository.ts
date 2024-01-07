@@ -54,9 +54,6 @@ export class BlogsRepository{
 
     }
 }
-
-
-export const blogsRepository = new BlogsRepository()
 export const blogMapper = (blog: WithId<BlogsType>): BlogsOutputModel => {
     return {
         id: blog._id.toHexString(),
@@ -69,4 +66,3 @@ export const blogMapper = (blog: WithId<BlogsType>): BlogsOutputModel => {
 }
 
 
-//TODO: Сделать ендпоинт консол лог objectID и toHEXString , проверить разницу и изменения.
