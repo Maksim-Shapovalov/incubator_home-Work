@@ -14,7 +14,7 @@ const securityDeviceRepository = new SecurityDevicesRepo()
 const securityDeviceService = new SecurityDeviceService(securityDeviceRepository)
 const deletedTokenRepository = new DeletedTokenRepoRepository()
 const refreshTokenRepository = new RefreshTokenRepo()
-const jwtService = new JwtService(refreshTokenRepository,securityDeviceRepository)
+export const jwtService = new JwtService(refreshTokenRepository,securityDeviceRepository)
 const authService = new AuthService(userRepository,userService)
 
 export const authController = new AuthController(authService,userService,

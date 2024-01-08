@@ -8,6 +8,6 @@ import {PostsController} from "../routers/blogs&posts&comments/posts-router";
 const blogRepository = new BlogsRepository()
 const postRepository = new PostsRepository(blogRepository)
 const postService = new ServicePosts(postRepository,blogRepository)
-const commentsRepository = new CommentsRepository()
+const commentsRepository = new CommentsRepository(postRepository)
 const commentsService = new ServiceComments(commentsRepository,postRepository)
 export const postsController = new PostsController(postService,postRepository,commentsService,commentsRepository)

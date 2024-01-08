@@ -1,14 +1,13 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUS} from "../index";
-import {JwtService} from "../application/jwt-service";
 import {UserRepository} from "../repository/user-repository";
 import { ObjectId} from "mongodb";
 import {DeletedTokenRepoRepository} from "../repository/deletedTokenRepo-repository";
 import {SecurityDevicesRepo} from "../repository/security-devices-repo";
 import {neSytTypes} from "../types/neSyt-types";
 import {NeSytModelClass} from "../schemas/neSyt-schemas";
+import {jwtService} from "../composition-root/composition-root-auth";
 
-const jwtService = new JwtService()
 const userRepository = new UserRepository()
 const deletedTokenRepoRepository = new DeletedTokenRepoRepository()
 const securityDevicesRepo = new SecurityDevicesRepo()

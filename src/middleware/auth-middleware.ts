@@ -1,11 +1,11 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUS} from "../index";
-import {JwtService} from "../application/jwt-service";
 import {body} from "express-validator";
 import {UserRepository} from "../repository/user-repository";
+import {jwtService} from "../composition-root/composition-root-auth";
 
 export const userRepo = new UserRepository()
-const jwtService = new JwtService()
+
 export const authMiddlewareForGetCommentById = async (req: Request, res: Response, next: NextFunction) => {
     const registr = req.headers.authorization
     if (!registr){
