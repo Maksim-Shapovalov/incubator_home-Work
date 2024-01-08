@@ -4,18 +4,18 @@ import {OutpatModeldevicesUser} from "../../types/device-of-user";
 import {HTTP_STATUS} from "../../index";
 import {SecurityDeviceService} from "../../service-rep/security-device-service";
 import {SecurityDevicesRepo} from "../../repository/security-devices-repo";
-
+import {deviceController} from "../../composition-root/composition-root-device";
 
 
 export const securityDevices = Router();
 
-class DeviceController {
-    private securityDeviceService: SecurityDeviceService;
-    private securityDevicesRepo: SecurityDevicesRepo;
-    constructor() {
-        this.securityDeviceService = new SecurityDeviceService()
-        this.securityDevicesRepo = new SecurityDevicesRepo()
-    }
+export class DeviceController {
+
+    constructor(
+        protected securityDeviceService: SecurityDeviceService,
+        protected securityDevicesRepo: SecurityDevicesRepo
+    ) {}
+
     async getAllDevice(req: Request, res: Response) {
 
         const user = req.body.user
@@ -57,7 +57,7 @@ class DeviceController {
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
 }
-const deviceControllerInstance = new DeviceController()
-securityDevices.get("/",ValidationRefreshToken, deviceControllerInstance.getAllDevice.bind(deviceControllerInstance))
-securityDevices.delete("/:idDevice", ValidationRefreshToken, deviceControllerInstance.deleteDeviceUserById.bind(deviceControllerInstance) )
-securityDevices.delete("/",ValidationRefreshToken,  deviceControllerInstance.deleteAllDeviceUserExceptCurrent.bind(deviceControllerInstance))
+
+securityDevices.get("/", ValidationRefreshToken, deviceController.getAllDevice.bind(deviceController))
+securityDevices.delete("/:idDevice", ValidationRefreshToken, deviceController.deleteDeviceUserById.bind(deviceController))
+securityDevices.delete("/", ValidationRefreshToken, deviceController.deleteAllDeviceUserExceptCurrent.bind(deviceController))

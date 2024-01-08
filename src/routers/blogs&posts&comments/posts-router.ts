@@ -10,21 +10,23 @@ import {CommentValidation} from "../../middleware/input-middleware/comment-valid
 import {PostsRepository} from "../../repository/posts-repository";
 import {CommentsRepository} from "../../repository/comments-repository";
 import {ServiceComments} from "../../service-rep/service-comments";
+import {postsController} from "../../composition-root/composition-root-post";
 
 export const postsRouter = Router()
 
 
-class PostsController {
-    private postsService: ServicePosts;
-    private postsRepository: PostsRepository;
-    private commentsRepository: CommentsRepository;
-    private serviceComments: ServiceComments;
-    constructor() {
-        this.postsService = new ServicePosts()
-        this.postsRepository = new PostsRepository()
-        this.serviceComments = new ServiceComments()
-        this.commentsRepository = new CommentsRepository()
+export class PostsController {
+
+
+    constructor(
+        protected postsService: ServicePosts,
+        protected postsRepository: PostsRepository,
+        protected serviceComments: ServiceComments,
+        protected commentsRepository: CommentsRepository
+    ) {
+
     }
+
     async getAllPostsInDB(req: Request, res: Response) {
         const filter = queryFilter(req.query);
         const allPosts = await this.postsRepository.getAllPosts(filter);
@@ -94,13 +96,12 @@ class PostsController {
     }
 }
 
-const postsControllerInstance = new PostsController()
 
-postsRouter.get('/', postsControllerInstance.getAllPostsInDB.bind(postsControllerInstance))
-postsRouter.get('/:id', postsControllerInstance.getPostByPostId.bind(postsControllerInstance))
-postsRouter.get("/:postId/comments",authMiddlewareForGetCommentById, postsControllerInstance.getCommentByCommendIdInPosts.bind(postsControllerInstance))
-postsRouter.post("/:postId/comments", authMiddleware, CommentValidation(), ErrorMiddleware, postsControllerInstance.createCommentsInPostById.bind(postsControllerInstance))
-postsRouter.post('/', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsControllerInstance.createNewPost.bind(postsControllerInstance))
-postsRouter.put('/:id', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsControllerInstance.updatePostByPostId.bind(postsControllerInstance))
-postsRouter.delete('/:id', authGuardMiddleware, postsControllerInstance.deletePostByPostId.bind(postsControllerInstance))
+postsRouter.get('/', postsController.getAllPostsInDB.bind(postsController))
+postsRouter.get('/:id', postsController.getPostByPostId.bind(postsController))
+postsRouter.get("/:postId/comments", authMiddlewareForGetCommentById, postsController.getCommentByCommendIdInPosts.bind(postsController))
+postsRouter.post("/:postId/comments", authMiddleware, CommentValidation(), ErrorMiddleware, postsController.createCommentsInPostById.bind(postsController))
+postsRouter.post('/', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsController.createNewPost.bind(postsController))
+postsRouter.put('/:id', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsController.updatePostByPostId.bind(postsController))
+postsRouter.delete('/:id', authGuardMiddleware, postsController.deletePostByPostId.bind(postsController))
 

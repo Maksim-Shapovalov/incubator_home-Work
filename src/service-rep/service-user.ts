@@ -7,10 +7,7 @@ import bcrypt from "bcrypt"
 import add from 'date-fns/add'
 import {randomUUID} from "crypto";
 export class ServiceUser {
-    userRepository: UserRepository
-    constructor() {
-        this.userRepository = new UserRepository()
-    }
+    constructor(protected userRepository: UserRepository) {}
     async getNewUser(user: UserBasicRequestBody): Promise<UserToShow> {
 
         const passwordSalt = await bcrypt.genSalt(10)

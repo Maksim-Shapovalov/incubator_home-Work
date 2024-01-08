@@ -1,26 +1,26 @@
 import {Router, Request, Response} from "express";
 import {HTTP_STATUS} from "../../index";
-import {ServiceComments } from "../../service-rep/service-comments";
+import {ServiceComments} from "../../service-rep/service-comments";
 import {authMiddleware, authMiddlewareForGetCommentById} from "../../middleware/auth-middleware";
 import {CommentValidation, LikeStatusValidation} from "../../middleware/input-middleware/comment-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {PostsRepository} from "../../repository/posts-repository";
 import {CommentsRepository} from "../../repository/comments-repository";
+import {commentsController} from "../../composition-root/composition-root-comment";
 
 export const commentsRouter = Router();
 
-class CommentsController {
-    private serviceComments: ServiceComments;
-    private postsRepository: PostsRepository;
-    private commentsRepository: CommentsRepository;
-    constructor() {
-        this.serviceComments = new ServiceComments()
-        this.commentsRepository = new CommentsRepository()
-        this.postsRepository = new PostsRepository()
+export class CommentsController {
+    constructor(
+        protected serviceComments: ServiceComments,
+        protected postsRepository: PostsRepository,
+        protected commentsRepository: CommentsRepository,
+    ) {
     }
+
     async getCommentsById(req: Request, res: Response) {
         const user = req.body.user
-        if (!user){
+        if (!user) {
             const findComments = await this.commentsRepository.getCommentById(req.params.id, null)
 
             if (!findComments) {
@@ -59,7 +59,8 @@ class CommentsController {
 
         res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
     }
-    async appropriationLike (req: Request, res: Response){
+
+    async appropriationLike(req: Request, res: Response) {
         const value = req.body.user
 
         const updateComment = await this.serviceComments.updateStatusLikeInUser(req.params.commentId, value._id.toString(), req.body.likeStatus)
@@ -93,9 +94,8 @@ class CommentsController {
 
 }
 
-const commentsControllerInstance = new CommentsController()
-commentsRouter.get("/:id",authMiddlewareForGetCommentById, commentsControllerInstance.getCommentsById.bind(commentsControllerInstance))
-commentsRouter.put("/:commentId", authMiddleware, CommentValidation(), ErrorMiddleware, commentsControllerInstance.updateCommentByCommentId.bind(commentsControllerInstance))
-commentsRouter.put("/:commentId/like-status",authMiddleware,LikeStatusValidation(),ErrorMiddleware,commentsControllerInstance.appropriationLike.bind(commentsControllerInstance))
-commentsRouter.delete("/:commentId", authMiddleware, commentsControllerInstance.deleteCommentByCommentId.bind(commentsControllerInstance))
+commentsRouter.get("/:id", authMiddlewareForGetCommentById, commentsController.getCommentsById.bind(commentsController))
+commentsRouter.put("/:commentId", authMiddleware, CommentValidation(), ErrorMiddleware, commentsController.updateCommentByCommentId.bind(commentsController))
+commentsRouter.put("/:commentId/like-status", authMiddleware, LikeStatusValidation(), ErrorMiddleware, commentsController.appropriationLike.bind(commentsController))
+commentsRouter.delete("/:commentId", authMiddleware, commentsController.deleteCommentByCommentId.bind(commentsController))
 

@@ -7,11 +7,11 @@ import {PostsRepository} from "../repository/posts-repository";
 
 
 export class ServiceComments {
-    commentsRepository: CommentsRepository;
-    postsRepository: PostsRepository;
-    constructor() {
-        this.commentsRepository = new CommentsRepository()
-        this.postsRepository = new PostsRepository()
+    constructor(
+        protected commentsRepository:CommentsRepository,
+        protected postsRepository: PostsRepository
+    ) {
+
     }
     async createdNewComments(postId: string, content: string, user: WithId<UserMongoDbType>): Promise<CommentsOutputType | null> {
         const post = await this.postsRepository.getPostsById(postId);

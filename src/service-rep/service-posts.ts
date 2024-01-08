@@ -4,12 +4,11 @@ import {BlogsRepository} from "../repository/blogs-repository";
 
 
 export class ServicePosts {
-    postsRepository: PostsRepository;
-    private blogsRepository: BlogsRepository;
-    constructor() {
-        this.postsRepository = new PostsRepository()
-        this.blogsRepository = new BlogsRepository()
-    }
+    constructor(
+        protected postsRepository: PostsRepository,
+        protected blogsRepository: BlogsRepository
+    ) {}
+
     async createNewPosts
     (bodyPost: BodyPostToRequest, blogId: string): Promise<PostOutputModel | null> {
         const findBlogName = await this.blogsRepository.getBlogsById(blogId)

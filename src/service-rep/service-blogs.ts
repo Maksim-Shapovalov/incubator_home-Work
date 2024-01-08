@@ -4,10 +4,7 @@ import {BlogsRepository} from "../repository/blogs-repository";
 
 
 export class ServiceBlogs {
-    blogsRepository: BlogsRepository;
-    constructor() {
-        this.blogsRepository = new BlogsRepository()
-    }
+    constructor(protected blogsRepository: BlogsRepository) {}
     async createNewBlogs(blog: BlogRequest): Promise<BlogsOutputModel> {
 
         const newBlogs = new BlogClass(

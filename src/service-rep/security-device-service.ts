@@ -4,10 +4,8 @@ import {ObjectId} from "mongodb";
 
 
 export class SecurityDeviceService {
-    private securityDevicesRepo: SecurityDevicesRepo;
-    constructor() {
-        this.securityDevicesRepo = new SecurityDevicesRepo()
-    }
+
+    constructor(protected securityDevicesRepo: SecurityDevicesRepo) {}
     async getAllDevices(userId: string): Promise<OutpatModeldevicesUser[] | null> {
         const devices = await this.securityDevicesRepo.getAllDevices(new ObjectId(userId).toString())
         if (!devices) {

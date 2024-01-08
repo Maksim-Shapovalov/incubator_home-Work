@@ -9,21 +9,21 @@ import {ServiceBlogs} from "../../service-rep/service-blogs";
 import {BlogsRepository} from "../../repository/blogs-repository";
 import {ServicePosts} from "../../service-rep/service-posts";
 import {PostsRepository} from "../../repository/posts-repository";
+import {blogController} from "../../composition-root/composition-root-blog";
 
 
 export const blogsRouter = Router()
 
-class BlogController {
-    private postsService: ServicePosts;
-    private blogsService: ServiceBlogs;
-    private blogsRepository: BlogsRepository;
-    private postsRepository: PostsRepository;
-    constructor() {
-        this.blogsService = new ServiceBlogs()
-        this.blogsRepository = new BlogsRepository()
-        this.postsService = new ServicePosts()
-        this.postsRepository = new PostsRepository()
+export class BlogController {
+
+    constructor(
+        protected postsService: ServicePosts,
+        protected blogsService: ServiceBlogs,
+        protected blogsRepository: BlogsRepository,
+        protected postsRepository: PostsRepository
+    ) {
     }
+
     async getAllBlogs(req: Request, res: Response) {
         const filter = searchNameInBlog(req.query);
         const allBlogs = await this.blogsRepository.getAllBlogs(filter);
@@ -92,16 +92,15 @@ class BlogController {
     }
 }
 
-const blogControllerInstance = new BlogController()
-blogsRouter.get('/', blogControllerInstance.getAllBlogs.bind(blogControllerInstance))
-blogsRouter.get('/:id', blogControllerInstance.getBlogById.bind(blogControllerInstance))
-blogsRouter.get('/:id/posts', blogControllerInstance.getPostsByBlogId.bind(blogControllerInstance))
+blogsRouter.get('/', blogController.getAllBlogs.bind(blogController))
+blogsRouter.get('/:id', blogController.getBlogById.bind(blogController))
+blogsRouter.get('/:id/posts', blogController.getPostsByBlogId.bind(blogController))
 blogsRouter.post('/:blogId/posts', authGuardMiddleware,
-    PostspParamsValidation(), ErrorMiddleware, blogControllerInstance.createPostInBlogByBlogId.bind(blogControllerInstance))
+    PostspParamsValidation(), ErrorMiddleware, blogController.createPostInBlogByBlogId.bind(blogController))
 blogsRouter.post('/', authGuardMiddleware,
-    BlogsValidation(), ErrorMiddleware, blogControllerInstance.createNewBlog.bind(blogControllerInstance))
+    BlogsValidation(), ErrorMiddleware, blogController.createNewBlog.bind(blogController))
 blogsRouter.put('/:id', authGuardMiddleware,
-    BlogsValidation(), ErrorMiddleware, blogControllerInstance.updateBlogByBlogId.bind(blogControllerInstance))
+    BlogsValidation(), ErrorMiddleware, blogController.updateBlogByBlogId.bind(blogController))
 blogsRouter.delete('/:id',
-    authGuardMiddleware, blogControllerInstance.deleteBlogById.bind(blogControllerInstance))
+    authGuardMiddleware, blogController.deleteBlogById.bind(blogController))
 

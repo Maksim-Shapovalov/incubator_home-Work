@@ -6,9 +6,7 @@ import {BlogsRepository} from "./blogs-repository";
 
 
 export class PostsRepository {
-    blogsRepository: BlogsRepository;
-    constructor() {
-        this.blogsRepository = new BlogsRepository()
+    constructor(protected blogsRepository: BlogsRepository) {
     }
     async getAllPosts(filter: PaginationQueryType): Promise<PaginationType<PostOutputModel>> {
         const pageSizeInQuery: number = filter.pageSize;

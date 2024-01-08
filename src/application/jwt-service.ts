@@ -20,12 +20,12 @@ type PayloadTypeRefresh = {
 } | null
 
 export class JwtService {
-    refreshTokenRepo: RefreshTokenRepo;
-    securityDevicesRepo: SecurityDevicesRepo;
-    constructor() {
-        this.refreshTokenRepo = new RefreshTokenRepo()
-        this.securityDevicesRepo = new SecurityDevicesRepo()
+    constructor(
+        protected refreshTokenRepo: RefreshTokenRepo,
+        protected securityDevicesRepo: SecurityDevicesRepo
+    ) {
     }
+
     async createdJWTAndInsertDevice(user: UserToPostsOutputModel, userAgent: any = null) {
         const createRefreshTokenMeta = new DeviceClass(
             userAgent.IP || '123',

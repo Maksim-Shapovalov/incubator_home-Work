@@ -6,18 +6,19 @@ import {UserValidation} from "../../middleware/input-middleware/user-validation"
 import {authGuardMiddleware} from "../../middleware/register-middleware";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {UserRepository} from "../../repository/user-repository";
+import {userController} from "../../composition-root/composition-root-user";
 
 
 export const userRouter = Router()
 
 
-class UserController {
-    private serviceUser: ServiceUser;
-    private userRepository: UserRepository;
+export class UserController {
 
-    constructor() {
-        this.serviceUser = new ServiceUser()
-        this.userRepository = new UserRepository()
+
+    constructor(
+        protected userRepository: UserRepository,
+        protected serviceUser: ServiceUser
+    ) {
     }
     async getAllUserInDB(req: Request, res: Response) {
         const filter = searchLogAndEmailInUsers(req.query)
@@ -51,9 +52,9 @@ class UserController {
     }
 }
 
-const userControllerInstance = new UserController()
+// const userControllerInstance = new UserController()
 
-userRouter.get("/", authGuardMiddleware, userControllerInstance.getAllUserInDB.bind(userControllerInstance))
-userRouter.get("/:codeId", userControllerInstance.getUserByCodeIdInDB.bind(userControllerInstance))
-userRouter.post("/", authGuardMiddleware, UserValidation(), ErrorMiddleware, userControllerInstance.createNewUser.bind(userControllerInstance))
-userRouter.delete("/:id", authGuardMiddleware, userControllerInstance.deleteUserInDB.bind(userControllerInstance) )
+userRouter.get("/", authGuardMiddleware, userController.getAllUserInDB.bind(userController))
+userRouter.get("/:codeId", userController.getUserByCodeIdInDB.bind(userController))
+userRouter.post("/", authGuardMiddleware, UserValidation(), ErrorMiddleware, userController.createNewUser.bind(userController))
+userRouter.delete("/:id", authGuardMiddleware, userController.deleteUserInDB.bind(userController) )

@@ -7,12 +7,10 @@ import {ServiceUser} from "../service-rep/service-user";
 
 
 export class AuthService{
-    private userRepository: UserRepository;
-    private serviceUser: ServiceUser;
-    constructor() {
-        this.serviceUser = new ServiceUser()
-        this.userRepository = new UserRepository()
-    }
+    constructor(
+        protected userRepository: UserRepository,
+        protected serviceUser: ServiceUser
+    ) {}
     async doOperation(user: any){
         await emailManager.sendEmailRecoveryMessage(user)
     }

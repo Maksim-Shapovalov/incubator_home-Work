@@ -6,10 +6,8 @@ import {CommentsModelClass, LikesModelClass} from "../schemas/comments-schemas";
 import {PostsRepository} from "./posts-repository";
 
 export class CommentsRepository {
-    postsRepository: PostsRepository;
-    constructor() {
-        this.postsRepository = new PostsRepository()
-    }
+
+    constructor(protected  postsRepository: PostsRepository) {}
     async getCommentsInPost(postId: string, filter: PaginationQueryType, userId: string | null): Promise<PaginationType<CommentsOutputType> | null> {
         const findPost = await  this.postsRepository.getPostsById(postId)
 

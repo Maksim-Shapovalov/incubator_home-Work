@@ -15,26 +15,22 @@ import {ServiceUser} from "../../service-rep/service-user";
 import {SecurityDeviceService} from "../../service-rep/security-device-service";
 import {DeletedTokenRepoRepository} from "../../repository/deletedTokenRepo-repository";
 import {authMiddleware, CheckingAuthorizationValidationCode} from "../../middleware/auth-middleware";
+import {authController} from "../../composition-root/composition-root-auth";
 
 
 export const authRouter = Router()
 
-class AuthController {
-    private authService: AuthService;
-    private serviceUser: ServiceUser;
-    private securityDeviceService: SecurityDeviceService;
-    private userRepository: UserRepository;
-    private deletedTokenRepoRepository: DeletedTokenRepoRepository;
-    private jwtService: JwtService;
+export class AuthController {
 
-    constructor() {
-        this.authService = new AuthService()
-        this.serviceUser = new ServiceUser()
-        this.securityDeviceService = new SecurityDeviceService()
-        this.userRepository = new UserRepository()
-        this.deletedTokenRepoRepository = new DeletedTokenRepoRepository()
-        this.jwtService = new JwtService()
-    }
+
+    constructor(
+        protected authService: AuthService,
+        protected serviceUser: ServiceUser,
+        protected securityDeviceService: SecurityDeviceService,
+        protected userRepository: UserRepository,
+        protected deletedTokenRepoRepository: DeletedTokenRepoRepository,
+        protected jwtService: JwtService
+    ) {}
 
     async loginInApp(req: Request, res: Response) {
         const userAgent = {
@@ -144,7 +140,7 @@ class AuthController {
     }
 }
 
-const authController = new AuthController()
+
 
 authRouter.post("/login", IPRequestCounter, authController.loginInApp.bind(authController))
 
