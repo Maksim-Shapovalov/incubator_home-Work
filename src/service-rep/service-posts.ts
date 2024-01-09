@@ -30,6 +30,9 @@ export class ServicePosts {
         return postMapper(result)
 
     }
+    async updateStatusLikeInUser(commentId:string, userId: string, status:string){
+        return this.postsRepository.updateStatusLikeUser(commentId, userId, status)
+    }
 
     async updatePostsById
     (id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<boolean> {

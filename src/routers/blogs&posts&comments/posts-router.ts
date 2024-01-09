@@ -6,11 +6,13 @@ import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {authGuardMiddleware} from "../../middleware/register-middleware";
 import {queryFilter} from "../../repository/qurey-repo/query-filter";
 import {authMiddleware, authMiddlewareForGetCommentById} from "../../middleware/auth-middleware";
-import {CommentValidation} from "../../middleware/input-middleware/comment-validation";
+import {CommentValidation, LikeStatusValidation} from "../../middleware/input-middleware/comment-validation";
 import {PostsRepository} from "../../repository/posts-repository";
 import {CommentsRepository} from "../../repository/comments-repository";
 import {ServiceComments} from "../../service-rep/service-comments";
 import {postsController} from "../../composition-root/composition-root-post";
+import {commentsController} from "../../composition-root/composition-root-comment";
+import {commentsRouter} from "./comments-router";
 
 export const postsRouter = Router()
 
@@ -83,6 +85,18 @@ export class PostsController {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         }
     }
+    async appropriationLike(req: Request, res: Response) {
+        const value = req.body.user
+
+        const updateComment = await this.postsService.updateStatusLikeInUser(req.params.commentId, value._id.toString(), req.body.likeStatus)
+
+        if (!updateComment) {
+            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+            return
+        }
+
+        res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
+    }
 
     async deletePostByPostId(req: Request, res: Response) {
         const deleted = await this.postsService.deletePostsById(req.params.id)
@@ -103,5 +117,6 @@ postsRouter.get("/:postId/comments", authMiddlewareForGetCommentById, postsContr
 postsRouter.post("/:postId/comments", authMiddleware, CommentValidation(), ErrorMiddleware, postsController.createCommentsInPostById.bind(postsController))
 postsRouter.post('/', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsController.createNewPost.bind(postsController))
 postsRouter.put('/:id', authGuardMiddleware, PostsValidation(), ErrorMiddleware, postsController.updatePostByPostId.bind(postsController))
+commentsRouter.put("/:commentId/like-status", authMiddleware, LikeStatusValidation(), ErrorMiddleware, postsController.appropriationLike.bind(postsController))
 postsRouter.delete('/:id', authGuardMiddleware, postsController.deletePostByPostId.bind(postsController))
 

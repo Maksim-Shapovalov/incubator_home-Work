@@ -3,6 +3,7 @@ import {ObjectId, WithId} from "mongodb";
 import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {PostModelClass} from "../schemas/post-schema";
 import {BlogsRepository} from "./blogs-repository";
+import {LikesModelClass} from "../schemas/comments-schemas";
 
 
 export class PostsRepository {
@@ -70,6 +71,29 @@ export class PostsRepository {
             items: items
         }
 
+    }
+    async updateStatusLikeUser(commentId: string, userId: string, status: string) {
+        const likeWithUserId = await LikesModelClass.findOne({userId, commentId}).exec()
+
+        const comment = await PostModelClass.findOne({_id: new ObjectId((commentId))}).exec()
+
+        if (!comment) {
+            return false
+        }
+
+        if (likeWithUserId) {
+            const updateStatus = await LikesModelClass.updateOne({commentId, userId}, {
+                $set: {
+                    likeStatus: status,
+                }
+            })
+
+            return updateStatus.matchedCount === 1
+        }
+
+        await LikesModelClass.create({commentId, userId, likeStatus: status})
+
+        return true
     }
 
     async savePost(post: PostClass): Promise<PostsType> {
