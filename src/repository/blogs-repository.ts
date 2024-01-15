@@ -2,8 +2,11 @@ import {BlogClass, BlogsOutputModel, BlogsType} from "../types/blogs-type";
 import {ObjectId, WithId} from "mongodb";
 import {BlogsPaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {BlogModelClass} from "../schemas/blog-schemas";
+import {injectable} from "inversify";
+import "reflect-metadata"
 
 
+@injectable()
 export class BlogsRepository{
     async getAllBlogs(filter: BlogsPaginationQueryType): Promise<PaginationType<BlogsOutputModel>> {
         const filterQuery = {name: {$regex: filter.searchNameTerm, $options: 'i'}}

@@ -6,6 +6,9 @@ import {UserRepository, userToPostMapper} from "../repository/user-repository";
 import bcrypt from "bcrypt"
 import add from 'date-fns/add'
 import {randomUUID} from "crypto";
+import {injectable} from "inversify";
+import "reflect-metadata"
+@injectable()
 export class ServiceUser {
     constructor(protected userRepository: UserRepository) {}
     async getNewUser(user: UserBasicRequestBody): Promise<UserToShow> {

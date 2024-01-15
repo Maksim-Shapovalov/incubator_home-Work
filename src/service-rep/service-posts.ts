@@ -1,8 +1,9 @@
 import {BodyPostToRequest, PostClass, PostOutputModel} from "../types/posts-type";
 import {postMapper, PostsRepository} from "../repository/posts-repository";
 import {BlogsRepository} from "../repository/blogs-repository";
-
-
+import {injectable} from "inversify";
+import "reflect-metadata"
+@injectable()
 export class ServicePosts {
     constructor(
         protected postsRepository: PostsRepository,

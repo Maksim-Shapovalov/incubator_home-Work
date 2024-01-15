@@ -6,12 +6,14 @@ import {DeletedTokenRepoRepository} from "../repository/deletedTokenRepo-reposit
 import {SecurityDevicesRepo} from "../repository/security-devices-repo";
 import {neSytTypes} from "../types/neSyt-types";
 import {NeSytModelClass} from "../schemas/neSyt-schemas";
-import {jwtService} from "../composition-root/composition-root-auth";
+import {container} from "../composition-root/composition-root";
+import {JwtService} from "../application/jwt-service";
 
-const userRepository = new UserRepository()
-const deletedTokenRepoRepository = new DeletedTokenRepoRepository()
-const securityDevicesRepo = new SecurityDevicesRepo()
 
+const userRepository = container.resolve<UserRepository>(UserRepository)
+const deletedTokenRepoRepository = container.resolve<DeletedTokenRepoRepository>(DeletedTokenRepoRepository)
+const securityDevicesRepo = container.resolve<SecurityDevicesRepo>(SecurityDevicesRepo)
+const jwtService = container.resolve<JwtService>(JwtService)
 
 export const ValidationRefreshToken = async (req: Request, res: Response , next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken

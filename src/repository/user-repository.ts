@@ -6,6 +6,10 @@ import {
 import {ObjectId, WithId} from "mongodb";
 import add from "date-fns/add";
 import {UserModelClass} from "../schemas/user-schemas";
+import {injectable} from "inversify";
+import "reflect-metadata"
+
+
 type possibleUser = {
     email: string,
     recoveryCode: string
@@ -15,7 +19,7 @@ export type newDataUser2={
     newSalt: string,
     recoveryCode: string
 }
-
+@injectable()
 export class UserRepository {
     async getAllUsers(filter:UserPaginationQueryType): Promise<PaginationType<UserToShow> | null>{
         const filterQuery = {$or: [

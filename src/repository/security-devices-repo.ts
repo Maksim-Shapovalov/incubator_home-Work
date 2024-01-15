@@ -1,8 +1,9 @@
 import {DevicesUserDB, OutpatModeldevicesUser} from "../types/device-of-user";
 import {WithId} from "mongodb";
 import {DataIDModelClass} from "../schemas/dataID-schemas";
-
-
+import {injectable} from "inversify";
+import "reflect-metadata"
+@injectable()
 export class SecurityDevicesRepo {
     async getDevice(sessionId: string, id: string) {
         const device = await DataIDModelClass.findOne({deviceId: sessionId})

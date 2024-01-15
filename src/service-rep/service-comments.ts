@@ -3,9 +3,10 @@ import {CommentsClass, CommentsOutputType} from "../types/comment-type";
 import {WithId} from "mongodb";
 import {UserMongoDbType} from "../types/user-type";
 import {PostsRepository} from "../repository/posts-repository";
+import {injectable} from "inversify";
+import "reflect-metadata"
 
-
-
+@injectable()
 export class ServiceComments {
     constructor(
         protected commentsRepository:CommentsRepository,

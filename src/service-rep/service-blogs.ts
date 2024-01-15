@@ -1,8 +1,9 @@
 import {BlogClass, BlogRequest, BlogsOutputModel, BlogsType} from "../types/blogs-type";
 import {WithId} from "mongodb";
 import {BlogsRepository} from "../repository/blogs-repository";
-
-
+import {injectable} from "inversify";
+import "reflect-metadata"
+@injectable()
 export class ServiceBlogs {
     constructor(protected blogsRepository: BlogsRepository) {}
     async createNewBlogs(blog: BlogRequest): Promise<BlogsOutputModel> {

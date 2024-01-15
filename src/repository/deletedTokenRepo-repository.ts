@@ -1,5 +1,9 @@
 import {BlackListModel} from "../schemas/blackList-schemas";
+import {injectable} from "inversify";
+import "reflect-metadata"
 
+
+@injectable()
 export class DeletedTokenRepoRepository {
     async deletedTokens(token: any) {
         return BlackListModel.insertMany({token})

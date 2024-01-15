@@ -4,8 +4,9 @@ import {PaginationQueryType, PaginationType} from "./qurey-repo/query-filter";
 import {PostModelClass} from "../schemas/post-schema";
 import {BlogsRepository} from "./blogs-repository";
 import {LikesModelClass} from "../schemas/comments-schemas";
-
-
+import {injectable} from "inversify";
+import "reflect-metadata"
+@injectable()
 export class PostsRepository {
     constructor(protected blogsRepository: BlogsRepository) {
     }

@@ -6,6 +6,7 @@ import {RefreshTokenRepo} from "../repository/refreshToken-repo";
 import {DeviceClass} from "../types/device-of-user";
 import {SecurityDevicesRepo} from "../repository/security-devices-repo";
 import {UserToPostsOutputModel} from "../types/user-type";
+import {injectable} from "inversify";
 
 type PayloadType = {
     userId: string
@@ -18,7 +19,7 @@ type PayloadTypeRefresh = {
     exp: number
 
 } | null
-
+@injectable()
 export class JwtService {
     constructor(
         protected refreshTokenRepo: RefreshTokenRepo,

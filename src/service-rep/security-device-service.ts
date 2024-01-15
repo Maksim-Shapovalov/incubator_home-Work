@@ -1,8 +1,10 @@
 import {SecurityDevicesRepo} from "../repository/security-devices-repo";
 import { OutpatModeldevicesUser} from "../types/device-of-user";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
+import "reflect-metadata"
 
-
+@injectable()
 export class SecurityDeviceService {
 
     constructor(protected securityDevicesRepo: SecurityDevicesRepo) {}
