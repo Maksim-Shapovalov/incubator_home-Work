@@ -26,7 +26,7 @@ export class PostsController {
         if (!user){
             const filter = queryFilter(req.query);
             const allPosts = await this.postsRepository.getAllPosts(filter, null);
-            res.status(HTTP_STATUS.OK_200).send(allPosts)
+            return res.status(HTTP_STATUS.OK_200).send(allPosts)
         }
         const filter = queryFilter(req.query);
         const allPosts = await this.postsRepository.getAllPosts(filter, user._id);
