@@ -23,9 +23,9 @@ export class EmailAdapter{
                     html: message
                 }
 
-            const result = await transporter.sendMail(info)
+            return transporter.sendMail(info)
             // const timeToStart = new Date()
-            return result
+
 
         }catch(e){
             console.log('error',e)
@@ -51,9 +51,9 @@ export class EmailAdapter{
                     html: message
                 }
 
-            const result = await transporter.sendMail(info)
+            return transporter.sendMail(info)
             // const timeToStart = new Date()
-            return result
+
 
         }catch(e){
             console.log('error',e)
@@ -76,8 +76,7 @@ export class EmailAdapter{
                     subject: email,
                     html: textForSend
                 }
-            const result = await transporter.sendMail(info)
-            return result
+            return transporter.sendMail(info)
         }catch (e){
             console.log('error',e)
         }

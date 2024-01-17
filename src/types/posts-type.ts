@@ -1,4 +1,5 @@
 import {WithId} from "mongodb";
+import {CommentsOutputType} from "./comment-type";
 
 export class PostClass {
     constructor(
@@ -7,10 +8,36 @@ export class PostClass {
         public content: string,
         public blogId: string,
         public blogName: string,
-        public createdAt: string) {
-    }
+        public createdAt: string,
+        public commentatorInfo: {
+            userId: string
+            userLogin: string
+         }) {}
 }
+export type PostsOutputType = {
+    id: string
+    content: string
+    commentatorInfo: {
+        userId: string
+        userLogin: string
+    }
+    createdAt: string
+    likesInfo: {
+        likeCount : number
+        dislikesCount: number
+        myStatus: string
+    }
+    newestLikes:{
+        addedAt: string
+        userId:string
+        login:string
+    }[]
+    title: string
+    shortDescription: string
+    blogId: string
+    blogName: string
 
+}
 
 export type PostOutputModel = {
     id: string
@@ -20,7 +47,33 @@ export type PostOutputModel = {
     blogId: string
     blogName: string
     createdAt: string
+    likesInfo: {
+        likeCount : number
+        dislikesCount: number
+        myStatus: string
+    }
+    newestLikes: [
+        {
+            addedAt: string
+            userId: string
+            login: string
+        }
+    ]
 }
+
+export type PostLikesDB = WithId<{
+    postId: string
+    likeStatus: string
+    userId: string
+    createdAt: string
+    login: string
+}>
+export type LastThreeLikeUserInPost = [{
+    postId: string
+    likeStatus: string
+    userId: string
+    createdAt: string
+}]
 
 export type BodyPostToRequest = {
     title: string,
@@ -36,5 +89,9 @@ export type PostsType = WithId<{
     content: string
     blogId: string
     blogName: string
+    commentatorInfo: {
+        userId: string
+        userLogin: string
+    }
     createdAt: string
 }>

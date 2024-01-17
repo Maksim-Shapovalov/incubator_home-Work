@@ -34,20 +34,21 @@ export class BlogController {
     }
 
     async getPostsByBlogId(req: Request, res: Response) {
+        const user = req.body.user
         const filter = queryFilter(req.query);
-        const result = await this.postsRepository.getPostInBlogs(req.params.id, filter)
+        const result = await this.postsRepository.getPostInBlogs(req.params.id, filter, user._id.toString())
         if (!result) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         return res.send(result)
     }
 
     async createPostInBlogByBlogId(req: Request, res: Response) {
-
+        const user = req.body.user
         const postBody = {
             title: req.body.title,
             shortDescription: req.body.shortDescription,
             content: req.body.content,
         }
-        const newPost = await this.postsService.createNewPosts(postBody, req.params.blogId)
+        const newPost = await this.postsService.createNewPosts(postBody, req.params.blogId, user._id.toString())
         if (!newPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return

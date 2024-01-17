@@ -5,6 +5,7 @@ import {ErrorMiddleware} from "../../middleware/error-middleware";
 import {PostspParamsValidation} from "../../repository/qurey-repo/query-posts-repository";
 import {container} from "../../composition-root/composition-root";
 import {BlogController} from "../../contoller/blog-controller";
+import {authMiddleware} from "../../middleware/auth-middleware";
 
 
 
@@ -14,7 +15,7 @@ const blogController = container.resolve<BlogController>(BlogController)
 
 blogsRouter.get('/', blogController.getAllBlogs.bind(blogController))
 blogsRouter.get('/:id', blogController.getBlogById.bind(blogController))
-blogsRouter.get('/:id/posts', blogController.getPostsByBlogId.bind(blogController))
+blogsRouter.get('/:id/posts', authMiddleware,blogController.getPostsByBlogId.bind(blogController))
 blogsRouter.post('/:blogId/posts', authGuardMiddleware,
     PostspParamsValidation(), ErrorMiddleware, blogController.createPostInBlogByBlogId.bind(blogController))
 blogsRouter.post('/', authGuardMiddleware,

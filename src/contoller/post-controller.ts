@@ -22,9 +22,16 @@ export class PostsController {
     }
 
     async getAllPostsInDB(req: Request, res: Response) {
+        const user = req.body.user
+        if (!user){
+            const filter = queryFilter(req.query);
+            const allPosts = await this.postsRepository.getAllPosts(filter, null);
+            res.status(HTTP_STATUS.OK_200).send(allPosts)
+        }
         const filter = queryFilter(req.query);
-        const allPosts = await this.postsRepository.getAllPosts(filter);
+        const allPosts = await this.postsRepository.getAllPosts(filter, user._id);
         res.status(HTTP_STATUS.OK_200).send(allPosts)
+
     }
 
     async getPostByPostId(req: Request, res: Response) {
@@ -59,12 +66,13 @@ export class PostsController {
     }
 
     async createNewPost(req: Request, res: Response) {
+        const user = req.body.user
         const postBody = {
             title: req.body.title,
             shortDescription: req.body.shortDescription,
             content: req.body.content,
         }
-        const newBlogs = await this.postsService.createNewPosts(postBody, req.body.blogId)
+        const newBlogs = await this.postsService.createNewPosts(postBody, req.body.blogId, user)
         res.status(HTTP_STATUS.CREATED_201).send(newBlogs)
     }
 
@@ -80,7 +88,7 @@ export class PostsController {
     async appropriationLike(req: Request, res: Response) {
         const value = req.body.user
 
-        const updateComment = await this.postsService.updateStatusLikeInUser(req.params.commentId, value._id.toString(), req.body.likeStatus)
+        const updateComment = await this.postsService.updateStatusLikeInUser(req.params.postId, value, req.body.likeStatus)
 
         if (!updateComment) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)

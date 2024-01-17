@@ -1,8 +1,10 @@
-import {BodyPostToRequest, PostClass, PostOutputModel} from "../types/posts-type";
-import {postMapper, PostsRepository} from "../repository/posts-repository";
+import {BodyPostToRequest, PostClass, PostOutputModel, PostsOutputType} from "../types/posts-type";
+import {postsLikeMapper, PostsRepository} from "../repository/posts-repository";
 import {BlogsRepository} from "../repository/blogs-repository";
 import {injectable} from "inversify";
 import "reflect-metadata"
+import {WithId} from "mongodb";
+import {UserMongoDbType} from "../types/user-type";
 @injectable()
 export class ServicePosts {
     constructor(
@@ -11,7 +13,7 @@ export class ServicePosts {
     ) {}
 
     async createNewPosts
-    (bodyPost: BodyPostToRequest, blogId: string): Promise<PostOutputModel | null> {
+    (bodyPost: BodyPostToRequest, blogId: string, user: WithId<UserMongoDbType>): Promise<PostsOutputType | null> {
         const findBlogName = await this.blogsRepository.getBlogsById(blogId)
         if (!findBlogName) {
             return null
@@ -23,16 +25,22 @@ export class ServicePosts {
             bodyPost.content,
             blogId,
             findBlogName.name,
-            new Date().toISOString()
+            new Date().toISOString(),
+             {
+                userId: user._id.toString(),
+                userLogin: user.login
+        }
+
+
         )
 
 
         const result = await this.postsRepository.savePost(newPosts)
-        return postMapper(result)
+        return postsLikeMapper(result, user._id.toString())
 
     }
-    async updateStatusLikeInUser(commentId:string, userId: string, status:string){
-        return this.postsRepository.updateStatusLikeUser(commentId, userId, status)
+    async updateStatusLikeInUser(postId:string, user: UserMongoDbType, status:string){
+        return this.postsRepository.updateStatusLikeUser(postId, user, status)
     }
 
     async updatePostsById
