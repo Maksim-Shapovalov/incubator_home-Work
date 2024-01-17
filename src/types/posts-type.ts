@@ -9,10 +9,10 @@ export class PostClass {
         public blogId: string,
         public blogName: string,
         public createdAt: string,
-        public commentatorInfo: {
-            userId: string
-            userLogin: string
-         }) {}
+        // public commentatorInfo: {
+        //     userId: string
+        //     userLogin: string
+         ) {}
 }
 export type PostsOutputType = {
     id: string
@@ -52,13 +52,11 @@ export type PostOutputModel = {
         dislikesCount: number
         myStatus: string
     }
-    newestLikes: [
-        {
-            addedAt: string
-            userId: string
-            login: string
-        }
-    ]
+    newestLikes:{
+        addedAt: string
+        userId:string
+        login:string
+    }[]
 }
 
 export type PostLikesDB = WithId<{

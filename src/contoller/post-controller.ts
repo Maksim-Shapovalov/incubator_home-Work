@@ -72,9 +72,13 @@ export class PostsController {
             shortDescription: req.body.shortDescription,
             content: req.body.content,
         }
-        const newBlogs = await this.postsService.createNewPosts(postBody, req.body.blogId, user)
-        if (!newBlogs) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
-        res.status(HTTP_STATUS.CREATED_201).send(newBlogs)
+        if (!user) {
+            const newPosts = await this.postsService.createNewPosts(postBody, req.body.blogId, null )
+            return res.status(HTTP_STATUS.CREATED_201).send(newPosts)
+        }
+        const newPost = await this.postsService.createNewPosts(postBody, req.body.blogId, user._id.toString() )
+
+        res.status(HTTP_STATUS.CREATED_201).send(newPost)
     }
 
     async updatePostByPostId(req: Request, res: Response) {
