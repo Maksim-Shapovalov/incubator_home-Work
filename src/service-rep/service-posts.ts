@@ -18,7 +18,9 @@ export class ServicePosts {
         if (!findBlogName) {
             return null
         }
-
+        if (!user){
+            return null
+        }
         const newPosts = new PostClass(
             bodyPost.title,
             bodyPost.shortDescription,
@@ -26,7 +28,7 @@ export class ServicePosts {
             blogId,
             findBlogName.name,
             new Date().toISOString(),
-             {
+            {
                 userId: user._id.toString(),
                 userLogin: user.login
         }

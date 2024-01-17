@@ -48,8 +48,8 @@ export class PostsController {
         const user = req.body.user
         const result = await this.commentsRepository.getCommentsInPost(req.params.postId, filter, user._id.toString())
         if (!result) {
-            res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
-            return
+            return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+
         }
         res.status(HTTP_STATUS.OK_200).send(result)
     }
@@ -73,6 +73,7 @@ export class PostsController {
             content: req.body.content,
         }
         const newBlogs = await this.postsService.createNewPosts(postBody, req.body.blogId, user)
+        if (!newBlogs) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
         res.status(HTTP_STATUS.CREATED_201).send(newBlogs)
     }
 
