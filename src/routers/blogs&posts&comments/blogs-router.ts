@@ -18,7 +18,7 @@ blogsRouter.get('/:id', blogController.getBlogById.bind(blogController))
 blogsRouter.get('/:id/posts', authMiddlewareForGetCommentById,blogController.getPostsByBlogId.bind(blogController))
 blogsRouter.post('/:blogId/posts', authMiddleware,
     PostspParamsValidation(), ErrorMiddleware, blogController.createPostInBlogByBlogId.bind(blogController))
-blogsRouter.post('/', authMiddlewareForGetCommentById,
+blogsRouter.post('/', authMiddleware,
     BlogsValidation(), ErrorMiddleware, blogController.createNewBlog.bind(blogController))
 blogsRouter.put('/:id', authGuardMiddleware,
     BlogsValidation(), ErrorMiddleware, blogController.updateBlogByBlogId.bind(blogController))
