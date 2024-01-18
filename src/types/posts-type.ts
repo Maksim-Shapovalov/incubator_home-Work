@@ -17,10 +17,6 @@ export class PostClass {
 export type PostsOutputType = {
     id: string
     content: string
-    commentatorInfo: {
-        userId: string
-        userLogin: string
-    }
     createdAt: string
     likesInfo: {
         likeCount : number

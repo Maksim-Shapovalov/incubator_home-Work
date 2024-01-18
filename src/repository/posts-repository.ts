@@ -156,10 +156,6 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt,
-        commentatorInfo: {
-            userId: post.commentatorInfo.userId,
-            userLogin: post.commentatorInfo.userLogin
-        },
         newestLikes: findThreeLastUser.map(r => ({
             addedAt: r.createdAt,
             userId:r.userId,
