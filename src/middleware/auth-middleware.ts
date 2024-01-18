@@ -37,8 +37,8 @@ export const authMiddlewareForGetCommentById = async (req: Request, res: Respons
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const registr = req.headers.authorization
     if (!registr){
-        res.send(HTTP_STATUS.UNAUTHORIZED_401)
-        return
+        return res.send(HTTP_STATUS.UNAUTHORIZED_401)
+
     }
 
     const token = registr.split(' ')[1]
