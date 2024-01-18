@@ -58,7 +58,7 @@ export type PostOutputModel = {
 
 export type PostLikesDB = WithId<{
     postId: string
-    likeStatus: string
+    likesStatus: string
     userId: string
     createdAt: string
     login: string

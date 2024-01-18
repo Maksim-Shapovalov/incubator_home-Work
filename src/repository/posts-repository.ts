@@ -133,11 +133,11 @@ export class PostsRepository {
 }
 export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | null): Promise<PostsOutputType> => {
     const likeCount = await PostLikesModelClass.countDocuments({
-        likeStatus: AvailableStatusEnum.like,
+        likesStatus: AvailableStatusEnum.like,
         commentId: post._id.toString()
     })
     const dislikeCount = await PostLikesModelClass.countDocuments({
-        likeStatus: AvailableStatusEnum.dislike,
+        likesStatus: AvailableStatusEnum.dislike,
         commentId: post._id.toString()
     })
 
@@ -146,7 +146,8 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
         userId,
         postId: post._id.toString()
     }).exec()
-    const findThreeLastUser = await PostLikesModelClass.find({likeStatus: {$all: ["Like"]}}).sort({createdAt: -1}).limit(3).exec()
+    const findThreeLastUser = await PostLikesModelClass.find({likesStatus: {$all: ["Like"]}}).sort({createdAt: -1}).limit(3).exec()
+
 
     return {
         id: post._id.toHexString(),
@@ -159,7 +160,7 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
         extendedLikesInfo: {
             likesCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus: myStatus ? myStatus.likeStatus : 'None',
+            myStatus: myStatus ? myStatus.likesStatus : 'None',
             newestLikes: findThreeLastUser.map(r => ({
                 addedAt: r.createdAt,
                 userId:r.userId,
@@ -171,11 +172,11 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
 
 export const postMapper = async (post: WithId<PostsType>, userId: string | null): Promise<PostOutputModel> => {
     const likeCount = await PostLikesModelClass.countDocuments({
-        likeStatus: AvailableStatusEnum.like,
+        likesStatus: AvailableStatusEnum.like,
         commentId: post._id.toString()
     })
     const dislikeCount = await PostLikesModelClass.countDocuments({
-        likeStatus: AvailableStatusEnum.dislike,
+        likesStatus: AvailableStatusEnum.dislike,
         commentId: post._id.toString()
     })
 
@@ -196,7 +197,7 @@ export const postMapper = async (post: WithId<PostsType>, userId: string | null)
         extendedLikesInfo: {
             likesCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus: myStatus ? myStatus.likeStatus : 'None',
+            myStatus: myStatus ? myStatus.likesStatus : 'None',
             newestLikes: findThreeLastUser.map(r => ({
                 addedAt: r.createdAt,
                 userId:r.userId,
