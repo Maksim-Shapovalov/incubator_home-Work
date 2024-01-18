@@ -131,11 +131,11 @@ export class PostsRepository {
 export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | null): Promise<PostsOutputType> => {
     const likeCount = await PostLikesModelClass.countDocuments({
         likesStatus: AvailableStatusEnum.like,
-        commentId: post._id.toString()
+        postId: post._id.toString()
     })
     const dislikeCount = await PostLikesModelClass.countDocuments({
         likesStatus: AvailableStatusEnum.dislike,
-        commentId: post._id.toString()
+        postId: post._id.toString()
     })
 
 
