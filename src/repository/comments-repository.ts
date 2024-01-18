@@ -13,7 +13,7 @@ export class CommentsRepository {
 
     constructor(protected  postsRepository: PostsRepository) {}
     async getCommentsInPost(postId: string, filter: PaginationQueryType, userId: string | null): Promise<PaginationType<CommentsOutputType> | null> {
-        const findPost = await  this.postsRepository.getPostsById(postId)
+        const findPost = await  this.postsRepository.getPostsById(postId, userId)
 
         if (!findPost) {
             return null

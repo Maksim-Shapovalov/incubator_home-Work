@@ -83,7 +83,7 @@ export class PostsRepository {
     }
     async updateStatusLikeUser(postId: string, user:UserMongoDbType,  status: string) {
         const userId = user._id.toString()
-        const likeWithUserId = await PostLikesModelClass.findOne({userId, postId}).exec()
+        const likeWithUserId = await PostLikesModelClass.findOne({userId: userId, postId: postId}).exec()
 
         const comment = await PostModelClass.findOne({_id: new ObjectId((postId))}).exec()
 
@@ -159,7 +159,7 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
         extendedLikesInfo: {
             likesCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus: myStatus ? myStatus.likeStatus : 'None',
+            myStatus: myStatus ? myStatus.likesStatus : 'None',
             newestLikes: findThreeLastUser.map(r => ({
                 addedAt: r.createdAt,
                 userId:r.userId,
@@ -196,7 +196,7 @@ export const postMapper = async (post: WithId<PostsType>, userId: string | null)
         extendedLikesInfo: {
             likesCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus: myStatus ? myStatus.likeStatus : 'None',
+            myStatus: myStatus ? myStatus.likesStatus : 'None',
             newestLikes: findThreeLastUser.map(r => ({
                 addedAt: r.createdAt,
                 userId:r.userId,

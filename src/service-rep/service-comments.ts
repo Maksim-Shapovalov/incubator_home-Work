@@ -15,7 +15,7 @@ export class ServiceComments {
 
     }
     async createdNewComments(postId: string, content: string, user: WithId<UserMongoDbType>): Promise<CommentsOutputType | null> {
-        const post = await this.postsRepository.getPostsById(postId);
+        const post = await this.postsRepository.getPostsById(postId, user._id.toString());
 
         if (!post) {
             return null;
