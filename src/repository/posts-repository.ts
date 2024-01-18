@@ -100,10 +100,7 @@ export class PostsRepository {
 
             return updateStatus.matchedCount === 1
         }
-        // const findLoginUser = await UserModelClass.findOne({userId})
-        // if (!findLoginUser){
-        //     return false
-        // }
+
         await PostLikesModelClass.create({postId, userId, likesStatus: status, createdAt: new Date().toISOString(), login:user.login })
 
         return true
@@ -146,7 +143,7 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
         userId,
         postId: post._id.toString()
     }).exec()
-    const findThreeLastUser = await PostLikesModelClass.find({likesStatus: {$all: ["Like"]}}).sort({createdAt: -1}).limit(3).exec()
+    const findThreeLastUser = await PostLikesModelClass.find({likesStatus: {$all: ["Like"]},postId: post._id.toString()}).sort({createdAt: -1}).limit(3).exec()
 
 
     return {
@@ -170,38 +167,3 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
     }
 }
 
-export const postMapper = async (post: WithId<PostsType>, userId: string | null): Promise<PostOutputModel> => {
-    const likeCount = await PostLikesModelClass.countDocuments({
-        likesStatus: AvailableStatusEnum.like,
-        commentId: post._id.toString()
-    })
-    const dislikeCount = await PostLikesModelClass.countDocuments({
-        likesStatus: AvailableStatusEnum.dislike,
-        commentId: post._id.toString()
-    })
-
-
-    const myStatus = await PostLikesModelClass.findOne({
-        userId,
-        postId: post._id.toString()
-    }).exec()
-    const findThreeLastUser = await PostLikesModelClass.find({likesStatus: {$all: ["Like"]}}).sort({createdAt: -1}).limit(3).exec()
-    return {
-        id: post._id.toHexString(),
-        title: post.title,
-        shortDescription: post.shortDescription,
-        content: post.content,
-        blogId: post.blogId,
-        blogName: post.blogName,
-        createdAt: post.createdAt,
-        extendedLikesInfo: {
-            likesCount: +likeCount,
-            dislikesCount: +dislikeCount,
-            myStatus: myStatus ? myStatus.likesStatus : 'None',
-            newestLikes: findThreeLastUser.map(r => ({
-                addedAt: r.createdAt,
-                userId:r.userId,
-                login: r.login})),
-        }
-    }
-}
