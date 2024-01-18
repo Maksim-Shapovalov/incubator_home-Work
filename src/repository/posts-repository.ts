@@ -37,14 +37,14 @@ export class PostsRepository {
         }
     }
 
-    async getPostsById(id: string): Promise<PostsOutputType | null> {
+    async getPostsById(id: string, userId: string | null): Promise<PostsOutputType | null> {
         const findPosts = await PostModelClass
             .findOne({_id: new ObjectId(id)});
 
         if (!findPosts) {
             return null
         }
-        return postsLikeMapper(findPosts,null)
+        return postsLikeMapper(findPosts,userId)
     }
 
     async getPostInBlogs(blogId: string, filter: PaginationQueryType, userId: string | null): Promise<PaginationType<PostsOutputType> | null> {

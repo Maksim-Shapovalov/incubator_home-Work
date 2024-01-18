@@ -35,12 +35,15 @@ export class PostsController {
     }
 
     async getPostByPostId(req: Request, res: Response) {
-        let post = await this.postsRepository.getPostsById(req.params.id)
-        if (post) {
-            res.status(200).send(post)
-        } else {
-            res.sendStatus(404)
+        const user = req.body.user
+        if (!user){
+            const filter = queryFilter(req.query);
+            const post = await this.postsRepository.getPostsById(req.params.id, null);
+            return res.status(HTTP_STATUS.OK_200).send(post)
         }
+        const post = await this.postsRepository.getPostsById(req.params.id, null);
+        if (!post) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        return res.status(HTTP_STATUS.OK_200).send(post)
     }
 
     async getCommentByCommendIdInPosts(req: Request, res: Response) {
