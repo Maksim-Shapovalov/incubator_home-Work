@@ -82,7 +82,7 @@ export class PostsRepository {
 
     }
     async updateStatusLikeUser(postId: string, user:UserMongoDbType,  status: string) {
-        const userId = user._id
+        const userId = user._id.toString()
         const likeWithUserId = await PostLikesModelClass.findOne({userId, postId}).exec()
 
         const comment = await PostModelClass.findOne({_id: new ObjectId((postId))}).exec()
