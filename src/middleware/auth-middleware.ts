@@ -21,11 +21,9 @@ export const authMiddlewareForGetCommentById = async (req: Request, res: Respons
     const userId = await jwtService.getUserIdByToken(token)
     if (userId){
         const user = await userRepo.getUserById(userId)
-        console.log(user)
 
         if(user){
             req.body.user = user
-            console.log(req.body.user)
             return next()
         }
     }
@@ -37,17 +35,16 @@ export const authMiddlewareForGetCommentById = async (req: Request, res: Respons
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const registr = req.headers.authorization
     if (!registr){
-        return res.send(HTTP_STATUS.UNAUTHORIZED_401)
+        return res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401)
 
     }
-    console.log(registr)
+
 
     const token = registr.split(' ')[1]
 
     const userId = await jwtService.getUserIdByToken(token)
 
-    console.log(userId)
-    console.log(token)
+
     if (userId){
         const user = await userRepo.getUserById(userId)
 
