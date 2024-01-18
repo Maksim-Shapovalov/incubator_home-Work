@@ -16,7 +16,7 @@ const blogController = container.resolve<BlogController>(BlogController)
 blogsRouter.get('/', blogController.getAllBlogs.bind(blogController))
 blogsRouter.get('/:id', blogController.getBlogById.bind(blogController))
 blogsRouter.get('/:id/posts', authMiddlewareForGetCommentById,blogController.getPostsByBlogId.bind(blogController))
-blogsRouter.post('/:blogId/posts', authMiddleware,
+blogsRouter.post('/:blogId/posts', authMiddlewareForGetCommentById,
     PostspParamsValidation(), ErrorMiddleware, blogController.createPostInBlogByBlogId.bind(blogController))
 blogsRouter.post('/', authMiddlewareForGetCommentById,
     BlogsValidation(), ErrorMiddleware, blogController.createNewBlog.bind(blogController))
