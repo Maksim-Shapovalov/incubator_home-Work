@@ -40,12 +40,14 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         return res.send(HTTP_STATUS.UNAUTHORIZED_401)
 
     }
+    console.log(registr)
 
     const token = registr.split(' ')[1]
 
     const userId = await jwtService.getUserIdByToken(token)
 
-
+    console.log(userId)
+    console.log(token)
     if (userId){
         const user = await userRepo.getUserById(userId)
 
