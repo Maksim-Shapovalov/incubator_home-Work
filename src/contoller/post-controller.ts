@@ -97,6 +97,7 @@ export class PostsController {
         const value = req.body.user
 
         const updateComment = await this.postsService.updateStatusLikeInUser(req.params.postId, value, req.body.likeStatus)
+
         if (!updateComment) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
             return
