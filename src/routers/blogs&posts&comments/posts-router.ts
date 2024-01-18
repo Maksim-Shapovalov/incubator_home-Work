@@ -20,6 +20,6 @@ postsRouter.get("/:postId/comments", authMiddlewareForGetCommentById, postsContr
 postsRouter.post("/:postId/comments", authMiddleware, CommentValidation(), ErrorMiddleware, postsController.createCommentsInPostById.bind(postsController))
 postsRouter.post('/', authMiddlewareForGetCommentById, PostsValidation(), ErrorMiddleware, postsController.createNewPost.bind(postsController))
 postsRouter.put('/:id', authMiddleware, PostsValidation(), ErrorMiddleware, postsController.updatePostByPostId.bind(postsController))
-commentsRouter.put("/:postId/like-status", authMiddleware, LikeStatusValidation(), ErrorMiddleware, postsController.appropriationLike.bind(postsController))
+postsRouter.put("/:postId/like-status", authMiddleware, LikeStatusValidation(), ErrorMiddleware, postsController.appropriationLike.bind(postsController))
 postsRouter.delete('/:id', authMiddleware, postsController.deletePostByPostId.bind(postsController))
 
