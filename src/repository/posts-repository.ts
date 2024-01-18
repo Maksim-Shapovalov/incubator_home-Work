@@ -92,7 +92,7 @@ export class PostsRepository {
         }
 
         if (likeWithUserId) {
-            const updateStatus = await PostLikesModelClass.updateOne({postId, userId}, {
+            const updateStatus = await PostLikesModelClass.updateOne({postId:postId, userId:userId}, {
                 $set: {
                     likesStatus: status,
                 }
