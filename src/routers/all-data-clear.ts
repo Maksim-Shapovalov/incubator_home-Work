@@ -3,7 +3,7 @@ import { HTTP_STATUS} from "../index";
 import {DataIDModelClass} from "../schemas/dataID-schemas";
 import {UserModelClass} from "../schemas/user-schemas";
 import {BlogModelClass} from "../schemas/blog-schemas";
-import {PostModelClass} from "../schemas/post-schema";
+import {PostLikesModelClass, PostModelClass} from "../schemas/post-schema";
 import {CommentsModelClass} from "../schemas/comments-schemas";
 
 
@@ -15,7 +15,8 @@ AllDataClear.delete('/', async(req:Request, res: Response) => {
        BlogModelClass.deleteMany({}),
        UserModelClass.deleteMany({}),
        CommentsModelClass.deleteMany({}),
-       DataIDModelClass.deleteMany({})
+       DataIDModelClass.deleteMany({}),
+       PostLikesModelClass.deleteMany({})
    ])
    return res.sendStatus(HTTP_STATUS.NO_CONTENT_204)
 })

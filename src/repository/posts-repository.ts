@@ -104,7 +104,7 @@ export class PostsRepository {
         // if (!findLoginUser){
         //     return false
         // }
-        await PostLikesModelClass.create({postId, userId, likeStatus: status, createdAt: new Date().toISOString(), login:user.login })
+        await PostLikesModelClass.create({postId, userId, likesStatus: status, createdAt: new Date().toISOString(), login:user.login })
 
         return true
     }
@@ -185,7 +185,7 @@ export const postMapper = async (post: WithId<PostsType>, userId: string | null)
         userId,
         postId: post._id.toString()
     }).exec()
-    const findThreeLastUser = await PostLikesModelClass.find({likeStatus: {$all: ["Like"]}}).sort({createdAt: -1}).limit(3).exec()
+    const findThreeLastUser = await PostLikesModelClass.find({likesStatus: {$all: ["Like"]}}).sort({createdAt: -1}).limit(3).exec()
     return {
         id: post._id.toHexString(),
         title: post.title,
