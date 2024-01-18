@@ -48,6 +48,10 @@ export class BlogController {
             shortDescription: req.body.shortDescription,
             content: req.body.content,
         }
+        if (!user){
+            const newPost = await this.postsService.createNewPosts(postBody, req.params.blogId, null)
+            return res.status(HTTP_STATUS.CREATED_201).send(newPost)
+        }
         const newPost = await this.postsService.createNewPosts(postBody, req.params.blogId, user._id.toString())
         if (!newPost) {
             res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
