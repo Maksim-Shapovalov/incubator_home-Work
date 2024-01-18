@@ -18,16 +18,16 @@ export type PostsOutputType = {
     id: string
     content: string
     createdAt: string
-    likesInfo: {
-        likeCount : number
+    extendedLikesInfo: {
+        likeCount: number
         dislikesCount: number
         myStatus: string
+        newestLikes: {
+            addedAt: string
+            userId: string
+            login: string
+        }[]
     }
-    newestLikes:{
-        addedAt: string
-        userId:string
-        login:string
-    }[]
     title: string
     shortDescription: string
     blogId: string
@@ -43,16 +43,17 @@ export type PostOutputModel = {
     blogId: string
     blogName: string
     createdAt: string
-    likesInfo: {
+    extendedLikesInfo: {
         likeCount : number
         dislikesCount: number
         myStatus: string
+        newestLikes:{
+            addedAt: string
+            userId:string
+            login:string
+        }[]
     }
-    newestLikes:{
-        addedAt: string
-        userId:string
-        login:string
-    }[]
+
 }
 
 export type PostLikesDB = WithId<{

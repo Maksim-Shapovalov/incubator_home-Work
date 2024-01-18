@@ -156,15 +156,16 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt,
-        newestLikes: findThreeLastUser.map(r => ({
-            addedAt: r.createdAt,
-            userId:r.userId,
-            login: r.login})),
-        likesInfo: {
+        extendedLikesInfo: {
             likeCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus: myStatus ? myStatus.likeStatus : 'None'
+            myStatus: myStatus ? myStatus.likeStatus : 'None',
+            newestLikes: findThreeLastUser.map(r => ({
+                addedAt: r.createdAt,
+                userId:r.userId,
+                login: r.login})),
         }
+
     }
 }
 
@@ -192,14 +193,14 @@ export const postMapper = async (post: WithId<PostsType>, userId: string | null)
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt,
-        newestLikes: findThreeLastUser.map(r => ({
-            addedAt: r.createdAt,
-            userId:r.userId,
-            login: r.login})),
-        likesInfo: {
+        extendedLikesInfo: {
             likeCount: +likeCount,
             dislikesCount: +dislikeCount,
-            myStatus: myStatus ? myStatus.likeStatus : 'None'
+            myStatus: myStatus ? myStatus.likeStatus : 'None',
+            newestLikes: findThreeLastUser.map(r => ({
+                addedAt: r.createdAt,
+                userId:r.userId,
+                login: r.login})),
         }
     }
 }
