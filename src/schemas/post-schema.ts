@@ -4,7 +4,7 @@ import {AvailableStatusEnum} from "../types/comment-type";
 
 const postLike = new mongoose.Schema<PostLikesDB>({
     postId: {type: String, required: true},
-    likesStatus:  {
+    likeStatus:  {
         type: String,
         enum: Object.values(AvailableStatusEnum),
         required:true
