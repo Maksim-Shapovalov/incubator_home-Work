@@ -140,7 +140,7 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
 
 
     const myStatus = await PostLikesModelClass.findOne({
-        userId,
+        userId: userId,
         postId: post._id.toString()
     }).exec()
     const findThreeLastUser = await PostLikesModelClass.find({likesStatus: {$all: ["Like"]},postId: post._id.toString()}).sort({createdAt: -1}).limit(3).exec()
