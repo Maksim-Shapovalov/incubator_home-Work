@@ -82,8 +82,8 @@ export class PostsRepository {
 
     }
     async updateStatusLikeUser(postId: string, user:UserMongoDbType,  status: string) {
-        const userId = user._id.toString()
-        const likeWithUserId = await PostLikesModelClass.findOne({userId: userId, postId: postId}).exec()
+
+        const likeWithUserId = await PostLikesModelClass.findOne({userId: user._id.toString(), postId: postId}).exec()
 
         const comment = await PostModelClass.findOne({_id: new ObjectId((postId))}).exec()
 
@@ -92,7 +92,7 @@ export class PostsRepository {
         }
 
         if (likeWithUserId) {
-            const updateStatus = await PostLikesModelClass.updateOne({postId:postId, userId:userId}, {
+            const updateStatus = await PostLikesModelClass.updateOne({postId:postId, userId:user._id.toString()}, {
                 $set: {
                     likesStatus: status,
                 }
@@ -101,7 +101,7 @@ export class PostsRepository {
             return updateStatus.matchedCount === 1
         }
 
-        await PostLikesModelClass.create({postId, userId, likesStatus: status, createdAt: new Date().toISOString(), login:user.login })
+        await PostLikesModelClass.create({postId, userId: user._id.toString(), likesStatus: status, createdAt: new Date().toISOString(), login:user.login })
 
         return true
     }
