@@ -19,7 +19,7 @@ export type PostsOutputType = {
     content: string
     createdAt: string
     extendedLikesInfo: {
-        likeCount: number
+        likesCount: number
         dislikesCount: number
         myStatus: string
         newestLikes: {
@@ -44,7 +44,7 @@ export type PostOutputModel = {
     blogName: string
     createdAt: string
     extendedLikesInfo: {
-        likeCount : number
+        likesCount : number
         dislikesCount: number
         myStatus: string
         newestLikes:{

@@ -157,7 +157,7 @@ export const postsLikeMapper = async (post: WithId<PostsType>, userId: string | 
         blogName: post.blogName,
         createdAt: post.createdAt,
         extendedLikesInfo: {
-            likeCount: +likeCount,
+            likesCount: +likeCount,
             dislikesCount: +dislikeCount,
             myStatus: myStatus ? myStatus.likeStatus : 'None',
             newestLikes: findThreeLastUser.map(r => ({
@@ -194,7 +194,7 @@ export const postMapper = async (post: WithId<PostsType>, userId: string | null)
         blogName: post.blogName,
         createdAt: post.createdAt,
         extendedLikesInfo: {
-            likeCount: +likeCount,
+            likesCount: +likeCount,
             dislikesCount: +dislikeCount,
             myStatus: myStatus ? myStatus.likeStatus : 'None',
             newestLikes: findThreeLastUser.map(r => ({
