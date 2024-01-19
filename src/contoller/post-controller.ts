@@ -29,7 +29,7 @@ export class PostsController {
             return res.status(HTTP_STATUS.OK_200).send(allPosts)
         }
         const filter = queryFilter(req.query);
-        const allPosts = await this.postsRepository.getAllPosts(filter, user._id);
+        const allPosts = await this.postsRepository.getAllPosts(filter, user._id.toString());
         res.status(HTTP_STATUS.OK_200).send(allPosts)
 
     }
@@ -41,7 +41,7 @@ export class PostsController {
             const post = await this.postsRepository.getPostsById(req.params.id, null);
             return res.status(HTTP_STATUS.OK_200).send(post)
         }
-        const post = await this.postsRepository.getPostsById(req.params.id, null);
+        const post = await this.postsRepository.getPostsById(req.params.id, user._id.toString());
         if (!post) return res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
         return res.status(HTTP_STATUS.OK_200).send(post)
     }

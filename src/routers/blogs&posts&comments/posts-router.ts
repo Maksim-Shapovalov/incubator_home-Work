@@ -1,10 +1,10 @@
 import {Router} from "express";
 import {PostsValidation} from "../../middleware/input-middleware/posts-validation";
 import {ErrorMiddleware} from "../../middleware/error-middleware";
-import {authGuardMiddleware} from "../../middleware/register-middleware";
+
 import {authMiddleware, authMiddlewareForGetCommentById} from "../../middleware/auth-middleware";
 import {CommentValidation, LikeStatusValidation} from "../../middleware/input-middleware/comment-validation";
-import {commentsRouter} from "./comments-router";
+
 import {PostsController} from "../../contoller/post-controller";
 import {container} from "../../composition-root/composition-root";
 
